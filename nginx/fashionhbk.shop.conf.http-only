@@ -1,0 +1,37 @@
+# Temporary HTTP-only config for certificate generation
+server {
+    listen 80;
+    listen [::]:80;
+    server_name fashionhbk.shop www.fashionhbk.shop;
+
+    # Root directory for the frontend build
+    root /var/www/fashionhbk.shop/frontend;
+    index index.html;
+
+    # Serve static files
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # SPA routing
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # Proxy API requests
+    location /api/ {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Error handling
+    error_page 404 /index.html;
+}
