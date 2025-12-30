@@ -2,6 +2,9 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "@components/layout";
 import Home from "@pages/Home";
+import FormDemo from "@pages/FormDemo";
+import CardDemo from "@pages/CardDemo";
+import LoadingDemo from "@pages/LoadingDemo";
 
 const Products = () => (
   <div style={{ padding: "2rem", textAlign: "center" }}>
@@ -57,7 +60,10 @@ function App() {
           <Route path="cart" element={<Cart />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="form-demo" element={<FormDemo />} />
+          <Route path="card-demo" element={<CardDemo />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="loading-demo" element={<LoadingDemo />} />
         </Route>
       </Routes>
     </Router>
