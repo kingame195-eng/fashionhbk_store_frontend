@@ -179,7 +179,6 @@
   border-color: var(--color-accent);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transform: translateY(-5px);
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-gray-800) 100%);
 }
 
 .cardImage {
@@ -273,10 +272,10 @@
 }
 
 .secondaryCta:hover {
-  background-color: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
+  background-color: var(--color-gray-100);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  color: white;
+  color: var(--color-accent-dark);
 }
 
 @media (max-width: 639px) {

@@ -1,0 +1,14 @@
+{
+  "name": "fashion-seeder",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Product seeder for fashion store",
+  "main": "seedProducts.js",
+  "scripts": {
+    "seed": "node seedProducts.js"
+  },
+  "dependencies": {
+    "mongoose": "^8.0.0",
+    "dotenv": "^16.0.0"
+  }
+}

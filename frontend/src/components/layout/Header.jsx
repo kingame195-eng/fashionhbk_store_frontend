@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "@styles/components/Header.module.css";
 
 const CartIcon = () => (
@@ -94,6 +94,7 @@ function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // TODO: Replace with actual auth context
   const isAuthenticated = false;
@@ -112,12 +113,17 @@ function Header() {
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
+      // Get scrollbar width before hiding
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [isMobileMenuOpen]);
 
@@ -129,6 +135,31 @@ function Header() {
     { path: "/products?category=accessories", label: "Accessories" },
     { path: "/about", label: "About" },
   ];
+
+  // Check if a nav link is active based on path and query params
+  const isLinkActive = (linkPath) => {
+    const [pathname, search] = linkPath.split("?");
+    const currentPathname = location.pathname;
+    const currentSearch = location.search;
+
+    // For home page, exact match
+    if (linkPath === "/") {
+      return currentPathname === "/" && !currentSearch;
+    }
+
+    // For links with query params (category links)
+    if (search) {
+      return currentPathname === pathname && currentSearch === `?${search}`;
+    }
+
+    // For /products without query (Shop link) - only active when no category filter
+    if (linkPath === "/products") {
+      return currentPathname === "/products" && !currentSearch.includes("category=");
+    }
+
+    // For other links, match pathname
+    return currentPathname === pathname;
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -154,12 +185,12 @@ function Header() {
           <ul className={styles.navList}>
             {navLinks.map((link) => (
               <li key={link.path}>
-                <NavLink
+                <Link
                   to={link.path}
-                  className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`}
+                  className={`${styles.navLink} ${isLinkActive(link.path) ? styles.active : ""}`}
                 >
                   {link.label}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>
@@ -225,15 +256,15 @@ function Header() {
           <ul className={styles.mobileNavList}>
             {navLinks.map((link) => (
               <li key={link.path}>
-                <NavLink
+                <Link
                   to={link.path}
-                  className={({ isActive }) =>
-                    `${styles.mobileNavLink} ${isActive ? styles.active : ""}`
-                  }
+                  className={`${styles.mobileNavLink} ${
+                    isLinkActive(link.path) ? styles.active : ""
+                  }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>

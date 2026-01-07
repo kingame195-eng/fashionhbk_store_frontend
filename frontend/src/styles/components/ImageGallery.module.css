@@ -1,0 +1,325 @@
+.gallery {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Thumbnails */
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  order: -1;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 100px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.thumbnail:hover {
+  border-color: var(--color-text-muted);
+}
+
+.thumbnail.active {
+  border-color: var(--color-primary);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Main Image */
+.mainImageWrapper {
+  position: relative;
+  flex: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.mainImage {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.mainImage.zoomed .image {
+  transform: scale(2);
+}
+
+.zoomIcon {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.mainImageWrapper:hover .zoomIcon {
+  opacity: 1;
+}
+
+.zoomIcon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text);
+}
+
+/* Navigation Buttons */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 2;
+}
+
+.mainImageWrapper:hover .navBtn {
+  opacity: 1;
+}
+
+.navBtn:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.navBtn svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text);
+}
+
+.prevBtn {
+  left: 16px;
+}
+
+.nextBtn {
+  right: 16px;
+}
+
+/* Image Counter */
+.counter {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.8125rem;
+  border-radius: var(--radius-md);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.lightboxClose:hover {
+  transform: scale(1.1);
+}
+
+.lightboxClose svg {
+  width: 28px;
+  height: 28px;
+}
+
+.lightboxContent {
+  max-width: 90vw;
+  max-height: 80vh;
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.lightboxNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: var(--radius-full);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lightboxNav:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.lightboxNav svg {
+  width: 28px;
+  height: 28px;
+}
+
+.lightboxPrev {
+  left: 20px;
+}
+
+.lightboxNext {
+  right: 20px;
+}
+
+.lightboxThumbnails {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lightboxThumb {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.lightboxThumb:hover,
+.lightboxThumb.active {
+  opacity: 1;
+}
+
+.lightboxThumb.active {
+  border-color: white;
+}
+
+.lightboxThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .gallery {
+    flex-direction: column;
+  }
+
+  .thumbnails {
+    flex-direction: row;
+    order: 1;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 75px;
+    flex-shrink: 0;
+  }
+
+  .mainImage {
+    aspect-ratio: 1 / 1;
+  }
+
+  .navBtn {
+    opacity: 1;
+    width: 36px;
+    height: 36px;
+  }
+
+  .navBtn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .lightboxNav {
+    width: 44px;
+    height: 44px;
+  }
+
+  .lightboxNav svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lightboxThumbnails {
+    display: none;
+  }
+}

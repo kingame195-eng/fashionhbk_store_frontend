@@ -33,6 +33,8 @@ body {
   background-color: var(--color-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent layout shift from scrollbar appearing/disappearing */
+  overflow-y: scroll;
 }
 
 /* Set shorter line heights on headings */

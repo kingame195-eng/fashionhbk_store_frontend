@@ -1,0 +1,108 @@
+.selector {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--color-bg-hover);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.input {
+  width: 48px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.input:focus {
+  outline: none;
+  background-color: var(--color-bg-secondary);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+/* Remove number input spinners */
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Size Variants */
+.small .btn {
+  width: 32px;
+  height: 32px;
+}
+
+.small .btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.small .input {
+  width: 40px;
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+.medium .btn {
+  width: 44px;
+  height: 44px;
+}
+
+.medium .btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.medium .input {
+  width: 56px;
+  height: 44px;
+  font-size: 1rem;
+}
+
+.large .btn {
+  width: 52px;
+  height: 52px;
+}
+
+.large .btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.large .input {
+  width: 64px;
+  height: 52px;
+  font-size: 1.125rem;
+}
