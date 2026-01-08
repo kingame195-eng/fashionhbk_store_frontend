@@ -30,8 +30,21 @@ export default function ProductCard({ product }) {
   const discount = compareAtPrice ? Math.round((1 - price / compareAtPrice) * 100) : 0;
 
   const isOutOfStock = inventory?.totalQuantity === 0;
-  const primaryImage = images?.[0]?.url || "/images/placeholder-product.jpg";
-  const hoverImage = images?.[1]?.url;
+
+  // Handle both formats: images as array of objects {url, alt} OR array of strings OR thumbnail field
+  const getImageUrl = (img) => {
+    if (!img) return null;
+    if (typeof img === "string") return img;
+    if (typeof img === "object" && img.url) return img.url;
+    return null;
+  };
+
+  const primaryImage =
+    getImageUrl(images?.[0]) ||
+    product.thumbnail ||
+    product.image ||
+    "/images/placeholder-product.jpg";
+  const hoverImage = getImageUrl(images?.[1]);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();

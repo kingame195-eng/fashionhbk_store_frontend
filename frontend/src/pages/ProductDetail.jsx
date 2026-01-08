@@ -46,8 +46,15 @@ const ProductDetail = () => {
         {/* Product Images */}
         <div className={styles.productImages}>
           <div className={styles.mainImage}>
-            {product.images && product.images.length > 0 ? (
-              <img src={product.images[0]} alt={product.name} />
+            {(product.images && product.images.length > 0) || product.thumbnail || product.image ? (
+              <img
+                src={
+                  typeof product.images?.[0] === "string"
+                    ? product.images[0]
+                    : product.images?.[0]?.url || product.thumbnail || product.image
+                }
+                alt={product.name}
+              />
             ) : (
               <div className={styles.placeholderImage}>No Image Available</div>
             )}
@@ -57,7 +64,10 @@ const ProductDetail = () => {
             <div className={styles.thumbnails}>
               {product.images.map((image, index) => (
                 <button key={index} className={styles.thumbnail}>
-                  <img src={image} alt={`${product.name} - ${index + 1}`} />
+                  <img
+                    src={typeof image === "string" ? image : image?.url}
+                    alt={`${product.name} - ${index + 1}`}
+                  />
                 </button>
               ))}
             </div>
@@ -151,8 +161,19 @@ const ProductDetail = () => {
                 className={styles.relatedCard}
               >
                 <div className={styles.relatedImage}>
-                  {relatedProduct.images && relatedProduct.images.length > 0 ? (
-                    <img src={relatedProduct.images[0]} alt={relatedProduct.name} />
+                  {(relatedProduct.images && relatedProduct.images.length > 0) ||
+                  relatedProduct.thumbnail ||
+                  relatedProduct.image ? (
+                    <img
+                      src={
+                        typeof relatedProduct.images?.[0] === "string"
+                          ? relatedProduct.images[0]
+                          : relatedProduct.images?.[0]?.url ||
+                            relatedProduct.thumbnail ||
+                            relatedProduct.image
+                      }
+                      alt={relatedProduct.name}
+                    />
                   ) : (
                     <div className={styles.placeholderImage}>No Image</div>
                   )}

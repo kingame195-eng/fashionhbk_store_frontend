@@ -106,8 +106,17 @@ const Products = () => {
                   className={styles.productCard}
                 >
                   <div className={styles.productImage}>
-                    {product.images && product.images.length > 0 ? (
-                      <img src={product.images[0]} alt={product.name} />
+                    {(product.images && product.images.length > 0) ||
+                    product.thumbnail ||
+                    product.image ? (
+                      <img
+                        src={
+                          typeof product.images?.[0] === "string"
+                            ? product.images[0]
+                            : product.images?.[0]?.url || product.thumbnail || product.image
+                        }
+                        alt={product.name}
+                      />
                     ) : (
                       <div className={styles.placeholderImage}>No Image</div>
                     )}

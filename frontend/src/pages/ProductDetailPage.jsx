@@ -52,6 +52,28 @@ export default function ProductDetailPage() {
     );
   }
 
+  // Normalize images to always be array of objects {url, alt}
+  const normalizeImages = (images, thumbnail, image) => {
+    if (images && images.length > 0) {
+      return images.map((img, index) => {
+        if (typeof img === "string") {
+          return { url: img, alt: `${product.name} - Image ${index + 1}` };
+        }
+        return img;
+      });
+    }
+    // Fallback to thumbnail or image field
+    if (thumbnail) {
+      return [{ url: thumbnail, alt: product.name }];
+    }
+    if (image) {
+      return [{ url: image, alt: product.name }];
+    }
+    return [];
+  };
+
+  const normalizedImages = normalizeImages(product.images, product.thumbnail, product.image);
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -59,7 +81,7 @@ export default function ProductDetailPage() {
         <div className={styles.productSection}>
           {/* Image Gallery */}
           <div className={styles.gallery}>
-            <ImageGallery images={product.images || []} productName={product.name} />
+            <ImageGallery images={normalizedImages} productName={product.name} />
           </div>
 
           {/* Product Info */}
