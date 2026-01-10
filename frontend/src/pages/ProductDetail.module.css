@@ -235,7 +235,8 @@
   border-color: var(--color-accent, #c9a962);
 }
 
-.sizeBtn.active {
+.sizeBtn.active,
+.sizeBtn.selected {
   background: var(--color-accent, #c9a962);
   border-color: var(--color-accent, #c9a962);
   color: var(--color-black, #000);
@@ -260,7 +261,8 @@
   transform: scale(1.1);
 }
 
-.colorBtn.active {
+.colorBtn.active,
+.colorBtn.selectedColor {
   border-color: var(--color-accent, #c9a962);
   box-shadow: 0 0 0 2px var(--color-accent, #c9a962);
 }

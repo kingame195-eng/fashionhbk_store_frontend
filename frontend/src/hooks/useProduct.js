@@ -26,17 +26,26 @@ export function useProduct(slug) {
 
       try {
         // Fetch product details
-        const productData = await productService.getProductBySlug(slug);
+        const responseData = await productService.getProductBySlug(slug);
+        console.log("API Response:", responseData);
+        // Handle both response formats: { product: {...} } or direct product object
+        const productData = responseData?.product || responseData;
+        console.log("Product Data:", productData);
         setProduct(productData);
 
         // Fetch related products (same category, excluding current)
-        if (productData.category) {
-          const related = await productService.getProducts({
-            category: productData.category._id || productData.category,
-            limit: 8,
-            exclude: productData._id,
-          });
-          setRelatedProducts(related.products || []);
+        if (productData?.category) {
+          try {
+            const related = await productService.getProducts({
+              category: productData.category._id || productData.category,
+              limit: 8,
+              exclude: productData._id,
+            });
+            setRelatedProducts(related?.products || []);
+          } catch (relatedErr) {
+            console.error("Failed to fetch related products:", relatedErr);
+            // Don't fail the whole page just for related products
+          }
         }
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -55,7 +64,9 @@ export function useProduct(slug) {
 
     setIsLoading(true);
     try {
-      const productData = await productService.getProductBySlug(slug);
+      const responseData = await productService.getProductBySlug(slug);
+      // Handle both response formats: { product: {...} } or direct product object
+      const productData = responseData?.product || responseData;
       setProduct(productData);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to refresh product");

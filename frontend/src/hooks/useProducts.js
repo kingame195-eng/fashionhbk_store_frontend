@@ -9,7 +9,7 @@ export function useProducts(initialFilters = {}) {
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    limit: 18,
     total: 0,
     pages: 0,
   });

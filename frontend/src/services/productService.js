@@ -10,11 +10,11 @@ const productService = {
   },
 
   /**
-   * Get single product by slug
+   * Get single product by slug or ID
    */
-  async getProductBySlug(slug) {
-    const response = await api.get(`/products/${slug}`);
-    return response.data.data.product;
+  async getProductBySlug(slugOrId) {
+    const response = await api.get(`/products/${slugOrId}`);
+    return response.data.data?.product || response.data.data || response.data;
   },
 
   /**
@@ -83,20 +83,20 @@ const productService = {
 };
 
 /**
- * Get a single product by slug
- * @param {string} slug - Product slug
+ * Get a single product by slug or ID
+ * @param {string} slugOrId - Product slug or ID
  * @returns {Promise<Object>} Product details
  */
 
-export const getProductBySlug = async (slug) => {
-  const response = await api.get(`/products/slug/${slug}`);
-  return response.data.data || response.data;
+export const getProductBySlug = async (slugOrId) => {
+  const response = await api.get(`/products/${slugOrId}`);
+  return response.data.data?.product || response.data.data || response.data;
 };
 
 // If your backend uses ID instead of slug:
 export const getProductById = async (id) => {
   const response = await api.get(`/products/${id}`);
-  return response.data.data || response.data;
+  return response.data.data?.product || response.data.data || response.data;
 };
 
 export default productService;

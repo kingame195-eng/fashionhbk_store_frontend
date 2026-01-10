@@ -10,10 +10,10 @@ import styles from "../styles/pages/ProductDetailPage.module.css";
 export default function ProductDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { product, relatedProducts, loading, error } = useProduct(slug);
+  const { product, relatedProducts, isLoading, error } = useProduct(slug);
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
         <LoadingSpinner size="large" />

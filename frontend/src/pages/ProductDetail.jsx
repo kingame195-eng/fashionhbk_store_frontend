@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useProduct } from "../hooks";
 import { LoadingSpinner } from "../components/common";
@@ -6,6 +7,9 @@ import styles from "./ProductDetail.module.css";
 const ProductDetail = () => {
   const { slug } = useParams();
   const { product, relatedProducts, isLoading, error } = useProduct(slug);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   if (isLoading) {
     return (
@@ -82,12 +86,12 @@ const ProductDetail = () => {
           {product.brand && <p className={styles.brand}>Brand: {product.brand}</p>}
 
           <div className={styles.price}>
-            {product.salePrice ? (
+            {product.compareAtPrice && product.compareAtPrice > product.price ? (
               <>
-                <span className={styles.salePrice}>${product.salePrice.toFixed(2)}</span>
-                <span className={styles.originalPrice}>${product.price.toFixed(2)}</span>
+                <span className={styles.salePrice}>${product.price?.toFixed(2)}</span>
+                <span className={styles.originalPrice}>${product.compareAtPrice.toFixed(2)}</span>
                 <span className={styles.discount}>
-                  {Math.round((1 - product.salePrice / product.price) * 100)}% OFF
+                  {Math.round((1 - product.price / product.compareAtPrice) * 100)}% OFF
                 </span>
               </>
             ) : (
@@ -107,11 +111,20 @@ const ProductDetail = () => {
             <div className={styles.options}>
               <h3>Size</h3>
               <div className={styles.sizeButtons}>
-                {product.sizes.map((size) => (
-                  <button key={size} className={styles.sizeBtn}>
-                    {size}
-                  </button>
-                ))}
+                {product.sizes.map((size, index) => {
+                  const sizeName = size.name || size;
+                  const sizeId = size._id || size.name || index;
+                  const isSelected = selectedSize === sizeName;
+                  return (
+                    <button
+                      key={sizeId}
+                      className={`${styles.sizeBtn} ${isSelected ? styles.selected : ""}`}
+                      onClick={() => setSelectedSize(sizeName)}
+                    >
+                      {sizeName}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -121,14 +134,21 @@ const ProductDetail = () => {
             <div className={styles.options}>
               <h3>Color</h3>
               <div className={styles.colorButtons}>
-                {product.colors.map((color) => (
-                  <button
-                    key={color}
-                    className={styles.colorBtn}
-                    style={{ backgroundColor: color.toLowerCase() }}
-                    title={color}
-                  />
-                ))}
+                {product.colors.map((color, index) => {
+                  const colorName = color.name || color;
+                  const colorId = color._id || color.name || index;
+                  const colorHex = color.hexCode || color.name?.toLowerCase() || color;
+                  const isSelected = selectedColor === colorName;
+                  return (
+                    <button
+                      key={colorId}
+                      className={`${styles.colorBtn} ${isSelected ? styles.selectedColor : ""}`}
+                      style={{ backgroundColor: colorHex }}
+                      onClick={() => setSelectedColor(colorName)}
+                      title={colorName}
+                    />
+                  );
+                })}
               </div>
             </div>
           )}
