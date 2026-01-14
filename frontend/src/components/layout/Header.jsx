@@ -167,6 +167,8 @@ export default function Header() {
     e.preventDefault();
     const searchQuery = e.target.search.value.trim();
     if (searchQuery) {
+      // Chỉ navigate với search param, không giữ category
+      // để tìm kiếm trên toàn bộ sản phẩm
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       e.target.reset();

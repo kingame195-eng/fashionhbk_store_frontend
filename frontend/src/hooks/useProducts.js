@@ -185,7 +185,23 @@ export function useProducts(initialFilters = {}) {
     [updateFilters]
   );
 
-  const setSearch = useCallback((search) => updateFilters({ search, page: 1 }), [updateFilters]);
+  // Khi tìm kiếm, xóa bộ lọc category để tìm trên toàn bộ sản phẩm
+  const setSearch = useCallback(
+    (search) => {
+      if (search && search.trim()) {
+        // Có từ khóa tìm kiếm -> xóa category để tìm toàn bộ website
+        updateFilters({
+          search,
+          category: "", // Xóa category filter
+          page: 1,
+        });
+      } else {
+        // Xóa từ khóa tìm kiếm -> giữ nguyên các filter khác
+        updateFilters({ search: "", page: 1 });
+      }
+    },
+    [updateFilters]
+  );
 
   const toggleFilter = useCallback(
     (filterType, value) => {

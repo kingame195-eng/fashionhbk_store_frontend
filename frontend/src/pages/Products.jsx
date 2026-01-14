@@ -48,9 +48,35 @@ const Products = () => {
     <div className={styles.productsPage}>
       {/* Page Header */}
       <div className={styles.pageHeader}>
-        <h1>Our Products</h1>
-        <p>Discover our latest collection</p>
+        <h1>
+          {filters.search
+            ? `Search Results for "${filters.search}"`
+            : filters.category
+            ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)}`
+            : "Our Products"}
+        </h1>
+        <p>
+          {filters.search
+            ? "Showing results from all categories"
+            : "Discover our latest collection"}
+        </p>
       </div>
+
+      {/* Search Info Banner - hiển thị khi có từ khóa tìm kiếm */}
+      {filters.search && (
+        <div className={styles.searchBanner}>
+          <span>
+            🔍 Searching for "<strong>{filters.search}</strong>" across all products
+          </span>
+          <button
+            onClick={() => setSearch("")}
+            className={styles.clearSearchBtn}
+            aria-label="Clear search"
+          >
+            ✕ Clear search
+          </button>
+        </div>
+      )}
 
       {/* Search and Sort Controls */}
       <div className={styles.controls}>

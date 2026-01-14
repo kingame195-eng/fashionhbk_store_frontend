@@ -92,6 +92,78 @@
 - **Hậu quả:** Frontend vẫn gọi API cũ, không lấy được dữ liệu.
 - **Khắc phục:** Luôn kiểm tra và cập nhật lại `.env.production` mỗi khi thay đổi domain hoặc endpoint API.
 
+### 13. Deploy thành công nhưng website không thay đổi
+
+- **Nguyên nhân:**
+  - Deploy vào sai thư mục so với cấu hình Nginx (ví dụ: deploy vào `/var/www/html` nhưng domain lại dùng `/var/www/fashionhbk.shop/frontend`).
+  - Có nhiều block server trong Nginx, mỗi block dùng một thư mục root khác nhau.
+  - Trình duyệt bị cache hoặc chưa reload Nginx sau khi deploy.
+  - Quyền file/folder không đúng, Nginx không đọc được file mới.
+- **Hậu quả:**
+  - Website vẫn hiển thị code cũ dù deploy thành công.
+- **Khắc phục:**
+  - Kiểm tra lại file cấu hình Nginx, xác định đúng block server và thư mục root đang phục vụ cho domain.
+  - Sửa file deploy.yml để upload vào đúng thư mục root của domain.
+  - Reload lại Nginx sau khi deploy: `sudo systemctl reload nginx`.
+  - Xóa cache trình duyệt, thử tab ẩn danh.
+  - Kiểm tra quyền file: `sudo chown -R www-data:www-data <thư_mục_root>`.
+
+### 14. Deploy đúng thư mục nhưng vẫn không lên code mới
+
+- **Nguyên nhân:**
+  - File index.html mới đã được upload nhưng Nginx vẫn ưu tiên file cũ (index.nginx-debian.html) do cấu hình index chưa đúng.
+  - Có nhiều file index trong thư mục, Nginx ưu tiên file không mong muốn.
+- **Hậu quả:**
+  - Website vẫn hiển thị landing page mặc định của Nginx hoặc code cũ.
+- **Khắc phục:**
+  - Đảm bảo dòng `index` trong block server ưu tiên `index.html` trước các file khác.
+  - Xóa file `index.nginx-debian.html` nếu không dùng nữa.
+  - Reload lại Nginx.
+
+### 15. Lỗi quyền file/folder sau khi deploy tự động
+
+- **Nguyên nhân:**
+  - File/folder được upload lên server bởi user khác (ví dụ: user 1001), Nginx (www-data) không đọc được.
+- **Hậu quả:**
+  - Website trắng trang hoặc lỗi 403/404.
+- **Khắc phục:**
+  - Sau khi deploy, chạy: `sudo chown -R www-data:www-data <thư_mục_root>` để đảm bảo quyền.
+
+### 16. Lỗi cache trình duyệt hoặc cache server
+
+- **Nguyên nhân:**
+  - Trình duyệt lưu cache file cũ, kể cả khi đã deploy code mới.
+  - Có thể server/proxy (Cloudflare, Nginx cache) cũng cache file cũ.
+- **Hậu quả:**
+  - Người dùng không thấy code mới.
+- **Khắc phục:**
+  - Ctrl+F5, thử tab ẩn danh, xóa cache trình duyệt.
+  - Nếu dùng proxy/cache server, clear cache server.
+
+### 17. Lỗi Nginx cấu hình nhiều block server, domain trỏ sai
+
+- **Nguyên nhân:**
+  - Có nhiều block server, mỗi block dùng một root khác nhau, domain trỏ nhầm block.
+- **Hậu quả:**
+  - Deploy đúng thư mục nhưng domain vẫn không nhận code mới.
+- **Khắc phục:**
+  - Kiểm tra kỹ file cấu hình Nginx, xác định block server nào phục vụ cho domain bạn muốn.
+  - Deploy đúng thư mục root của block đó.
+
+### 18. Lỗi tìm kiếm sản phẩm bị giới hạn bởi category (Search không trả về kết quả toàn site)
+
+- **Nguyên nhân:**
+  - Khi người dùng đang ở trang danh mục (ví dụ: /products?category=women), thực hiện tìm kiếm sẽ vẫn giữ filter category, khiến kết quả chỉ nằm trong danh mục hiện tại.
+  - Logic frontend chưa loại bỏ filter category khi có từ khóa tìm kiếm.
+- **Hậu quả:**
+  - Người dùng tìm kiếm từ khóa (ví dụ: "kid") nhưng không thấy sản phẩm thuộc danh mục khác (ví dụ: "Kids"), gây hiểu nhầm là không có sản phẩm.
+- **Khắc phục:**
+  - Sửa logic frontend: Khi có từ khóa tìm kiếm, tự động xóa filter category để trả về kết quả trên toàn bộ sản phẩm.
+  - Nếu muốn giữ filter category khi search, cần hiển thị thông báo rõ ràng cho người dùng biết kết quả đang bị giới hạn trong danh mục hiện tại.
+- **Cải tiến UX đã thực hiện:**
+  - Khi người dùng nhập từ khóa tìm kiếm, hệ thống sẽ tự động tìm trên toàn bộ sản phẩm (bỏ lọc category).
+  - Hiển thị banner thông báo "Searching for ... across all products" và nút "Clear search" để người dùng dễ dàng quay lại duyệt sản phẩm bình thường.
+
 ---
 
 ## II. Lỗi Phát Triển & Vận Hành
