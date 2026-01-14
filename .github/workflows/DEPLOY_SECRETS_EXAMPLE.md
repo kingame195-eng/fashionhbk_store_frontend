@@ -47,4 +47,4 @@ Bạn cần vào phần **Settings > Secrets and variables > Actions** của rep
 - Không cần đặt passphrase (chỉ nhấn Enter liên tục).
 - Sau đó, chạy lại lệnh `cat ~/.ssh/id_rsa` để lấy private key.
 
-> Lưu ý: Không public file này, chỉ dùng để tham khảo cấu hình. Secrets phải nhập trong GitHub, không commit lên repo!
+> Lưu ý: Không public file này, chỉ dùng để tham khảo cấu hình. Secrets phải nhập trong GitHub, không commit lên repo!!!!
