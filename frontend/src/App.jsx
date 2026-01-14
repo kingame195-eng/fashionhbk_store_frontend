@@ -4,6 +4,8 @@ import { Layout } from "@components/layout";
 import Home from "@pages/Home";
 import Products from "@pages/Products";
 import ProductDetail from "@pages/ProductDetail";
+import Login from "@pages/Login";
+import Register from "@pages/Register";
 import FormDemo from "@pages/FormDemo";
 import CardDemo from "@pages/CardDemo";
 import LoadingDemo from "@pages/LoadingDemo";
@@ -16,20 +18,6 @@ const Cart = () => (
   <div style={{ padding: "2rem", textAlign: "center" }}>
     <h1>Shopping Cart</h1>
     <p>Cart page coming soon...</p>
-  </div>
-);
-
-const Login = () => (
-  <div style={{ padding: "2rem", textAlign: "center" }}>
-    <h1>Login</h1>
-    <p>Login page coming soon...</p>
-  </div>
-);
-
-const Register = () => (
-  <div style={{ padding: "2rem", textAlign: "center" }}>
-    <h1>Register</h1>
-    <p>Register page coming soon...</p>
   </div>
 );
 

@@ -158,6 +158,50 @@
 
 ---
 
+## II. Lỗi & Vấn Đề Chức Năng Đăng Nhập/Đăng Ký
+
+### 1. Lỗi import sai đường dẫn AuthContext
+
+- **Mô tả:** Không thể import được hook `useAuth` trong Header hoặc các component khác, gây lỗi build hoặc runtime.
+- **Nguyên nhân:** Import sai đường dẫn (`../../contexts/AuthContext` thay vì `../../context/AuthContext`).
+- **Cách sửa:** Sửa lại đường dẫn import thành đúng `../../context/AuthContext`.
+
+### 2. Lỗi hiển thị navigation bị dính chữ (HomeShop, LoginRegister)
+
+- **Mô tả:** Thanh menu navigation bị dính chữ, các link không có style, hiển thị "HomeShop" và "LoginRegister" liền nhau.
+- **Nguyên nhân:** Có đoạn code thừa các thẻ `<Link>` và `<div>` không có class CSS nằm ngoài danh sách navList.
+- **Cách sửa:** Xóa các đoạn code thừa, chỉ render các link trong navList với className đúng.
+
+### 3. Lỗi CSS input bị tràn viền, không thấy chữ khi nhập
+
+- **Mô tả:** Trường input trong form đăng ký/đăng nhập bị tràn viền, khi nhập không thấy chữ hoặc chữ quá nhạt.
+- **Nguyên nhân:**
+  - Màu chữ input dùng biến CSS không tồn tại (`var(--color-gray-900, #171717)`) nên có thể bị nhạt hoặc không hiển thị.
+  - Các container input thiếu thuộc tính `min-width: 0`, `box-sizing: border-box` gây tràn viền khi responsive hoặc khi có lỗi.
+- **Cách sửa:**
+  - Đặt màu chữ input thành `#000` (đen) rõ ràng.
+  - Thêm `min-width: 0`, `width: 100%`, `box-sizing: border-box` cho `.input`, `.inputWrapper`, `.nameRow`, `.inputGroup`.
+
+### 4. Lỗi validate hiển thị viền đỏ bị lệch hoặc tràn
+
+- **Mô tả:** Khi có lỗi validate, viền đỏ của input bị lệch hoặc tràn ra ngoài form.
+- **Nguyên nhân:** Thiếu `box-sizing: border-box` và `min-width: 0` ở các container input.
+- **Cách sửa:** Thêm các thuộc tính này vào CSS cho các class liên quan.
+
+### 5. Lỗi UX: Không thấy rõ placeholder hoặc text khi nhập
+
+- **Mô tả:** Placeholder hoặc text trong input quá nhạt, khó nhìn.
+- **Nguyên nhân:** Màu placeholder hoặc text dùng biến màu xám nhạt.
+- **Cách sửa:** Đặt màu chữ input là đen, placeholder giữ màu xám nhưng tăng độ tương phản nếu cần.
+
+### 6. Lỗi responsive: Form bị vỡ layout trên mobile
+
+- **Mô tả:** Form đăng ký/đăng nhập bị vỡ layout, input tràn ra ngoài trên màn hình nhỏ.
+- **Nguyên nhân:** Các grid input thiếu `min-width: 0`, không set `width: 100%`.
+- **Cách sửa:** Đảm bảo các input, group, row đều có `min-width: 0` và `width: 100%`.
+
+---
+
 ## Phân tích lỗi Pagination & Nhật ký sửa chi tiết
 
 ### 1. Sử dụng sai component

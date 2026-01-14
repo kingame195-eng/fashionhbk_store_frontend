@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "@styles/components/Header.module.css";
+import { useAuth } from "../../context/AuthContext";
 
 const CartIcon = () => (
   <svg
@@ -89,7 +90,8 @@ const SearchIcon = () => (
   </svg>
 );
 
-function Header() {
+export default function Header() {
+  const { user, isAuthenticated, logout, hasRole } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -97,7 +99,7 @@ function Header() {
   const location = useLocation();
 
   // TODO: Replace with actual auth context
-  const isAuthenticated = false;
+  //const isAuthenticated = false;
   const cartItemCount = 0;
 
   // Handle scroll effect
@@ -315,5 +317,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;
