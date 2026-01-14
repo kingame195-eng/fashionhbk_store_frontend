@@ -1,0 +1,98 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build project
+        run: |
+          cd frontend
+          npm run build
+
+      # Upload build to server via SSH/SCP
+      - name: Deploy to server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 103.82.24.135
+          username: root
+          key: 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
+          port: 22
+          source: "frontend/dist/*"
+          target: /var/www/html
+          strip_components: 2
+
+      # Optionally, restart web server (if needed)
+      # - name: SSH commands
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     port: ${{ secrets.SERVER_PORT }}
+      #     script: |
+      #       cd ${{ secrets.SERVER_TARGET_PATH }}
+      #       pm2 reload all
