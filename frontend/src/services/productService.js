@@ -5,7 +5,7 @@ const productService = {
    * Get all products with filters
    */
   async getProducts(params = {}) {
-    const response = await api.get("/products", { params });
+    const response = await api.get("/api/products", { params });
     return response.data.data;
   },
 
@@ -13,7 +13,7 @@ const productService = {
    * Get single product by slug or ID
    */
   async getProductBySlug(slugOrId) {
-    const response = await api.get(`/products/${slugOrId}`);
+    const response = await api.get(`/api/products/${slugOrId}`);
     return response.data.data?.product || response.data.data || response.data;
   },
 
@@ -21,7 +21,7 @@ const productService = {
    * Get product by ID
    */
   async getProductById(id) {
-    const response = await api.get(`/products/id/${id}`);
+    const response = await api.get(`/api/products/id/${id}`);
     return response.data.data.product;
   },
 
@@ -29,7 +29,7 @@ const productService = {
    * Get all categories
    */
   async getCategories() {
-    const response = await api.get("/products/categories");
+    const response = await api.get("/api/products/categories");
     return response.data.data.categories;
   },
 
@@ -37,7 +37,7 @@ const productService = {
    * Get all brands
    */
   async getBrands() {
-    const response = await api.get("/products/brands");
+    const response = await api.get("/api/products/brands");
     return response.data.data.brands;
   },
 
@@ -45,7 +45,7 @@ const productService = {
    * Search products
    */
   async searchProducts(query, params = {}) {
-    const response = await api.get("/products", {
+    const response = await api.get("/api/products", {
       params: { search: query, ...params },
     });
     return response.data.data;
@@ -55,7 +55,7 @@ const productService = {
    * Get featured products
    */
   async getFeaturedProducts(limit = 8) {
-    const response = await api.get("/products", {
+    const response = await api.get("/api/products", {
       params: { featured: true, limit },
     });
     return response.data.data.products;
@@ -65,7 +65,7 @@ const productService = {
    * Get new arrivals
    */
   async getNewArrivals(limit = 8) {
-    const response = await api.get("/products", {
+    const response = await api.get("/api/products", {
       params: { sortBy: "createdAt", sortOrder: "desc", limit },
     });
     return response.data.data.products;
@@ -75,7 +75,7 @@ const productService = {
    * Get related products
    */
   async getRelatedProducts(productId, limit = 4) {
-    const response = await api.get(`/products/${productId}/related`, {
+    const response = await api.get(`/api/products/${productId}/related`, {
       params: { limit },
     });
     return response.data.data.products;
@@ -89,13 +89,13 @@ const productService = {
  */
 
 export const getProductBySlug = async (slugOrId) => {
-  const response = await api.get(`/products/${slugOrId}`);
+  const response = await api.get(`/api/products/${slugOrId}`);
   return response.data.data?.product || response.data.data || response.data;
 };
 
 // If your backend uses ID instead of slug:
 export const getProductById = async (id) => {
-  const response = await api.get(`/products/${id}`);
+  const response = await api.get(`/api/products/${id}`);
   return response.data.data?.product || response.data.data || response.data;
 };
 

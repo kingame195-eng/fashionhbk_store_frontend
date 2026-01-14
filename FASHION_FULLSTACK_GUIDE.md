@@ -5784,6 +5784,8 @@ export const securityAuditMiddleware = (req, res, next) => {
  */
 const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:3000",
+  "https://fashionhbk.shop",
+  "https://www.fashionhbk.shop"
   // Add production domains here
 ];
 

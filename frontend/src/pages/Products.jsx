@@ -7,19 +7,22 @@ import styles from "./Products.module.css";
 const Products = () => {
   const {
     products = [],
-    pagination = { page: 1, pages: 0, total: 0 },
+    pagination,
     filters,
     isLoading,
+    isLoadingMore,
     error,
     hasActiveFilters,
-    setPage,
+    hasMore,
+    remainingProducts,
     setSort,
     setSearch,
     clearFilters,
+    loadMore,
   } = useProducts();
 
   // Local search state for debouncing
-  const [searchInput, setSearchInput] = useState(filters.search);
+  const [searchInput] = useState(filters.search);
   const debouncedSearch = useDebounce(searchInput, 500);
 
   // Update URL only after debounce
@@ -51,16 +54,6 @@ const Products = () => {
 
       {/* Search and Sort Controls */}
       <div className={styles.controls}>
-        <div className={styles.searchBox}>
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className={styles.searchInput}
-          />
-        </div>
-
         <div className={styles.sortBox}>
           <label htmlFor="sort">Sort by:</label>
           <select
@@ -80,12 +73,6 @@ const Products = () => {
             <option value="name-desc">Name: Z-A</option>
           </select>
         </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className={styles.clearBtn}>
-            Clear Filters
-          </button>
-        )}
       </div>
 
       {/* Loading State */}
@@ -152,42 +139,37 @@ const Products = () => {
             </div>
           )}
 
-          {/* Pagination */}
-          {pagination.pages > 1 && (
-            <div className={styles.pagination}>
-              <button
-                onClick={() => setPage(pagination.page - 1)}
-                disabled={pagination.page <= 1}
-                className={styles.pageBtn}
-              >
-                Previous
-              </button>
-
-              <div className={styles.pageNumbers}>
-                {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setPage(page)}
-                    className={`${styles.pageBtn} ${pagination.page === page ? styles.active : ""}`}
-                  >
-                    {page}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={() => setPage(pagination.page + 1)}
-                disabled={pagination.page >= pagination.pages}
-                className={styles.pageBtn}
-              >
-                Next
+          {/* Load More Button */}
+          {hasMore && (
+            <div className={styles.loadMoreWrapper}>
+              <button onClick={loadMore} disabled={isLoadingMore} className={styles.loadMoreBtn}>
+                {isLoadingMore ? (
+                  <>
+                    <span className={styles.loadMoreSpinner}></span>
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    View {remainingProducts} more products
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </>
+                )}
               </button>
             </div>
           )}
 
           {/* Results Info */}
           <div className={styles.resultsInfo}>
-            Showing {products.length} of {pagination.total} products
+            Showing {products.length} of {pagination?.totalProducts || 0} products
           </div>
         </>
       )}

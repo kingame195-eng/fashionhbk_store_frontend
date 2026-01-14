@@ -7,13 +7,9 @@ export function useProducts(initialFilters = {}) {
 
   // State
   const [products, setProducts] = useState([]);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 18,
-    total: 0,
-    pages: 0,
-  });
+  const [pagination, setPagination] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState(null);
 
   // Use ref to track if initial fetch is done
@@ -34,7 +30,6 @@ export function useProducts(initialFilters = {}) {
       sortBy: params.sortBy || "createdAt",
       sortOrder: params.sortOrder || "desc",
       page: params.page ? Number(params.page) : 1,
-      limit: params.limit ? Number(params.limit) : 12,
       search: params.search || "",
       featured: params.featured === "true",
       onSale: params.onSale === "true",
@@ -42,18 +37,45 @@ export function useProducts(initialFilters = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParamsString]);
 
+  // Track previous filters to detect if we should reset or append products
+  const prevFiltersRef = useRef(null);
+
   // Fetch products - only depends on searchParamsString
   useEffect(() => {
     let isMounted = true;
 
     const fetchProducts = async () => {
-      setIsLoading(true);
+      const params = Object.fromEntries(searchParams);
+      const currentPage = params.page ? Number(params.page) : 1;
+
+      // Check if only page changed (for load more) or other filters changed (reset)
+      const currentFiltersKey = JSON.stringify({
+        category: params.category,
+        brand: params.brand,
+        size: params.size,
+        color: params.color,
+        minPrice: params.minPrice,
+        maxPrice: params.maxPrice,
+        search: params.search,
+        featured: params.featured,
+        onSale: params.onSale,
+        sortBy: params.sortBy,
+        sortOrder: params.sortOrder,
+      });
+
+      const isLoadMore = prevFiltersRef.current === currentFiltersKey && currentPage > 1;
+      prevFiltersRef.current = currentFiltersKey;
+
+      if (isLoadMore) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+        setProducts([]);
+      }
       setError(null);
 
       try {
-        const params = Object.fromEntries(searchParams);
-
-        // Build API params
+        // Build API params - limit sẽ được backend quyết định
         const apiParams = {};
 
         if (params.category) apiParams.category = params.category;
@@ -68,23 +90,31 @@ export function useProducts(initialFilters = {}) {
 
         apiParams.sortBy = params.sortBy || "createdAt";
         apiParams.sortOrder = params.sortOrder || "desc";
-        apiParams.page = params.page ? Number(params.page) : 1;
-        apiParams.limit = params.limit ? Number(params.limit) : 12;
+        apiParams.page = currentPage;
 
         const data = await productService.getProducts(apiParams);
 
         if (isMounted) {
-          setProducts(data.products || []);
-          setPagination(data.pagination || { page: 1, limit: 12, total: 0, pages: 0 });
+          if (isLoadMore) {
+            // Append new products to existing ones
+            setProducts((prev) => [...prev, ...(data.products || [])]);
+          } else {
+            // Replace products (first load or filter change)
+            setProducts(data.products || []);
+          }
+          setPagination(data.pagination || null);
         }
       } catch (err) {
         if (isMounted) {
           setError(err.message || "Failed to load products");
-          setProducts([]);
+          if (!isLoadMore) {
+            setProducts([]);
+          }
         }
       } finally {
         if (isMounted) {
           setIsLoading(false);
+          setIsLoadingMore(false);
           initialFetchDone.current = true;
         }
       }
@@ -130,6 +160,25 @@ export function useProducts(initialFilters = {}) {
 
   // Convenience methods
   const setPage = useCallback((page) => updateFilters({ page }), [updateFilters]);
+
+  // Load more products
+  const loadMore = useCallback(() => {
+    if (pagination && pagination.hasNextPage && !isLoadingMore) {
+      updateFilters({ page: pagination.currentPage + 1 });
+    }
+  }, [pagination, isLoadingMore, updateFilters]);
+
+  // Check if can load more
+  const hasMore = useMemo(() => {
+    return pagination && pagination.hasNextPage;
+  }, [pagination]);
+
+  // Calculate remaining products
+  const remainingProducts = useMemo(() => {
+    if (!pagination) return 0;
+    const loaded = products.length;
+    return Math.max(0, pagination.totalProducts - loaded);
+  }, [pagination, products.length]);
 
   const setSort = useCallback(
     (sortBy, sortOrder = "asc") => updateFilters({ sortBy, sortOrder, page: 1 }),
@@ -179,14 +228,18 @@ export function useProducts(initialFilters = {}) {
     pagination,
     filters,
     isLoading,
+    isLoadingMore,
     error,
     hasActiveFilters,
+    hasMore,
+    remainingProducts,
     updateFilters,
     setPage,
     setSort,
     setSearch,
     toggleFilter,
     clearFilters,
+    loadMore,
     refetch,
   };
 }
