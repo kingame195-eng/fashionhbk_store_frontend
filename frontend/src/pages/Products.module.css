@@ -67,10 +67,110 @@
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   padding: 1rem;
   background: var(--color-bg-secondary, #f8f9fa);
   border-radius: 8px;
+}
+
+/* Filter Toggle Button */
+.filterToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.filterToggleBtn:hover {
+  border-color: var(--color-accent, #c9a962);
+  background: var(--color-bg-hover, #f5f5f5);
+}
+
+.filterBadge {
+  color: var(--color-accent, #c9a962);
+  font-size: 0.6rem;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+/* Main Content Layout */
+.mainContent {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+}
+
+/* Filter Sidebar */
+.filterSidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Products Area */
+.productsArea {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Filter Overlay (Mobile) */
+.filterOverlay {
+  display: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .filterSidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 300px;
+    height: 100vh;
+    max-height: 100vh;
+    z-index: 1000;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    padding: 1rem;
+  }
+
+  .filterSidebar.filterOpen {
+    left: 0;
+  }
+
+  .filterOverlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .mainContent {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1025px) {
+  .filterToggleBtn {
+    display: none;
+  }
 }
 
 .searchBox {

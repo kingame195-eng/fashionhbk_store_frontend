@@ -109,38 +109,39 @@ export default function Register() {
 
   // Validation functions
   const validateFirstName = (name) => {
-    if (!name.trim()) return "First name is required";
-    if (name.trim().length < 2) return "First name must be at least 2 characters";
+    if (!name.trim()) return "Please enter your first name";
+    if (name.trim().length < 2) return "First name must be at least 2 characters long";
     if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(name.trim())) return "First name can only contain letters";
     return "";
   };
 
   const validateLastName = (name) => {
-    if (!name.trim()) return "Last name is required";
-    if (name.trim().length < 2) return "Last name must be at least 2 characters";
+    if (!name.trim()) return "Please enter your last name";
+    if (name.trim().length < 2) return "Last name must be at least 2 characters long";
     if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(name.trim())) return "Last name can only contain letters";
     return "";
   };
 
   const validateEmail = (email) => {
-    if (!email.trim()) return "Email is required";
+    if (!email.trim()) return "Please enter your email address";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Please enter a valid email address";
+    if (!emailRegex.test(email))
+      return "Please enter a valid email address (e.g., name@example.com)";
     return "";
   };
 
   const validatePassword = (password) => {
-    if (!password) return "Password is required";
-    if (password.length < 8) return "Password must be at least 8 characters";
-    if (!/[a-z]/.test(password)) return "Password must contain a lowercase letter";
-    if (!/[A-Z]/.test(password)) return "Password must contain an uppercase letter";
-    if (!/[0-9]/.test(password)) return "Password must contain a number";
+    if (!password) return "Please create a password";
+    if (password.length < 8) return "Password must be at least 8 characters long";
+    if (!/[a-z]/.test(password)) return "Password must include at least one lowercase letter";
+    if (!/[A-Z]/.test(password)) return "Password must include at least one uppercase letter";
+    if (!/[0-9]/.test(password)) return "Password must include at least one number";
     return "";
   };
 
   const validateConfirmPassword = (confirmPassword, password) => {
     if (!confirmPassword) return "Please confirm your password";
-    if (confirmPassword !== password) return "Passwords do not match";
+    if (confirmPassword !== password) return "Passwords do not match. Please try again.";
     return "";
   };
 
@@ -220,23 +221,37 @@ export default function Register() {
       });
 
       if (result.success) {
-        showToast("Account created successfully! Welcome aboard.", "success");
+        showToast("Welcome! Your account has been created successfully.", "success");
         navigate("/", { replace: true });
       } else {
-        let errorMessage = result.error || "Registration failed. Please try again.";
+        let errorMessage = result.error || "Unable to create your account. Please try again.";
 
+        // Map error codes to user-friendly messages
         if (
-          errorMessage.toLowerCase().includes("exist") ||
-          errorMessage.toLowerCase().includes("already")
+          result.error?.includes("already") ||
+          result.error?.includes("EMAIL_EXISTS") ||
+          result.error?.includes("registered")
         ) {
-          errorMessage = "An account with this email already exists. Please login instead.";
+          errorMessage =
+            "This email is already registered. Please sign in or use a different email address.";
+        } else if (result.error?.includes("network") || result.error?.includes("Network")) {
+          errorMessage = "Unable to connect to the server. Please check your internet connection.";
+        } else if (result.error?.includes("password")) {
+          errorMessage = "Please ensure your password meets all the requirements.";
         }
 
         showToast(errorMessage, "error");
         setErrors((prev) => ({ ...prev, form: errorMessage }));
       }
     } catch (error) {
-      const errorMessage = error.message || "An unexpected error occurred. Please try again.";
+      let errorMessage = "An unexpected error occurred. Please try again later.";
+
+      if (error.message?.includes("Network") || error.message?.includes("fetch")) {
+        errorMessage = "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.message?.includes("timeout")) {
+        errorMessage = "The request timed out. Please try again.";
+      }
+
       showToast(errorMessage, "error");
       setErrors((prev) => ({ ...prev, form: errorMessage }));
     } finally {

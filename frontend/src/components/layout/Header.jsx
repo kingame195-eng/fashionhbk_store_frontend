@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "@styles/components/Header.module.css";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 
 const CartIcon = () => (
   <svg
@@ -90,17 +91,129 @@ const SearchIcon = () => (
   </svg>
 );
 
+const LogoutIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+);
+
+const ProfileIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const OrdersIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+  </svg>
+);
+
+const HeartIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+
+const ChevronDownIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
 export default function Header() {
-  const { user, isAuthenticated, logout, hasRole } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+  const { showToast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // TODO: Replace with actual auth context
-  //const isAuthenticated = false;
   const cartItemCount = 0;
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsUserMenuOpen(false);
+      setIsMobileMenuOpen(false);
+      showToast("You have been signed out successfully", "success");
+      navigate("/");
+    } catch (error) {
+      showToast("Failed to sign out. Please try again.", "error");
+    }
+  };
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Handle scroll effect
   useEffect(() => {
@@ -211,14 +324,73 @@ export default function Header() {
             <SearchIcon />
           </button>
 
-          {/* User Account */}
-          <Link
-            to={isAuthenticated ? "/profile" : "/login"}
-            className={styles.iconButton}
-            aria-label={isAuthenticated ? "Profile" : "Login"}
-          >
-            <UserIcon />
-          </Link>
+          {/* User Account - with Dropdown for authenticated users */}
+          {isAuthenticated ? (
+            <div className={styles.userMenuWrapper} ref={userMenuRef}>
+              <button
+                className={styles.userMenuButton}
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                aria-label="User menu"
+                aria-expanded={isUserMenuOpen}
+              >
+                <div className={styles.userAvatar}>
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user.firstName} />
+                  ) : (
+                    <span>{user?.firstName?.[0]?.toUpperCase() || "U"}</span>
+                  )}
+                </div>
+                <span className={styles.userName}>{user?.firstName || "Account"}</span>
+                <ChevronDownIcon />
+              </button>
+
+              {/* User Dropdown Menu */}
+              {isUserMenuOpen && (
+                <div className={styles.userDropdown}>
+                  <div className={styles.dropdownHeader}>
+                    <p className={styles.dropdownName}>
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p className={styles.dropdownEmail}>{user?.email}</p>
+                  </div>
+                  <div className={styles.dropdownDivider} />
+                  <Link
+                    to="/profile"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <ProfileIcon />
+                    <span>My Profile</span>
+                  </Link>
+                  <Link
+                    to="/profile?tab=orders"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <OrdersIcon />
+                    <span>My Orders</span>
+                  </Link>
+                  <Link
+                    to="/profile?tab=wishlist"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <HeartIcon />
+                    <span>Wishlist</span>
+                  </Link>
+                  <div className={styles.dropdownDivider} />
+                  <button className={styles.dropdownItemLogout} onClick={handleLogout}>
+                    <LogoutIcon />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className={styles.iconButton} aria-label="Login">
+              <UserIcon />
+            </Link>
+          )}
 
           {/* Cart */}
           <Link to="/cart" className={styles.cartButton} aria-label="Shopping Cart">
@@ -277,14 +449,48 @@ export default function Header() {
           <div className={styles.mobileAuthLinks}>
             {isAuthenticated ? (
               <>
+                <div className={styles.mobileUserInfo}>
+                  <div className={styles.mobileUserAvatar}>
+                    {user?.firstName?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  <div>
+                    <p className={styles.mobileUserName}>
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p className={styles.mobileUserEmail}>{user?.email}</p>
+                  </div>
+                </div>
                 <Link
                   to="/profile"
                   className={styles.mobileAuthLink}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  My Account
+                  <ProfileIcon />
+                  <span>My Profile</span>
                 </Link>
-                <button className={styles.mobileAuthLink}>Logout</button>
+                <Link
+                  to="/profile?tab=orders"
+                  className={styles.mobileAuthLink}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <OrdersIcon />
+                  <span>My Orders</span>
+                </Link>
+                <Link
+                  to="/profile?tab=wishlist"
+                  className={styles.mobileAuthLink}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <HeartIcon />
+                  <span>Wishlist</span>
+                </Link>
+                <button
+                  className={`${styles.mobileAuthLink} ${styles.logoutLink}`}
+                  onClick={handleLogout}
+                >
+                  <LogoutIcon />
+                  <span>Sign Out</span>
+                </button>
               </>
             ) : (
               <>

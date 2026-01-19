@@ -6,12 +6,16 @@ import Products from "@pages/Products";
 import ProductDetail from "@pages/ProductDetail";
 import Login from "@pages/Login";
 import Register from "@pages/Register";
+import Profile from "@pages/Profile";
+import ForgotPassword from "@pages/ForgotPassword";
+import ResetPassword from "@pages/ResetPassword";
 import FormDemo from "@pages/FormDemo";
 import CardDemo from "@pages/CardDemo";
 import LoadingDemo from "@pages/LoadingDemo";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ProtectedRoute, GuestRoute } from "@components/auth";
 
 // Placeholder pages - can be expanded later
 const Cart = () => (
@@ -41,8 +45,46 @@ export default function App() {
                 <Route path="products" element={<Products />} />
                 <Route path="products/:slug" element={<ProductDetail />} />
                 <Route path="cart" element={<Cart />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
+                <Route
+                  path="login"
+                  element={
+                    <GuestRoute>
+                      <Login />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <GuestRoute>
+                      <Register />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="forgot-password"
+                  element={
+                    <GuestRoute>
+                      <ForgotPassword />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="reset-password/:token"
+                  element={
+                    <GuestRoute>
+                      <ResetPassword />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="form-demo" element={<FormDemo />} />
                 <Route path="card-demo" element={<CardDemo />} />
                 <Route path="loading-demo" element={<LoadingDemo />} />

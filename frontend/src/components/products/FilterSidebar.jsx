@@ -53,9 +53,11 @@ export default function FilterSidebar({
   };
 
   const handleCategoryClick = (categorySlug) => {
+    // Khi click category, giữ nguyên search query (nếu có) để kết hợp search + filter
     updateFilters({
       category: filters.category === categorySlug ? "" : categorySlug,
       page: 1,
+      // Giữ nguyên search param
     });
   };
 
@@ -146,52 +148,6 @@ export default function FilterSidebar({
         </form>
       </FilterSection>
 
-      {/* Sizes Section */}
-      <FilterSection
-        title="Sizes"
-        isExpanded={expandedSections.sizes}
-        onToggle={() => toggleSection("sizes")}
-      >
-        <div className={styles.sizeGrid}>
-          {sizes.map((size) => (
-            <button
-              key={size}
-              className={`${styles.sizeBtn} ${filters.sizes?.includes(size) ? styles.active : ""}`}
-              onClick={() => toggleFilter("sizes", size)}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Colors Section */}
-      <FilterSection
-        title="Colors"
-        isExpanded={expandedSections.colors}
-        onToggle={() => toggleSection("colors")}
-      >
-        <div className={styles.colorGrid}>
-          {colors.map((color) => (
-            <button
-              key={color.value}
-              className={`${styles.colorBtn} ${
-                filters.colors?.includes(color.value) ? styles.active : ""
-              }`}
-              onClick={() => toggleFilter("colors", color.value)}
-              title={color.name}
-              aria-label={`Filter by ${color.name}`}
-            >
-              <span className={styles.colorSwatch} style={{ backgroundColor: color.hex }} />
-              {filters.colors?.includes(color.value) && (
-                <svg className={styles.checkIcon} viewBox="0 0 24 24">
-                  <path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              )}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
 
       {/* On Sale Toggle */}
       <div className={styles.toggleSection}>

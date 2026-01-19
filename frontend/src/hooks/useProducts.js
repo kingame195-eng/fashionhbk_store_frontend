@@ -185,16 +185,22 @@ export function useProducts(initialFilters = {}) {
     [updateFilters]
   );
 
-  // Khi tìm kiếm, xóa bộ lọc category để tìm trên toàn bộ sản phẩm
+  // Tìm kiếm sản phẩm - giữ nguyên các filter khác để user có thể kết hợp search + filter
   const setSearch = useCallback(
-    (search) => {
+    (search, clearCategory = false) => {
       if (search && search.trim()) {
-        // Có từ khóa tìm kiếm -> xóa category để tìm toàn bộ website
-        updateFilters({
-          search,
-          category: "", // Xóa category filter
-          page: 1,
-        });
+        // Có từ khóa tìm kiếm
+        if (clearCategory) {
+          // Khi search từ Header hoặc muốn search toàn site -> xóa category
+          updateFilters({
+            search,
+            category: "",
+            page: 1,
+          });
+        } else {
+          // Search trong context hiện tại (giữ category nếu có)
+          updateFilters({ search, page: 1 });
+        }
       } else {
         // Xóa từ khóa tìm kiếm -> giữ nguyên các filter khác
         updateFilters({ search: "", page: 1 });

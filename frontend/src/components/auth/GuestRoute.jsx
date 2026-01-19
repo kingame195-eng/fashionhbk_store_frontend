@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-// import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import LoadingSpinner from "../common/LoadingSpinner";
 
 /**
@@ -11,10 +11,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
  */
 
 export default function GuestRoute({ children, redirectTo = "/" }) {
-  // TODO: Uncomment when useAuth is implemented
-  // const { isAuthenticated, isLoading } = useAuth();
-  const isAuthenticated = false;
-  const isLoading = false;
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   // Show loading while checking auth
@@ -29,7 +26,7 @@ export default function GuestRoute({ children, redirectTo = "/" }) {
   // Already authenticated - redirect
   if (isAuthenticated) {
     // Redirect to intended destination or default
-    const destination = location.state?.from || redirectTo;
+    const destination = location.state?.from?.pathname || redirectTo;
     return <Navigate to={destination} replace />;
   }
 

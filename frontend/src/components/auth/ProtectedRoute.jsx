@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-// import { useAuth, AUTH_STATUS } from "../../contexts/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import LoadingSpinner from "../common/LoadingSpinner";
 
 /**
@@ -19,13 +19,7 @@ export default function ProtectedRoute({
   requireVerified = false,
   redirectTo = "/login",
 }) {
-  // TODO: Uncomment when useAuth is implemented
-  // const { user, isAuthenticated, isLoading, hasRole, hasPermission } = useAuth();
-  const user = null;
-  const isAuthenticated = false;
-  const isLoading = false;
-  const hasRole = () => false;
-  const hasPermission = () => false;
+  const { user, isAuthenticated, isLoading, hasRole, hasPermission } = useAuth();
 
   const location = useLocation();
 
@@ -43,7 +37,7 @@ export default function ProtectedRoute({
     return (
       <Navigate
         to={redirectTo}
-        state={{ from: location.pathname, message: "Please login to continue" }}
+        state={{ from: location, message: "Please login to continue" }}
         replace
       />
     );

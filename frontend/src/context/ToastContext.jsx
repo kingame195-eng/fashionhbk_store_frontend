@@ -135,6 +135,14 @@ export function ToastProvider({ children }) {
   );
 
   // -----------------------------------------
+  // Generic showToast method (commonly used)
+  // -----------------------------------------
+  const showToast = useCallback(
+    (message, type = TOAST_TYPES.INFO, duration) => addToast(message, type, duration),
+    [addToast]
+  );
+
+  // -----------------------------------------
   // Memoized Context Value
   // -----------------------------------------
   const value = useMemo(
@@ -147,6 +155,9 @@ export function ToastProvider({ children }) {
       removeToast,
       clearAllToasts,
 
+      // Generic method
+      showToast,
+
       // Convenience methods
       showSuccess,
       showError,
@@ -158,6 +169,7 @@ export function ToastProvider({ children }) {
       addToast,
       removeToast,
       clearAllToasts,
+      showToast,
       showSuccess,
       showError,
       showWarning,

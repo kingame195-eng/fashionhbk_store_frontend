@@ -72,21 +72,21 @@ export default function Login() {
   // Validation functions
   const validateEmail = (email) => {
     if (!email.trim()) {
-      return "Email is required";
+      return "Please enter your email address";
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return "Please enter a valid email address";
+      return "Please enter a valid email address (e.g., name@example.com)";
     }
     return "";
   };
 
   const validatePassword = (password) => {
     if (!password) {
-      return "Password is required";
+      return "Please enter your password";
     }
     if (password.length < 6) {
-      return "Password must be at least 6 characters";
+      return "Password must be at least 6 characters long";
     }
     return "";
   };
@@ -143,24 +143,40 @@ export default function Login() {
       });
 
       if (result.success) {
-        showToast("Welcome back! You have successfully logged in.", "success");
+        showToast("Welcome back! You have successfully signed in.", "success");
         const from = location.state?.from?.pathname || "/";
         navigate(from, { replace: true });
       } else {
-        // Handle specific error messages
-        let errorMessage = result.error || "Login failed. Please try again.";
+        // Handle specific error messages based on error codes
+        let errorMessage =
+          result.error || "Unable to sign in. Please check your credentials and try again.";
 
-        if (errorMessage.toLowerCase().includes("invalid")) {
-          errorMessage = "Invalid email or password. Please try again.";
-        } else if (errorMessage.toLowerCase().includes("not found")) {
-          errorMessage = "No account found with this email address.";
+        // Map error codes to user-friendly messages
+        if (result.error?.includes("incorrect") || result.error?.includes("INVALID_CREDENTIALS")) {
+          errorMessage = "The email or password you entered is incorrect. Please try again.";
+        } else if (
+          result.error?.includes("suspended") ||
+          result.error?.includes("ACCOUNT_SUSPENDED")
+        ) {
+          errorMessage = "Your account has been suspended. Please contact support for assistance.";
+        } else if (result.error?.includes("expired") || result.error?.includes("SESSION_EXPIRED")) {
+          errorMessage = "Your session has expired. Please sign in again.";
+        } else if (result.error?.includes("network") || result.error?.includes("Network")) {
+          errorMessage = "Unable to connect to the server. Please check your internet connection.";
         }
 
         showToast(errorMessage, "error");
         setErrors((prev) => ({ ...prev, form: errorMessage }));
       }
     } catch (error) {
-      const errorMessage = error.message || "An unexpected error occurred. Please try again.";
+      let errorMessage = "An unexpected error occurred. Please try again later.";
+
+      if (error.message?.includes("Network") || error.message?.includes("fetch")) {
+        errorMessage = "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.message?.includes("timeout")) {
+        errorMessage = "The request timed out. Please try again.";
+      }
+
       showToast(errorMessage, "error");
       setErrors((prev) => ({ ...prev, form: errorMessage }));
     } finally {
