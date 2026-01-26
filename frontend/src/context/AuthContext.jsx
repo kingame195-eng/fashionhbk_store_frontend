@@ -185,6 +185,9 @@ export function AuthProvider({ children }) {
         payload: { user },
       });
 
+      // Dispatch event for other contexts (e.g., CartContext)
+      window.dispatchEvent(new CustomEvent("auth:login"));
+
       return { success: true, user };
     } catch (error) {
       dispatch({
@@ -212,6 +215,9 @@ export function AuthProvider({ children }) {
         payload: { user },
       });
 
+      // Dispatch event for other contexts (e.g., CartContext)
+      window.dispatchEvent(new CustomEvent("auth:login"));
+
       return { success: true, user };
     } catch (error) {
       dispatch({
@@ -233,6 +239,8 @@ export function AuthProvider({ children }) {
     } finally {
       clearAccessToken();
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
+      // Dispatch event for other contexts (e.g., CartContext)
+      window.dispatchEvent(new CustomEvent("auth:logout"));
     }
   }, []);
 

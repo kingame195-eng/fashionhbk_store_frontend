@@ -1,5 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useReducer, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import { TOAST_TYPES } from "./constants";
 
 // ============================================
@@ -62,6 +70,17 @@ const ToastContext = createContext(null);
 export function ToastProvider({ children }) {
   const [state, dispatch] = useReducer(toastReducer, initialState);
 
+  // Track timeouts to clean them up on unmount or manual removal
+  const timeoutsRef = useRef(new Map());
+
+  // Cleanup all timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
+
   // Generate unique ID for each toast
   const generateId = () => `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -83,12 +102,16 @@ export function ToastProvider({ children }) {
 
     // Auto-remove toast after duration
     if (duration > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         dispatch({
           type: TOAST_ACTIONS.REMOVE_TOAST,
           payload: id,
         });
+        timeoutsRef.current.delete(id);
       }, duration);
+
+      // Store timeout for cleanup
+      timeoutsRef.current.set(id, timeoutId);
     }
 
     return id;
@@ -98,6 +121,11 @@ export function ToastProvider({ children }) {
   // Remove Toast
   // -----------------------------------------
   const removeToast = useCallback((id) => {
+    // Clear timeout when manually removing
+    if (timeoutsRef.current.has(id)) {
+      clearTimeout(timeoutsRef.current.get(id));
+      timeoutsRef.current.delete(id);
+    }
     dispatch({
       type: TOAST_ACTIONS.REMOVE_TOAST,
       payload: id,
@@ -108,6 +136,9 @@ export function ToastProvider({ children }) {
   // Clear All Toasts
   // -----------------------------------------
   const clearAllToasts = useCallback(() => {
+    // Clear all pending timeouts
+    timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+    timeoutsRef.current.clear();
     dispatch({ type: TOAST_ACTIONS.CLEAR_ALL });
   }, []);
 

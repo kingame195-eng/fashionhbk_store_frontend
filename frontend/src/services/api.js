@@ -140,14 +140,15 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear token
+        // Refresh failed - save auth state before clearing
+        const wasAuthenticated = !!accessToken;
         isRefreshing = false;
         onRefreshFailed(refreshError);
         clearAccessToken();
 
-        // Only dispatch logout event if it wasn't just an expected 401 for guests
-        // (i.e., user was previously authenticated)
-        if (accessToken) {
+        // Only dispatch logout event if user was previously authenticated
+        // (not just an expected 401 for guests)
+        if (wasAuthenticated) {
           window.dispatchEvent(new CustomEvent("auth:logout"));
         }
         return Promise.reject(refreshError);

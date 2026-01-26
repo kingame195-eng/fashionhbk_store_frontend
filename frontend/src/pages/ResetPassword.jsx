@@ -96,13 +96,13 @@ export default function ResetPassword() {
 
     let label, color;
     if (score <= 2) {
-      label = "Yếu";
+      label = "Weak";
       color = "#ef4444";
     } else if (score <= 4) {
-      label = "Trung bình";
+      label = "Medium";
       color = "#f59e0b";
     } else {
-      label = "Mạnh";
+      label = "Strong";
       color = "#22c55e";
     }
 
@@ -112,20 +112,20 @@ export default function ResetPassword() {
   // Validation
   const validatePassword = (password) => {
     if (!password) {
-      return "Vui lòng nhập mật khẩu mới";
+      return "Please enter a new password";
     }
     if (password.length < 6) {
-      return "Mật khẩu phải có ít nhất 6 ký tự";
+      return "Password must be at least 6 characters";
     }
     return "";
   };
 
   const validateConfirmPassword = (confirmPassword, password) => {
     if (!confirmPassword) {
-      return "Vui lòng xác nhận mật khẩu";
+      return "Please confirm your password";
     }
     if (confirmPassword !== password) {
-      return "Mật khẩu xác nhận không khớp";
+      return "Passwords do not match";
     }
     return "";
   };
@@ -188,9 +188,9 @@ export default function ResetPassword() {
     try {
       await authService.resetPassword(token, formData.password, formData.confirmPassword);
       setStatus("success");
-      showSuccess("Đặt lại mật khẩu thành công!");
+      showSuccess("Password reset successfully!");
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
+      const errorMessage = err.response?.data?.message || "An error occurred. Please try again.";
 
       if (err.response?.status === 400 && errorMessage.includes("expired")) {
         setStatus("expired");
@@ -218,16 +218,16 @@ export default function ResetPassword() {
           <div className={styles.expiredIcon}>
             <XCircleIcon />
           </div>
-          <h1 className={styles.expiredTitle}>Link đã hết hạn</h1>
+          <h1 className={styles.expiredTitle}>Link Expired</h1>
           <p className={styles.expiredMessage}>
-            Link đặt lại mật khẩu đã hết hạn hoặc đã được sử dụng. Vui lòng yêu cầu link mới.
+            The password reset link has expired or has already been used. Please request a new link.
           </p>
           <div className={styles.expiredActions}>
             <Link to="/forgot-password" className={styles.requestNewBtn}>
-              Yêu cầu link mới
+              Request New Link
             </Link>
             <Link to="/login" className={styles.backToLoginLink}>
-              Quay lại đăng nhập
+              Back to Login
             </Link>
           </div>
         </div>
@@ -243,16 +243,16 @@ export default function ResetPassword() {
           <div className={styles.errorIcon}>
             <XCircleIcon />
           </div>
-          <h1 className={styles.errorTitle}>Link không hợp lệ</h1>
+          <h1 className={styles.errorTitle}>Invalid Link</h1>
           <p className={styles.errorMessage}>
-            Link đặt lại mật khẩu không hợp lệ. Vui lòng kiểm tra lại email hoặc yêu cầu link mới.
+            The password reset link is invalid. Please check your email or request a new link.
           </p>
           <div className={styles.errorActions}>
             <Link to="/forgot-password" className={styles.requestNewBtn}>
-              Yêu cầu link mới
+              Request New Link
             </Link>
             <Link to="/login" className={styles.backToLoginLink}>
-              Quay lại đăng nhập
+              Back to Login
             </Link>
           </div>
         </div>
@@ -268,9 +268,9 @@ export default function ResetPassword() {
           <div className={styles.successIcon}>
             <CheckCircleIcon />
           </div>
-          <h1 className={styles.successTitle}>Đặt lại mật khẩu thành công!</h1>
+          <h1 className={styles.successTitle}>Password Reset Successful!</h1>
           <p className={styles.successMessage}>
-            Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập với mật khẩu mới.
+            Your password has been changed. You can now log in with your new password.
           </p>
           <button onClick={handleGoToLogin} className={styles.loginBtn}>
             <svg
@@ -283,7 +283,7 @@ export default function ResetPassword() {
             >
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
             </svg>
-            Đăng nhập ngay
+            Log In Now
           </button>
         </div>
       </div>
@@ -299,9 +299,9 @@ export default function ResetPassword() {
           <div className={styles.iconWrapper}>
             <ShieldIcon />
           </div>
-          <h1 className={styles.title}>Đặt lại mật khẩu</h1>
+          <h1 className={styles.title}>Reset Password</h1>
           <p className={styles.subtitle}>
-            Nhập mật khẩu mới cho tài khoản của bạn. Mật khẩu nên có ít nhất 6 ký tự.
+            Enter a new password for your account. Password should be at least 6 characters.
           </p>
         </div>
 
@@ -310,7 +310,7 @@ export default function ResetPassword() {
           {/* New Password */}
           <div className={styles.inputGroup}>
             <label htmlFor="password" className={styles.label}>
-              Mật khẩu mới
+              New Password
             </label>
             <div className={`${styles.inputWrapper} ${errors.password ? styles.inputError : ""}`}>
               <span className={styles.inputIcon}>
@@ -323,7 +323,7 @@ export default function ResetPassword() {
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="Nhập mật khẩu mới"
+                placeholder="Enter new password"
                 className={styles.input}
                 disabled={isSubmitting}
                 autoComplete="new-password"
@@ -378,7 +378,7 @@ export default function ResetPassword() {
           {/* Confirm Password */}
           <div className={styles.inputGroup}>
             <label htmlFor="confirmPassword" className={styles.label}>
-              Xác nhận mật khẩu
+              Confirm Password
             </label>
             <div
               className={`${styles.inputWrapper} ${errors.confirmPassword ? styles.inputError : ""}`}
@@ -393,7 +393,7 @@ export default function ResetPassword() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="Nhập lại mật khẩu mới"
+                placeholder="Re-enter new password"
                 className={styles.input}
                 disabled={isSubmitting}
                 autoComplete="new-password"
@@ -439,7 +439,7 @@ export default function ResetPassword() {
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                   <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
-                Mật khẩu khớp
+                Passwords match
               </span>
             )}
           </div>
@@ -452,7 +452,7 @@ export default function ResetPassword() {
             {isSubmitting ? (
               <>
                 <SpinnerIcon />
-                Đang xử lý...
+                Processing...
               </>
             ) : (
               <>
@@ -466,7 +466,7 @@ export default function ResetPassword() {
                 >
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
-                Đặt lại mật khẩu
+                Reset Password
               </>
             )}
           </button>
@@ -474,11 +474,11 @@ export default function ResetPassword() {
 
         {/* Password Tips */}
         <div className={styles.tips}>
-          <h4>Gợi ý tạo mật khẩu mạnh:</h4>
+          <h4>Tips for a strong password:</h4>
           <ul>
-            <li>Sử dụng ít nhất 8 ký tự</li>
-            <li>Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt</li>
-            <li>Không sử dụng thông tin cá nhân dễ đoán</li>
+            <li>Use at least 8 characters</li>
+            <li>Combine uppercase, lowercase, numbers and special characters</li>
+            <li>Avoid using easily guessable personal information</li>
           </ul>
         </div>
 
@@ -495,7 +495,7 @@ export default function ResetPassword() {
             >
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            Quay lại đăng nhập
+            Back to Login
           </Link>
         </div>
       </div>

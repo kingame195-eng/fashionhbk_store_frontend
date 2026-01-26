@@ -1,0 +1,17 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private paths
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/
+Disallow: /cart/
+Disallow: /checkout/
+
+# Sitemap location
+Sitemap: https://fashionhbk.shop/sitemap.xml
+
+# Crawl-delay for bots
+Crawl-delay: 1

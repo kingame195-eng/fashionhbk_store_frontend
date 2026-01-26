@@ -1,5 +1,7 @@
 {
   "git.ignoreLimitWarning": true,
   "markdown.validate.enabled": false,
-  "postman.settings.dotenv-detection-notification-visibility": false
+  "postman.settings.dotenv-detection-notification-visibility": false,
+  "powershell.promptToUpdatePowerShell": false,
+  "powershell.integratedConsole.showOnStartup": false
 }

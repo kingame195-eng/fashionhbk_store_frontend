@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCategories } from "../../hooks";
 import styles from "../../styles/components/FilterSidebar.module.css";
 
@@ -21,6 +21,14 @@ export default function FilterSidebar({
     sizes: true,
     colors: true,
   });
+
+  // Sync priceRange when filters change externally (e.g., from URL or clear)
+  useEffect(() => {
+    setPriceRange({
+      min: filters.minPrice || "",
+      max: filters.maxPrice || "",
+    });
+  }, [filters.minPrice, filters.maxPrice]);
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
   const colors = [
@@ -147,7 +155,6 @@ export default function FilterSidebar({
           </button>
         </form>
       </FilterSection>
-
 
       {/* On Sale Toggle */}
       <div className={styles.toggleSection}>

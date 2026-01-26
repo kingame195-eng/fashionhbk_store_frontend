@@ -1,15 +1,49 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useProduct } from "../hooks";
+import { useCart } from "../context/CartContext";
+import { useToast } from "../context/ToastContext";
 import { LoadingSpinner } from "../components/common";
 import styles from "./ProductDetail.module.css";
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const { product, relatedProducts, isLoading, error } = useProduct(slug);
+  const { addToCart, isLoading: isCartLoading } = useCart();
+  const { showSuccess, showError } = useToast();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+
+    // Check if variants exist and require selection
+    const hasSizes = product.sizes && product.sizes.length > 0;
+    const hasColors = product.colors && product.colors.length > 0;
+
+    if (hasSizes && !selectedSize) {
+      showError("Please select a size");
+      return;
+    }
+
+    if (hasColors && !selectedColor) {
+      showError("Please select a color");
+      return;
+    }
+
+    try {
+      await addToCart({
+        productId: product._id,
+        quantity,
+        size: selectedSize,
+        color: selectedColor,
+      });
+      showSuccess(`${product.name} added to cart!`);
+    } catch (err) {
+      showError(err.message || "Failed to add to cart");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -163,8 +197,12 @@ const ProductDetail = () => {
           </div>
 
           {/* Add to Cart Button */}
-          <button className={styles.addToCartBtn} disabled={product.stock <= 0}>
-            {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+          <button
+            className={styles.addToCartBtn}
+            disabled={product.stock <= 0 || isCartLoading}
+            onClick={handleAddToCart}
+          >
+            {isCartLoading ? "Adding..." : product.stock > 0 ? "Add to Cart" : "Out of Stock"}
           </button>
         </div>
       </div>

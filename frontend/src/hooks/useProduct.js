@@ -27,10 +27,8 @@ export function useProduct(slug) {
       try {
         // Fetch product details
         const responseData = await productService.getProductBySlug(slug);
-        console.log("API Response:", responseData);
         // Handle both response formats: { product: {...} } or direct product object
         const productData = responseData?.product || responseData;
-        console.log("Product Data:", productData);
         setProduct(productData);
 
         // Fetch related products (same category, excluding current)

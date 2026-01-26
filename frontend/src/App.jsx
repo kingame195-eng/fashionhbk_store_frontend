@@ -1,6 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "@components/layout";
+import { ErrorBoundary } from "@components/common";
 import Home from "@pages/Home";
 import Products from "@pages/Products";
 import ProductDetail from "@pages/ProductDetail";
@@ -34,66 +35,68 @@ const NotFound = () => (
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <CartProvider>
-          <Router>
-            <Routes>
-              {/* Routes with Layout (Header + Footer) */}
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="products" element={<Products />} />
-                <Route path="products/:slug" element={<ProductDetail />} />
-                <Route path="cart" element={<Cart />} />
-                <Route
-                  path="login"
-                  element={
-                    <GuestRoute>
-                      <Login />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="register"
-                  element={
-                    <GuestRoute>
-                      <Register />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="forgot-password"
-                  element={
-                    <GuestRoute>
-                      <ForgotPassword />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="reset-password/:token"
-                  element={
-                    <GuestRoute>
-                      <ResetPassword />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="form-demo" element={<FormDemo />} />
-                <Route path="card-demo" element={<CardDemo />} />
-                <Route path="loading-demo" element={<LoadingDemo />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </Router>
-        </CartProvider>
-      </AuthProvider>
-    </ToastProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Router>
+              <Routes>
+                {/* Routes with Layout (Header + Footer) */}
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="products/:slug" element={<ProductDetail />} />
+                  <Route path="cart" element={<Cart />} />
+                  <Route
+                    path="login"
+                    element={
+                      <GuestRoute>
+                        <Login />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="register"
+                    element={
+                      <GuestRoute>
+                        <Register />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="forgot-password"
+                    element={
+                      <GuestRoute>
+                        <ForgotPassword />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="reset-password/:token"
+                    element={
+                      <GuestRoute>
+                        <ResetPassword />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="form-demo" element={<FormDemo />} />
+                  <Route path="card-demo" element={<CardDemo />} />
+                  <Route path="loading-demo" element={<LoadingDemo />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </Router>
+          </CartProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorBoundary>
   );
 }
