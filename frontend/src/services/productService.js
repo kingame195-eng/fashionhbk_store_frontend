@@ -30,7 +30,17 @@ const productService = {
    */
   async getCategories() {
     const response = await api.get("/products/categories");
-    return response.data.data.categories;
+    const categories = response.data.data.categories;
+    
+    // Map _id to name for frontend compatibility
+    // API returns: { _id: "men", count: 8, subcategories: "..." }
+    // Frontend expects: { name: "men", slug: "men", count: 8 }
+    return categories.map((cat) => ({
+      name: cat._id || cat.name,
+      slug: cat._id || cat.slug || cat.name,
+      count: cat.count,
+      subcategories: cat.subcategories,
+    }));
   },
 
   /**

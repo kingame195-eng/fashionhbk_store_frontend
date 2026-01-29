@@ -19,12 +19,12 @@ export default function ScrollToTop() {
     const params = new URLSearchParams(search);
     const category = params.get("category");
     const searchQuery = params.get("search");
-    
+
     // Determine if we should scroll to top
     const pathChanged = prevPathRef.current !== pathname;
     const categoryChanged = prevCategoryRef.current !== category;
     const searchChanged = prevSearchRef.current !== searchQuery;
-    
+
     // Scroll to top if path, category, or search query changed
     if (pathChanged || categoryChanged || searchChanged) {
       window.scrollTo({
@@ -33,7 +33,7 @@ export default function ScrollToTop() {
         behavior: "instant",
       });
     }
-    
+
     // Update refs
     prevPathRef.current = pathname;
     prevCategoryRef.current = category;
