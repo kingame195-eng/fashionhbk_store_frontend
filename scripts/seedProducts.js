@@ -12,9 +12,10 @@ dotenv.config();
 
 // MongoDB connection string with authentication
 // Credentials from docker inspect: admin / 123456
+// NOTE: Database name is "fashion-store" (with hyphen, not underscore)
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  "mongodb://admin:123456@localhost:27017/fashion_store?authSource=admin";
+  "mongodb://admin:123456@localhost:27017/fashion-store?authSource=admin";
 
 // Product Schema (simplified for seeding)
 const productSchema = new mongoose.Schema(
