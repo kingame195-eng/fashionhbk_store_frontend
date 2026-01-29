@@ -49,17 +49,17 @@ const Products = () => {
                 filters.category.charAt(0).toUpperCase() + filters.category.slice(1)
               }`
             : filters.search
-            ? `Search Results for "${filters.search}"`
-            : filters.category
-            ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)}`
-            : "Our Products"}
+              ? `Search Results for "${filters.search}"`
+              : filters.category
+                ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)}`
+                : "Our Products"}
         </h1>
         <p>
           {filters.search && filters.category
             ? `Showing results filtered by category`
             : filters.search
-            ? "Showing results from all categories. Use filters to narrow down."
-            : "Discover our latest collection"}
+              ? "Showing results from all categories. Use filters to narrow down."
+              : "Discover our latest collection"}
         </p>
       </div>
 
@@ -187,13 +187,11 @@ const Products = () => {
                         <span className={styles.productCategory}>{product.category}</span>
                         <h3 className={styles.productName}>{product.name}</h3>
                         <div className={styles.productPrice}>
-                          {product.salePrice ? (
+                          {product.compareAtPrice && product.compareAtPrice > product.price ? (
                             <>
-                              <span className={styles.salePrice}>
-                                ${product.salePrice.toFixed(2)}
-                              </span>
+                              <span className={styles.salePrice}>${product.price.toFixed(2)}</span>
                               <span className={styles.originalPrice}>
-                                ${product.price.toFixed(2)}
+                                ${product.compareAtPrice.toFixed(2)}
                               </span>
                             </>
                           ) : (

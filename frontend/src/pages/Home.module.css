@@ -187,7 +187,7 @@
   justify-content: center;
   min-height: 200px;
   font-size: 4rem;
-  background: linear-gradient(135deg, var(--color-white) 0%, #D0B674 100%);
+  background: linear-gradient(135deg, var(--color-white) 0%, #d0b674 100%);
 }
 
 .cardContent {
@@ -290,4 +290,74 @@
   .sectionTitle {
     font-size: 1.875rem;
   }
+}
+
+/* Products Section */
+.products {
+  padding: var(--space-16) var(--space-4);
+  background-color: var(--color-gray-50);
+}
+
+.products:nth-child(even) {
+  background-color: var(--color-white);
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .productGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.errorMessage {
+  text-align: center;
+  color: var(--color-error);
+  padding: var(--space-8);
+  background-color: var(--color-error-bg);
+  border-radius: var(--radius-md);
+}
+
+.viewAllContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
+}
+
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-accent-dark);
+  padding: var(--space-3) var(--space-6);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.viewAllLink:hover {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.3);
 }

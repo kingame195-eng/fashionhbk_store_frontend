@@ -92,12 +92,14 @@ export default function FilterSidebar({
         ) : (
           <ul className={styles.filterList}>
             {categories.map((category) => (
-              <li key={category.slug}>
+              <li key={category.slug || category.name}>
                 <button
                   className={`${styles.filterOption} ${
-                    filters.category === category.slug ? styles.active : ""
+                    filters.category === category.name || filters.category === category.slug
+                      ? styles.active
+                      : ""
                   }`}
-                  onClick={() => handleCategoryClick(category.slug)}
+                  onClick={() => handleCategoryClick(category.name)}
                 >
                   <span>{category.name}</span>
                   <span className={styles.count}>({category.count})</span>

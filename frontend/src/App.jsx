@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "@components/layout";
 import { ErrorBoundary } from "@components/common";
+import ScrollToTop from "@components/common/ScrollToTop";
 import Home from "@pages/Home";
 import Products from "@pages/Products";
 import ProductDetail from "@pages/ProductDetail";
@@ -10,6 +11,14 @@ import Register from "@pages/Register";
 import Profile from "@pages/Profile";
 import ForgotPassword from "@pages/ForgotPassword";
 import ResetPassword from "@pages/ResetPassword";
+import Cart from "@pages/Cart";
+import Checkout from "@pages/Checkout";
+import OrderConfirmation from "@pages/OrderConfirmation";
+import Orders from "@pages/Orders";
+import Wishlist from "@pages/Wishlist";
+import About from "@pages/About";
+import Contact from "@pages/Contact";
+import FAQ from "@pages/FAQ";
 import FormDemo from "@pages/FormDemo";
 import CardDemo from "@pages/CardDemo";
 import LoadingDemo from "@pages/LoadingDemo";
@@ -17,14 +26,6 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ToastProvider } from "./context/ToastContext";
 import { ProtectedRoute, GuestRoute } from "@components/auth";
-
-// Placeholder pages - can be expanded later
-const Cart = () => (
-  <div style={{ padding: "2rem", textAlign: "center" }}>
-    <h1>Shopping Cart</h1>
-    <p>Cart page coming soon...</p>
-  </div>
-);
 
 const NotFound = () => (
   <div style={{ padding: "4rem", textAlign: "center" }}>
@@ -40,6 +41,7 @@ export default function App() {
         <AuthProvider>
           <CartProvider>
             <Router>
+              <ScrollToTop />
               <Routes>
                 {/* Routes with Layout (Header + Footer) */}
                 <Route path="/" element={<Layout />}>
@@ -47,6 +49,13 @@ export default function App() {
                   <Route path="products" element={<Products />} />
                   <Route path="products/:slug" element={<ProductDetail />} />
                   <Route path="cart" element={<Cart />} />
+                  <Route path="checkout" element={<Checkout />} />
+                  <Route path="order-confirmation/:orderNumber" element={<OrderConfirmation />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="contact" element={<Contact />} />
+                  <Route path="faq" element={<FAQ />} />
+                  <Route path="wishlist" element={<Wishlist />} />
+                  <Route path="orders" element={<Orders />} />
                   <Route
                     path="login"
                     element={

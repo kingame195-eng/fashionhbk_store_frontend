@@ -168,7 +168,9 @@ export default function ProductCard({ product }) {
         {/* Product Info */}
         <div className={styles.info}>
           {/* Category */}
-          <p className={styles.category}>{category?.name}</p>
+          <p className={styles.category}>
+            {typeof category === "string" ? category.toUpperCase() : category?.name?.toUpperCase()}
+          </p>
 
           {/* Product Name */}
           <h3 className={styles.name}>{name}</h3>
@@ -191,11 +193,15 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
-          {/* Pricing */}
+          {/* Pricing - Hiển thị giá gốc và giá sale */}
           <div className={styles.pricing}>
-            <span className={styles.price}>${price.toFixed(2)}</span>
-            {compareAtPrice && compareAtPrice > price && (
-              <span className={styles.comparePrice}>${compareAtPrice.toFixed(2)}</span>
+            {compareAtPrice && Number(compareAtPrice) > Number(price) ? (
+              <>
+                <span className={styles.salePrice}>${Number(price).toFixed(2)}</span>
+                <span className={styles.comparePrice}>${Number(compareAtPrice).toFixed(2)}</span>
+              </>
+            ) : (
+              <span className={styles.price}>${Number(price).toFixed(2)}</span>
             )}
           </div>
         </div>

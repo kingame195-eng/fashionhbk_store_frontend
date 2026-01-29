@@ -12,9 +12,10 @@ const checkoutService = {
   /**
    * Get shipping rates
    */
-  async getShippingRates(shippingAddress) {
+  async getShippingRates(shippingAddress, subtotal) {
     const response = await api.post("/checkout/shipping-rates", {
       shippingAddress,
+      subtotal,
     });
     return response.data.data;
   },
@@ -22,26 +23,21 @@ const checkoutService = {
   /**
    * Calculate tax
    */
-  async calculateTax(shippingAddress) {
+  async calculateTax(subtotal) {
     const response = await api.post("/checkout/calculate-tax", {
-      shippingAddress,
+      subtotal,
     });
     return response.data.data;
   },
 
   /**
-   * Create payment intent
+   * Validate coupon
    */
-  async createPaymentIntent(checkoutData) {
-    const response = await api.post("/checkout/create-payment-intent", checkoutData);
-    return response.data.data;
-  },
-
-  /**
-   * Update payment intent
-   */
-  async updatePaymentIntent(paymentIntentId, updates) {
-    const response = await api.patch(`/checkout/payment-intent/${paymentIntentId}`, updates);
+  async validateCoupon(code, subtotal) {
+    const response = await api.post("/checkout/validate-coupon", {
+      code,
+      subtotal,
+    });
     return response.data.data;
   },
 

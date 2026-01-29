@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "@styles/components/Header.module.css";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
+import CategoryMegaMenu from "./CategoryMegaMenu";
 
 const CartIcon = () => (
   <svg
@@ -179,16 +181,17 @@ const ChevronDownIcon = () => (
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { itemCount: cartItemCount } = useCart();
   const { showToast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState(null); // State cho mega menu
   const userMenuRef = useRef(null);
+  const megaMenuTimeoutRef = useRef(null); // Timeout ref cho mega menu
   const navigate = useNavigate();
   const location = useLocation();
-
-  const cartItemCount = 0;
 
   // Handle logout
   const handleLogout = async () => {
@@ -245,11 +248,44 @@ export default function Header() {
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/products", label: "Shop" },
-    { path: "/products?category=women", label: "Women" },
-    { path: "/products?category=men", label: "Men" },
-    { path: "/products?category=accessories", label: "Accessories" },
+    { path: "/products?category=women", label: "Women", category: "women" },
+    { path: "/products?category=men", label: "Men", category: "men" },
+    { path: "/products?category=accessories", label: "Accessories", category: "accessories" },
     { path: "/about", label: "About" },
   ];
+
+  // Categories có mega menu
+  const categoriesWithMegaMenu = ["women", "men", "accessories"];
+
+  // Handler mở mega menu với delay
+  const handleCategoryMouseEnter = (category) => {
+    if (megaMenuTimeoutRef.current) {
+      clearTimeout(megaMenuTimeoutRef.current);
+    }
+    setActiveMegaMenu(category);
+  };
+
+  // Handler đóng mega menu với delay
+  const handleCategoryMouseLeave = () => {
+    megaMenuTimeoutRef.current = setTimeout(() => {
+      setActiveMegaMenu(null);
+    }, 200); // 200ms delay để user có thể di chuột vào mega menu
+  };
+
+  // Handler khi mouse vào mega menu content
+  const handleMegaMenuEnter = () => {
+    if (megaMenuTimeoutRef.current) {
+      clearTimeout(megaMenuTimeoutRef.current);
+    }
+  };
+
+  // Handler đóng mega menu ngay lập tức
+  const closeMegaMenu = () => {
+    if (megaMenuTimeoutRef.current) {
+      clearTimeout(megaMenuTimeoutRef.current);
+    }
+    setActiveMegaMenu(null);
+  };
 
   // Check if a nav link is active based on path and query params
   const isLinkActive = (linkPath) => {
@@ -300,16 +336,40 @@ export default function Header() {
         {/* Desktop Navigation */}
         <nav className={styles.desktopNav}>
           <ul className={styles.navList}>
-            {navLinks.map((link) => (
-              <li key={link.path}>
-                <Link
-                  to={link.path}
-                  className={`${styles.navLink} ${isLinkActive(link.path) ? styles.active : ""}`}
+            {navLinks.map((link) => {
+              const hasDropdown = link.category && categoriesWithMegaMenu.includes(link.category);
+
+              return (
+                <li
+                  key={link.path}
+                  className={hasDropdown ? styles.navItemWithDropdown : undefined}
+                  onMouseEnter={
+                    hasDropdown ? () => handleCategoryMouseEnter(link.category) : undefined
+                  }
+                  onMouseLeave={hasDropdown ? handleCategoryMouseLeave : undefined}
                 >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+                  <Link
+                    to={link.path}
+                    className={`${styles.navLink} ${isLinkActive(link.path) ? styles.active : ""}`}
+                    onClick={closeMegaMenu}
+                  >
+                    {link.label}
+                    {hasDropdown && <ChevronDownIcon />}
+                  </Link>
+
+                  {/* Mega Menu cho category */}
+                  {hasDropdown && (
+                    <div onMouseEnter={handleMegaMenuEnter} onMouseLeave={handleCategoryMouseLeave}>
+                      <CategoryMegaMenu
+                        category={link.category}
+                        isOpen={activeMegaMenu === link.category}
+                        onClose={closeMegaMenu}
+                      />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -363,7 +423,7 @@ export default function Header() {
                     <span>My Profile</span>
                   </Link>
                   <Link
-                    to="/profile?tab=orders"
+                    to="/orders"
                     className={styles.dropdownItem}
                     onClick={() => setIsUserMenuOpen(false)}
                   >
@@ -371,7 +431,7 @@ export default function Header() {
                     <span>My Orders</span>
                   </Link>
                   <Link
-                    to="/profile?tab=wishlist"
+                    to="/wishlist"
                     className={styles.dropdownItem}
                     onClick={() => setIsUserMenuOpen(false)}
                   >
@@ -469,7 +529,7 @@ export default function Header() {
                   <span>My Profile</span>
                 </Link>
                 <Link
-                  to="/profile?tab=orders"
+                  to="/orders"
                   className={styles.mobileAuthLink}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -477,7 +537,7 @@ export default function Header() {
                   <span>My Orders</span>
                 </Link>
                 <Link
-                  to="/profile?tab=wishlist"
+                  to="/wishlist"
                   className={styles.mobileAuthLink}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

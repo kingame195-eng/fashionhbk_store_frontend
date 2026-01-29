@@ -68,8 +68,16 @@
   gap: var(--space-8);
 }
 
+/* Nav item với dropdown mega menu */
+.navItemWithDropdown {
+  position: relative;
+}
+
 .navLink {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   color: #000000;
@@ -77,6 +85,16 @@
   letter-spacing: var(--tracking-wide);
   padding: var(--space-2) var(--space-3);
   transition: all var(--transition-fast);
+}
+
+.navLink svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.navItemWithDropdown:hover .navLink svg {
+  transform: rotate(180deg);
 }
 
 .navLink::after {
