@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 
 async function updatePrices() {
   try {
-    await mongoose.connect("mongodb://admin:123456@localhost:27017/fashion_store?authSource=admin");
+    // NOTE: Database name is "fashion-store" (with hyphen, not underscore)
+    await mongoose.connect("mongodb://admin:123456@localhost:27017/fashion-store?authSource=admin");
     console.log("Connected to MongoDB");
 
     const db = mongoose.connection.db;
