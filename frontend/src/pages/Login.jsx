@@ -143,26 +143,36 @@ export default function Login() {
       });
 
       if (result.success) {
-        showToast("Welcome back! You have successfully signed in.", "success");
+        showToast("Welcome back! You have successfully logged in.", "success");
         const from = location.state?.from?.pathname || "/";
         navigate(from, { replace: true });
       } else {
         // Handle specific error messages based on error codes
         let errorMessage =
-          result.error || "Unable to sign in. Please check your credentials and try again.";
+          result.error || "Unable to login. Please check your information and try again.";
 
-        // Map error codes to user-friendly messages
+        // Map error codes to user-friendly messages (if backend returns English messages)
         if (result.error?.includes("incorrect") || result.error?.includes("INVALID_CREDENTIALS")) {
-          errorMessage = "The email or password you entered is incorrect. Please try again.";
+          errorMessage = "Email or password is incorrect. Please try again.";
         } else if (
           result.error?.includes("suspended") ||
-          result.error?.includes("ACCOUNT_SUSPENDED")
+          result.error?.includes("ACCOUNT_SUSPENDED") ||
+          result.error?.includes("ACCOUNT_DEACTIVATED")
         ) {
-          errorMessage = "Your account has been suspended. Please contact support for assistance.";
-        } else if (result.error?.includes("expired") || result.error?.includes("SESSION_EXPIRED")) {
-          errorMessage = "Your session has expired. Please sign in again.";
+          errorMessage = "Your account has been suspended. Please contact support.";
+        } else if (
+          result.error?.includes("expired") ||
+          result.error?.includes("SESSION_EXPIRED") ||
+          result.error?.includes("TOKEN_EXPIRED")
+        ) {
+          errorMessage = "Session has expired. Please log in again.";
         } else if (result.error?.includes("network") || result.error?.includes("Network")) {
-          errorMessage = "Unable to connect to the server. Please check your internet connection.";
+          errorMessage = "Unable to connect to server. Please check your network connection.";
+        } else if (
+          result.error?.includes("TOO_MANY_LOGIN_ATTEMPTS") ||
+          result.error?.includes("RATE_LIMIT")
+        ) {
+          errorMessage = "Too many login attempts. Please try again later.";
         }
 
         showToast(errorMessage, "error");
@@ -172,9 +182,9 @@ export default function Login() {
       let errorMessage = "An unexpected error occurred. Please try again later.";
 
       if (error.message?.includes("Network") || error.message?.includes("fetch")) {
-        errorMessage = "Unable to connect to the server. Please check your internet connection.";
+        errorMessage = "Unable to connect to server. Please check your network connection.";
       } else if (error.message?.includes("timeout")) {
-        errorMessage = "The request timed out. Please try again.";
+        errorMessage = "Request timed out. Please try again.";
       }
 
       showToast(errorMessage, "error");

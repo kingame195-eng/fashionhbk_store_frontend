@@ -110,14 +110,14 @@ export default function Register() {
   // Validation functions
   const validateFirstName = (name) => {
     if (!name.trim()) return "Please enter your first name";
-    if (name.trim().length < 2) return "First name must be at least 2 characters long";
+    if (name.trim().length < 2) return "First name must have at least 2 characters";
     if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(name.trim())) return "First name can only contain letters";
     return "";
   };
 
   const validateLastName = (name) => {
     if (!name.trim()) return "Please enter your last name";
-    if (name.trim().length < 2) return "Last name must be at least 2 characters long";
+    if (name.trim().length < 2) return "Last name must have at least 2 characters";
     if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(name.trim())) return "Last name can only contain letters";
     return "";
   };
@@ -125,23 +125,23 @@ export default function Register() {
   const validateEmail = (email) => {
     if (!email.trim()) return "Please enter your email address";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email))
-      return "Please enter a valid email address (e.g., name@example.com)";
+    if (!emailRegex.test(email)) return "Please enter a valid email address (e.g., name@email.com)";
     return "";
   };
 
   const validatePassword = (password) => {
     if (!password) return "Please create a password";
-    if (password.length < 8) return "Password must be at least 8 characters long";
-    if (!/[a-z]/.test(password)) return "Password must include at least one lowercase letter";
-    if (!/[A-Z]/.test(password)) return "Password must include at least one uppercase letter";
-    if (!/[0-9]/.test(password)) return "Password must include at least one number";
+    if (password.length < 8) return "Password must have at least 8 characters";
+    if (!/[a-z]/.test(password)) return "Password must have at least one lowercase letter";
+    if (!/[A-Z]/.test(password)) return "Password must have at least one uppercase letter";
+    if (!/[0-9]/.test(password)) return "Password must have at least one number";
     return "";
   };
 
   const validateConfirmPassword = (confirmPassword, password) => {
     if (!confirmPassword) return "Please confirm your password";
-    if (confirmPassword !== password) return "Passwords do not match. Please try again.";
+    if (confirmPassword !== password)
+      return "Password confirmation does not match. Please try again.";
     return "";
   };
 
@@ -224,20 +224,22 @@ export default function Register() {
         showToast("Welcome! Your account has been created successfully.", "success");
         navigate("/", { replace: true });
       } else {
-        let errorMessage = result.error || "Unable to create your account. Please try again.";
+        let errorMessage = result.error || "Unable to create account. Please try again.";
 
         // Map error codes to user-friendly messages
         if (
           result.error?.includes("already") ||
           result.error?.includes("EMAIL_EXISTS") ||
-          result.error?.includes("registered")
+          result.error?.includes("registered") ||
+          result.error?.includes("đã được sử dụng")
         ) {
-          errorMessage =
-            "This email is already registered. Please sign in or use a different email address.";
+          errorMessage = "This email is already registered. Please login or use a different email.";
         } else if (result.error?.includes("network") || result.error?.includes("Network")) {
-          errorMessage = "Unable to connect to the server. Please check your internet connection.";
+          errorMessage = "Unable to connect to server. Please check your network connection.";
         } else if (result.error?.includes("password")) {
-          errorMessage = "Please ensure your password meets all the requirements.";
+          errorMessage = "Please ensure password meets all requirements.";
+        } else if (result.error?.includes("RATE_LIMIT") || result.error?.includes("TOO_MANY")) {
+          errorMessage = "Too many requests. Please try again later.";
         }
 
         showToast(errorMessage, "error");
@@ -247,9 +249,9 @@ export default function Register() {
       let errorMessage = "An unexpected error occurred. Please try again later.";
 
       if (error.message?.includes("Network") || error.message?.includes("fetch")) {
-        errorMessage = "Unable to connect to the server. Please check your internet connection.";
+        errorMessage = "Unable to connect to server. Please check your network connection.";
       } else if (error.message?.includes("timeout")) {
-        errorMessage = "The request timed out. Please try again.";
+        errorMessage = "Request timed out. Please try again.";
       }
 
       showToast(errorMessage, "error");

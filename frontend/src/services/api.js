@@ -86,9 +86,11 @@ api.interceptors.response.use(
     if (error.response?.status === 429) {
       console.warn("Rate limited - please wait a moment and try again");
       const errorResponse = {
-        message: "Too many requests. Please wait a moment and try again.",
+        message:
+          error.response?.data?.message || "Too many requests. Please wait a moment and try again.",
         status: 429,
         isRateLimited: true,
+        code: error.response?.data?.code || "RATE_LIMIT_EXCEEDED",
       };
       return Promise.reject(errorResponse);
     }
@@ -157,12 +159,31 @@ api.interceptors.response.use(
 
     // Format error response
     const errorResponse = {
-      message: error.response?.data?.message || "An error occurred",
+      message: error.response?.data?.message || getDefaultErrorMessage(error.response?.status),
       status: error.response?.status,
       errors: error.response?.data?.errors,
+      code: error.response?.data?.code,
     };
     return Promise.reject(errorResponse);
   }
 );
+
+/**
+ * Get user-friendly default error message based on status code
+ */
+function getDefaultErrorMessage(status) {
+  const messages = {
+    400: "Invalid data. Please check and try again.",
+    401: "Invalid session. Please sign in again.",
+    403: "You don't have permission to access this feature.",
+    404: "Requested information not found.",
+    409: "Information already exists in the system.",
+    429: "Too many requests. Please wait a moment and try again.",
+    500: "System error occurred. Please try again later.",
+    502: "Server temporarily unavailable. Please try again later.",
+    503: "Service temporarily interrupted. Please try again later.",
+  };
+  return messages[status] || "An error occurred. Please try again later.";
+}
 
 export default api;

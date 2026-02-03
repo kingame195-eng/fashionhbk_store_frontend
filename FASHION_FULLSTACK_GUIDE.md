@@ -9753,3 +9753,2394 @@ Sau khi bổ sung, hệ thống có tổng cộng:
 > 4. Integrate Stripe/VNPay thật với API keys
 >
 > Good luck! 🚀
+
+---
+
+## Phụ lục G: Source Code Đầy Đủ ⭐ **MỚI**
+
+> 📅 **Cập nhật:** 2026-02-02  
+> 🎯 **Mục đích:** Tổng hợp toàn bộ source code đã chỉnh sửa/thêm mới trong quá trình phát triển
+
+---
+
+### G.1 Backend - Models
+
+#### G.1.1 Review Model
+
+**📁 File:** `backend/src/models/Review.js`  
+**📝 Mô tả:** Model cho hệ thống đánh giá sản phẩm với verified purchase, helpful votes, admin moderation
+
+```javascript
+import mongoose from "mongoose";
+
+/**
+ * Review Model
+ * Cho phép khách hàng đánh giá sản phẩm
+ *
+ * Features:
+ * - Rating 1-5 sao
+ * - Comment text
+ * - Images đính kèm
+ * - Verified purchase badge
+ * - Helpful votes
+ * - Admin reply
+ */
+
+const reviewSchema = new mongoose.Schema(
+  {
+    // Reference to Product
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: [true, "Product is required"],
+      index: true,
+    },
+
+    // Reference to User
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User is required"],
+      index: true,
+    },
+
+    // Order reference (to verify purchase)
+    order: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+
+    // Rating (1-5 stars)
+    rating: {
+      type: Number,
+      required: [true, "Rating is required"],
+      min: [1, "Rating must be at least 1"],
+      max: [5, "Rating cannot exceed 5"],
+    },
+
+    // Review title
+    title: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Title cannot exceed 100 characters"],
+    },
+
+    // Review comment
+    comment: {
+      type: String,
+      required: [true, "Review comment is required"],
+      trim: true,
+      maxlength: [2000, "Comment cannot exceed 2000 characters"],
+    },
+
+    // Review images
+    images: [
+      {
+        url: { type: String, required: true },
+        alt: String,
+      },
+    ],
+
+    // Size & Color purchased (for context)
+    sizePurchased: { type: String },
+    colorPurchased: { type: String },
+
+    // Fit feedback
+    fit: {
+      type: String,
+      enum: ["runs_small", "true_to_size", "runs_large"],
+    },
+
+    // Verified purchase (user bought this product)
+    isVerifiedPurchase: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Review status
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
+    // Helpful votes
+    helpfulVotes: { type: Number, default: 0, min: 0 },
+    helpfulVoters: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    // Admin reply
+    adminReply: {
+      comment: String,
+      repliedAt: Date,
+      repliedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    },
+
+    // Rejection reason
+    rejectionReason: { type: String },
+  },
+  { timestamps: true }
+);
+
+// Compound index: Một user chỉ review một product một lần
+reviewSchema.index({ product: 1, user: 1 }, { unique: true });
+reviewSchema.index({ status: 1, createdAt: -1 });
+reviewSchema.index({ rating: 1 });
+
+// Static method: Tính average rating cho product
+reviewSchema.statics.calculateAverageRating = async function (productId) {
+  const stats = await this.aggregate([
+    { $match: { product: productId, status: "approved" } },
+    {
+      $group: {
+        _id: "$product",
+        averageRating: { $avg: "$rating" },
+        numReviews: { $sum: 1 },
+        ratingDistribution: { $push: "$rating" },
+      },
+    },
+  ]);
+
+  if (stats.length > 0) {
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    stats[0].ratingDistribution.forEach((rating) => {
+      distribution[rating]++;
+    });
+
+    await mongoose.model("Product").findByIdAndUpdate(productId, {
+      "ratings.average": Math.round(stats[0].averageRating * 10) / 10,
+      "ratings.count": stats[0].numReviews,
+      "ratings.distribution": distribution,
+    });
+  } else {
+    await mongoose.model("Product").findByIdAndUpdate(productId, {
+      "ratings.average": 0,
+      "ratings.count": 0,
+      "ratings.distribution": { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    });
+  }
+};
+
+// Post save/remove hooks
+reviewSchema.post("save", async function () {
+  if (this.status === "approved") {
+    await this.constructor.calculateAverageRating(this.product);
+  }
+});
+
+reviewSchema.post("remove", async function () {
+  await this.constructor.calculateAverageRating(this.product);
+});
+
+reviewSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await doc.constructor.calculateAverageRating(doc.product);
+  }
+});
+
+const Review = mongoose.model("Review", reviewSchema);
+export default Review;
+```
+
+---
+
+#### G.1.2 Coupon Model
+
+**📁 File:** `backend/src/models/Coupon.js`  
+**📝 Mô tả:** Model mã giảm giá với percentage/fixed discount, usage limits, date range, category restrictions
+
+```javascript
+import mongoose from "mongoose";
+
+/**
+ * Coupon Model - Quản lý mã giảm giá
+ */
+
+const couponSchema = new mongoose.Schema(
+  {
+    // Coupon code (unique, uppercase)
+    code: {
+      type: String,
+      required: [true, "Coupon code is required"],
+      unique: true,
+      uppercase: true,
+      trim: true,
+      maxlength: [20, "Coupon code cannot exceed 20 characters"],
+      match: [/^[A-Z0-9]+$/, "Coupon code can only contain letters and numbers"],
+    },
+
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+      trim: true,
+      maxlength: [200, "Description cannot exceed 200 characters"],
+    },
+
+    // Discount type & value
+    discountType: {
+      type: String,
+      required: true,
+      enum: ["percentage", "fixed"],
+      default: "percentage",
+    },
+    discountValue: {
+      type: Number,
+      required: [true, "Discount value is required"],
+      min: [0, "Discount value cannot be negative"],
+    },
+    maxDiscount: { type: Number, min: [0, "Max discount cannot be negative"] },
+    minOrderValue: { type: Number, default: 0, min: [0, "Min order value cannot be negative"] },
+
+    // Validity period
+    validFrom: { type: Date, required: true, default: Date.now },
+    validUntil: { type: Date, required: true },
+
+    // Usage limits
+    usageLimit: { type: Number, default: null, min: [1, "Usage limit must be at least 1"] },
+    usageLimitPerUser: { type: Number, default: 1, min: 1 },
+    usedCount: { type: Number, default: 0, min: 0 },
+
+    // Users who used this coupon
+    usedBy: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        usedAt: { type: Date, default: Date.now },
+        orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
+      },
+    ],
+
+    // Restrictions
+    applicableProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    applicableCategories: [
+      { type: String, enum: ["women", "men", "kids", "accessories", "shoes", "bags"] },
+    ],
+    excludedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    firstOrderOnly: { type: Boolean, default: false },
+    minItems: { type: Number, default: 1, min: 1 },
+
+    // Status
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  },
+  { timestamps: true }
+);
+
+// Indexes
+couponSchema.index({ code: 1 });
+couponSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
+
+// Virtual: Check if coupon is valid
+couponSchema.virtual("isValid").get(function () {
+  const now = new Date();
+  return (
+    this.isActive &&
+    now >= this.validFrom &&
+    now <= this.validUntil &&
+    (this.usageLimit === null || this.usedCount < this.usageLimit)
+  );
+});
+
+// Method: Check if user can use this coupon
+couponSchema.methods.canBeUsedBy = async function (userId, cartTotal, cartItems, isFirstOrder) {
+  const errors = [];
+  const now = new Date();
+
+  if (!this.isActive) errors.push("Coupon is not active");
+  if (now < this.validFrom) errors.push("Coupon is not yet valid");
+  if (now > this.validUntil) errors.push("Coupon has expired");
+  if (this.usageLimit && this.usedCount >= this.usageLimit)
+    errors.push("Coupon usage limit reached");
+  if (cartTotal < this.minOrderValue) errors.push(`Minimum order value is $${this.minOrderValue}`);
+  if (this.firstOrderOnly && !isFirstOrder) errors.push("Coupon is for first order only");
+
+  // Check user usage limit
+  if (userId) {
+    const userUsageCount = this.usedBy.filter(
+      (u) => u.user.toString() === userId.toString()
+    ).length;
+    if (userUsageCount >= this.usageLimitPerUser) {
+      errors.push("You have reached your usage limit for this coupon");
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+};
+
+// Method: Calculate discount
+couponSchema.methods.calculateDiscount = function (cartTotal) {
+  let discount = 0;
+  if (this.discountType === "percentage") {
+    discount = (cartTotal * this.discountValue) / 100;
+    if (this.maxDiscount) discount = Math.min(discount, this.maxDiscount);
+  } else {
+    discount = this.discountValue;
+  }
+  return Math.min(discount, cartTotal);
+};
+
+// Method: Record usage
+couponSchema.methods.recordUsage = async function (userId, orderId) {
+  this.usedBy.push({ user: userId, orderId, usedAt: new Date() });
+  this.usedCount += 1;
+  await this.save();
+};
+
+// Static: Find valid coupon by code
+couponSchema.statics.findValidCoupon = async function (code) {
+  const now = new Date();
+  return this.findOne({
+    code: code.toUpperCase(),
+    isActive: true,
+    validFrom: { $lte: now },
+    validUntil: { $gte: now },
+  });
+};
+
+const Coupon = mongoose.model("Coupon", couponSchema);
+export default Coupon;
+```
+
+---
+
+### G.2 Backend - Controllers
+
+#### G.2.1 Review Controller
+
+**📁 File:** `backend/src/controllers/reviewController.js`  
+**📝 Mô tả:** CRUD reviews, vote helpful, admin moderation (approve/reject/reply)
+
+```javascript
+import Review from "../models/Review.js";
+import Product from "../models/Product.js";
+import Order from "../models/Order.js";
+import { asyncHandler, AppError } from "../middleware/errorHandler.js";
+
+// ============================================================
+// PUBLIC ROUTES
+// ============================================================
+
+/**
+ * @desc    Get reviews for a product
+ * @route   GET /api/reviews/product/:productId
+ * @access  Public
+ */
+export const getProductReviews = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const skip = (page - 1) * limit;
+
+  const { rating, sort, verified } = req.query;
+  const query = { product: productId, status: "approved" };
+
+  if (rating) query.rating = parseInt(rating, 10);
+  if (verified === "true") query.isVerifiedPurchase = true;
+
+  let sortOption = { createdAt: -1 };
+  if (sort === "helpful") sortOption = { helpfulVotes: -1, createdAt: -1 };
+  else if (sort === "rating-high") sortOption = { rating: -1, createdAt: -1 };
+  else if (sort === "rating-low") sortOption = { rating: 1, createdAt: -1 };
+
+  const [reviews, total] = await Promise.all([
+    Review.find(query)
+      .populate("user", "firstName lastName avatar")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Review.countDocuments(query),
+  ]);
+
+  // Get rating summary
+  const ratingSummary = await Review.aggregate([
+    { $match: { product: productId, status: "approved" } },
+    {
+      $group: {
+        _id: null,
+        averageRating: { $avg: "$rating" },
+        totalReviews: { $sum: 1 },
+        rating5: { $sum: { $cond: [{ $eq: ["$rating", 5] }, 1, 0] } },
+        rating4: { $sum: { $cond: [{ $eq: ["$rating", 4] }, 1, 0] } },
+        rating3: { $sum: { $cond: [{ $eq: ["$rating", 3] }, 1, 0] } },
+        rating2: { $sum: { $cond: [{ $eq: ["$rating", 2] }, 1, 0] } },
+        rating1: { $sum: { $cond: [{ $eq: ["$rating", 1] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      reviews,
+      summary: ratingSummary[0] || { averageRating: 0, totalReviews: 0 },
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalReviews: total,
+        limit,
+      },
+    },
+  });
+});
+
+// ============================================================
+// PROTECTED ROUTES
+// ============================================================
+
+/**
+ * @desc    Create a review
+ * @route   POST /api/reviews
+ * @access  Private
+ */
+export const createReview = asyncHandler(async (req, res, next) => {
+  const { productId, rating, title, comment, images, sizePurchased, colorPurchased, fit } =
+    req.body;
+
+  const product = await Product.findById(productId);
+  if (!product) return next(new AppError("Product not found", 404));
+
+  const existingReview = await Review.findOne({ product: productId, user: req.user._id });
+  if (existingReview) return next(new AppError("You have already reviewed this product", 400));
+
+  // Check verified purchase
+  const purchasedOrder = await Order.findOne({
+    user: req.user._id,
+    "items.product": productId,
+    status: { $in: ["delivered", "completed"] },
+  });
+
+  const review = await Review.create({
+    product: productId,
+    user: req.user._id,
+    order: purchasedOrder?._id,
+    rating,
+    title,
+    comment,
+    images,
+    sizePurchased,
+    colorPurchased,
+    fit,
+    isVerifiedPurchase: !!purchasedOrder,
+    status: "pending",
+  });
+
+  await review.populate("user", "firstName lastName avatar");
+
+  res.status(201).json({
+    success: true,
+    message: "Review submitted successfully. It will be visible after approval.",
+    data: { review },
+  });
+});
+
+/**
+ * @desc    Update a review
+ * @route   PUT /api/reviews/:id
+ * @access  Private (Owner only)
+ */
+export const updateReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+  if (review.user.toString() !== req.user._id.toString()) {
+    return next(new AppError("You can only update your own reviews", 403));
+  }
+
+  const { rating, title, comment, images, fit } = req.body;
+  if (rating) review.rating = rating;
+  if (title !== undefined) review.title = title;
+  if (comment) review.comment = comment;
+  if (images) review.images = images;
+  if (fit) review.fit = fit;
+  review.status = "pending"; // Re-approval needed
+
+  await review.save();
+  await review.populate("user", "firstName lastName avatar");
+
+  res.status(200).json({
+    success: true,
+    message: "Review updated. It will be visible after re-approval.",
+    data: { review },
+  });
+});
+
+/**
+ * @desc    Delete a review
+ * @route   DELETE /api/reviews/:id
+ * @access  Private (Owner or Admin)
+ */
+export const deleteReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+
+  if (review.user.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+    return next(new AppError("You can only delete your own reviews", 403));
+  }
+
+  const productId = review.product;
+  await Review.findByIdAndDelete(req.params.id);
+  await Review.calculateAverageRating(productId);
+
+  res.status(200).json({ success: true, message: "Review deleted successfully" });
+});
+
+/**
+ * @desc    Vote review as helpful
+ * @route   POST /api/reviews/:id/helpful
+ * @access  Private
+ */
+export const voteHelpful = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+
+  const alreadyVoted = review.helpfulVoters.includes(req.user._id);
+  if (alreadyVoted) {
+    review.helpfulVoters = review.helpfulVoters.filter(
+      (v) => v.toString() !== req.user._id.toString()
+    );
+    review.helpfulVotes -= 1;
+  } else {
+    review.helpfulVoters.push(req.user._id);
+    review.helpfulVotes += 1;
+  }
+
+  await review.save();
+  res.status(200).json({
+    success: true,
+    message: alreadyVoted ? "Vote removed" : "Marked as helpful",
+    data: { helpfulVotes: review.helpfulVotes, voted: !alreadyVoted },
+  });
+});
+
+/**
+ * @desc    Get user's reviews
+ * @route   GET /api/reviews/my-reviews
+ * @access  Private
+ */
+export const getMyReviews = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+
+  const [reviews, total] = await Promise.all([
+    Review.find({ user: req.user._id })
+      .populate("product", "name slug thumbnail price")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Review.countDocuments({ user: req.user._id }),
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      reviews,
+      pagination: { currentPage: page, totalPages: Math.ceil(total / limit), totalReviews: total },
+    },
+  });
+});
+
+/**
+ * @desc    Check if user can review a product
+ * @route   GET /api/reviews/can-review/:productId
+ * @access  Private
+ */
+export const canReviewProduct = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const existingReview = await Review.findOne({ product: productId, user: req.user._id });
+
+  if (existingReview) {
+    return res.status(200).json({
+      success: true,
+      data: { canReview: false, reason: "already_reviewed", existingReview: existingReview._id },
+    });
+  }
+
+  const purchasedOrder = await Order.findOne({
+    user: req.user._id,
+    "items.product": productId,
+    status: { $in: ["delivered", "completed"] },
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { canReview: true, isVerifiedPurchase: !!purchasedOrder },
+  });
+});
+
+// ============================================================
+// ADMIN ROUTES
+// ============================================================
+
+/**
+ * @desc    Get all reviews (Admin)
+ * @route   GET /api/reviews/admin/all
+ */
+export const getAllReviews = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 20;
+  const { status, rating, search } = req.query;
+  const query = {};
+
+  if (status) query.status = status;
+  if (rating) query.rating = parseInt(rating, 10);
+  if (search) {
+    query.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { comment: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const [reviews, total] = await Promise.all([
+    Review.find(query)
+      .populate("user", "firstName lastName email")
+      .populate("product", "name slug thumbnail")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Review.countDocuments(query),
+  ]);
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      data: { reviews, pagination: { currentPage: page, totalPages: Math.ceil(total / limit) } },
+    });
+});
+
+/** @desc Approve review - PATCH /api/reviews/:id/approve */
+export const approveReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+
+  review.status = "approved";
+  await review.save();
+  await Review.calculateAverageRating(review.product);
+
+  res.status(200).json({ success: true, message: "Review approved", data: { review } });
+});
+
+/** @desc Reject review - PATCH /api/reviews/:id/reject */
+export const rejectReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+
+  review.status = "rejected";
+  review.rejectionReason = req.body.reason;
+  await review.save();
+
+  res.status(200).json({ success: true, message: "Review rejected", data: { review } });
+});
+
+/** @desc Reply to review - POST /api/reviews/:id/reply */
+export const replyToReview = asyncHandler(async (req, res, next) => {
+  const { comment } = req.body;
+  if (!comment) return next(new AppError("Reply comment is required", 400));
+
+  const review = await Review.findById(req.params.id);
+  if (!review) return next(new AppError("Review not found", 404));
+
+  review.adminReply = { comment, repliedAt: new Date(), repliedBy: req.user._id };
+  await review.save();
+
+  res.status(200).json({ success: true, message: "Reply added", data: { review } });
+});
+```
+
+---
+
+#### G.2.2 Coupon Controller
+
+**📁 File:** `backend/src/controllers/couponController.js`  
+**📝 Mô tả:** Validate coupon, CRUD coupons (Admin), coupon statistics
+
+```javascript
+import Coupon from "../models/Coupon.js";
+import Order from "../models/Order.js";
+import { asyncHandler, AppError } from "../middleware/errorHandler.js";
+
+// ============================================================
+// PUBLIC/USER ROUTES
+// ============================================================
+
+/**
+ * @desc    Validate and get coupon details
+ * @route   POST /api/coupons/validate
+ * @access  Public
+ */
+export const validateCoupon = asyncHandler(async (req, res, next) => {
+  const { code, cartTotal, cartItems } = req.body;
+  if (!code) return next(new AppError("Coupon code is required", 400));
+
+  const coupon = await Coupon.findValidCoupon(code);
+  if (!coupon) return next(new AppError("Invalid or expired coupon code", 404));
+
+  let isFirstOrder = true;
+  if (req.user) {
+    const orderCount = await Order.countDocuments({ user: req.user._id });
+    isFirstOrder = orderCount === 0;
+  }
+
+  const validation = await coupon.canBeUsedBy(
+    req.user?._id,
+    cartTotal || 0,
+    cartItems,
+    isFirstOrder
+  );
+  if (!validation.valid) {
+    return res
+      .status(400)
+      .json({ success: false, message: validation.errors[0], errors: validation.errors });
+  }
+
+  const discount = coupon.calculateDiscount(cartTotal || 0);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      coupon: {
+        code: coupon.code,
+        description: coupon.description,
+        discountType: coupon.discountType,
+        discountValue: coupon.discountValue,
+        maxDiscount: coupon.maxDiscount,
+        minOrderValue: coupon.minOrderValue,
+        validUntil: coupon.validUntil,
+      },
+      discount,
+      newTotal: Math.max(0, (cartTotal || 0) - discount),
+    },
+  });
+});
+
+/**
+ * @desc    Get available coupons for user
+ * @route   GET /api/coupons/available
+ * @access  Private
+ */
+export const getAvailableCoupons = asyncHandler(async (req, res) => {
+  const now = new Date();
+  const coupons = await Coupon.find({
+    isActive: true,
+    validFrom: { $lte: now },
+    validUntil: { $gte: now },
+    $or: [{ usageLimit: null }, { $expr: { $lt: ["$usedCount", "$usageLimit"] } }],
+  })
+    .select("code description discountType discountValue maxDiscount minOrderValue validUntil")
+    .lean();
+
+  const availableCoupons = [];
+  for (const coupon of coupons) {
+    const fullCoupon = await Coupon.findById(coupon._id);
+    const userUsageCount = fullCoupon.usedBy.filter(
+      (u) => u.user.toString() === req.user._id.toString()
+    ).length;
+    if (userUsageCount < fullCoupon.usageLimitPerUser) {
+      availableCoupons.push({
+        ...coupon,
+        remainingUses: fullCoupon.usageLimitPerUser - userUsageCount,
+      });
+    }
+  }
+
+  res.status(200).json({ success: true, data: { coupons: availableCoupons } });
+});
+
+// ============================================================
+// ADMIN ROUTES
+// ============================================================
+
+/** @desc Create coupon - POST /api/coupons */
+export const createCoupon = asyncHandler(async (req, res, next) => {
+  const existingCoupon = await Coupon.findOne({ code: req.body.code?.toUpperCase() });
+  if (existingCoupon) return next(new AppError("Coupon code already exists", 400));
+
+  const coupon = await Coupon.create({ ...req.body, createdBy: req.user._id });
+  res.status(201).json({ success: true, message: "Coupon created", data: { coupon } });
+});
+
+/** @desc Get all coupons - GET /api/coupons */
+export const getAllCoupons = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 20;
+  const { status, search } = req.query;
+  const query = {};
+
+  if (status === "active") {
+    const now = new Date();
+    query.isActive = true;
+    query.validFrom = { $lte: now };
+    query.validUntil = { $gte: now };
+  } else if (status === "expired") query.validUntil = { $lt: new Date() };
+  else if (status === "inactive") query.isActive = false;
+
+  if (search) {
+    query.$or = [
+      { code: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const [coupons, total] = await Promise.all([
+    Coupon.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Coupon.countDocuments(query),
+  ]);
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      data: { coupons, pagination: { currentPage: page, totalPages: Math.ceil(total / limit) } },
+    });
+});
+
+/** @desc Get single coupon - GET /api/coupons/:id */
+export const getCoupon = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findById(req.params.id).populate(
+    "usedBy.user",
+    "firstName lastName email"
+  );
+  if (!coupon) return next(new AppError("Coupon not found", 404));
+  res.status(200).json({ success: true, data: { coupon } });
+});
+
+/** @desc Update coupon - PUT /api/coupons/:id */
+export const updateCoupon = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findById(req.params.id);
+  if (!coupon) return next(new AppError("Coupon not found", 404));
+
+  if (req.body.code && coupon.usedCount > 0 && req.body.code !== coupon.code) {
+    return next(new AppError("Cannot change code of a used coupon", 400));
+  }
+
+  const allowedFields = [
+    "description",
+    "discountType",
+    "discountValue",
+    "maxDiscount",
+    "minOrderValue",
+    "validFrom",
+    "validUntil",
+    "usageLimit",
+    "usageLimitPerUser",
+    "isActive",
+  ];
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) coupon[field] = req.body[field];
+  });
+
+  await coupon.save();
+  res.status(200).json({ success: true, message: "Coupon updated", data: { coupon } });
+});
+
+/** @desc Delete coupon - DELETE /api/coupons/:id */
+export const deleteCoupon = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findById(req.params.id);
+  if (!coupon) return next(new AppError("Coupon not found", 404));
+
+  if (coupon.usedCount > 0) {
+    coupon.isActive = false;
+    await coupon.save();
+    return res
+      .status(200)
+      .json({ success: true, message: "Coupon deactivated (has usage history)" });
+  }
+
+  await Coupon.findByIdAndDelete(req.params.id);
+  res.status(200).json({ success: true, message: "Coupon deleted" });
+});
+
+/** @desc Toggle coupon status - PATCH /api/coupons/:id/toggle */
+export const toggleCouponStatus = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findById(req.params.id);
+  if (!coupon) return next(new AppError("Coupon not found", 404));
+
+  coupon.isActive = !coupon.isActive;
+  await coupon.save();
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: `Coupon ${coupon.isActive ? "activated" : "deactivated"}`,
+      data: { coupon },
+    });
+});
+
+/** @desc Get coupon stats - GET /api/coupons/:id/stats */
+export const getCouponStats = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findById(req.params.id);
+  if (!coupon) return next(new AppError("Coupon not found", 404));
+
+  const orders = await Order.find({ couponCode: coupon.code }).select(
+    "totalAmount discount createdAt"
+  );
+  const stats = {
+    totalUses: coupon.usedCount,
+    remainingUses: coupon.usageLimit ? coupon.usageLimit - coupon.usedCount : "Unlimited",
+    totalDiscountGiven: orders.reduce((sum, o) => sum + (o.discount || 0), 0),
+    totalOrderValue: orders.reduce((sum, o) => sum + o.totalAmount, 0),
+  };
+
+  res.status(200).json({ success: true, data: { stats } });
+});
+```
+
+---
+
+#### G.2.3 Payment Controller
+
+**📁 File:** `backend/src/controllers/paymentController.js`  
+**📝 Mô tả:** Xử lý thanh toán COD, Bank Transfer, Stripe (mock), VNPay (mock), refund
+
+```javascript
+import Order from "../models/Order.js";
+import Coupon from "../models/Coupon.js";
+import { asyncHandler, AppError } from "../middleware/errorHandler.js";
+import { sendEmail } from "../utils/emailService.js";
+
+/**
+ * @desc    Get available payment methods
+ * @route   GET /api/payments/methods
+ * @access  Public
+ */
+export const getPaymentMethods = asyncHandler(async (req, res) => {
+  const paymentMethods = [
+    {
+      id: "cod",
+      name: "Cash on Delivery",
+      description: "Pay when you receive",
+      icon: "cash",
+      enabled: true,
+      fee: 0,
+    },
+    {
+      id: "bank_transfer",
+      name: "Bank Transfer",
+      description: "Transfer to our bank",
+      icon: "bank",
+      enabled: true,
+      fee: 0,
+      bankInfo: {
+        bankName: "Vietcombank",
+        accountNumber: "1234567890",
+        accountName: "FASHION STORE",
+        branch: "Ho Chi Minh City",
+      },
+    },
+    {
+      id: "stripe",
+      name: "Credit/Debit Card",
+      description: "Pay with Stripe",
+      icon: "credit-card",
+      enabled: true,
+      supportedCards: ["visa", "mastercard", "amex"],
+    },
+    {
+      id: "vnpay",
+      name: "VNPay",
+      description: "Pay with VNPay QR",
+      icon: "qr-code",
+      enabled: true,
+    },
+  ];
+
+  res
+    .status(200)
+    .json({ success: true, data: { paymentMethods: paymentMethods.filter((m) => m.enabled) } });
+});
+
+/**
+ * @desc    Create payment intent (for Stripe)
+ * @route   POST /api/payments/create-intent
+ */
+export const createPaymentIntent = asyncHandler(async (req, res, next) => {
+  const { orderId, paymentMethod } = req.body;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+  if (order.paymentStatus === "paid") return next(new AppError("Order already paid", 400));
+
+  // Mock payment intent
+  const paymentIntent = {
+    id: `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    clientSecret: `${Date.now()}_secret_${Math.random().toString(36).substr(2, 16)}`,
+    amount: order.totalAmount * 100,
+    currency: "usd",
+  };
+
+  order.paymentDetails = {
+    paymentIntentId: paymentIntent.id,
+    paymentMethod,
+    createdAt: new Date(),
+  };
+  await order.save();
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      data: { clientSecret: paymentIntent.clientSecret, paymentIntentId: paymentIntent.id },
+    });
+});
+
+/**
+ * @desc    Confirm payment
+ * @route   POST /api/payments/confirm
+ */
+export const confirmPayment = asyncHandler(async (req, res, next) => {
+  const { orderId, paymentIntentId, paymentMethod } = req.body;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  order.paymentStatus = "paid";
+  order.paymentDetails = {
+    ...order.paymentDetails,
+    paymentIntentId,
+    paymentMethod,
+    paidAt: new Date(),
+  };
+  order.status = "processing";
+  await order.save();
+
+  // Record coupon usage
+  if (order.couponCode) {
+    const coupon = await Coupon.findOne({ code: order.couponCode });
+    if (coupon) await coupon.recordUsage(order.user, order._id);
+  }
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "Payment confirmed",
+      data: { order: { _id: order._id, orderNumber: order.orderNumber, status: order.status } },
+    });
+});
+
+/**
+ * @desc    Process COD order
+ * @route   POST /api/payments/cod
+ */
+export const processCOD = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.body.orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  order.paymentMethod = "cod";
+  order.paymentStatus = "pending";
+  order.status = "processing";
+  order.paymentDetails = { paymentMethod: "cod", note: "Payment on delivery" };
+  await order.save();
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "COD order confirmed",
+      data: { order: { _id: order._id, orderNumber: order.orderNumber } },
+    });
+});
+
+/**
+ * @desc    Process Bank Transfer
+ * @route   POST /api/payments/bank-transfer
+ */
+export const processBankTransfer = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.body.orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  const transferReference = `FS${order.orderNumber}`;
+  order.paymentMethod = "bank_transfer";
+  order.paymentStatus = "awaiting_payment";
+  order.paymentDetails = {
+    paymentMethod: "bank_transfer",
+    transferReference,
+    bankInfo: {
+      bankName: "Vietcombank",
+      accountNumber: "1234567890",
+      accountName: "FASHION STORE",
+    },
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  };
+  await order.save();
+
+  // Send email with bank transfer instructions
+  if (order.customerEmail) {
+    await sendEmail({
+      to: order.customerEmail,
+      subject: `Bank Transfer Instructions - Order #${order.orderNumber}`,
+      html: `<p>Please transfer $${order.totalAmount} with reference: ${transferReference}</p>`,
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Please complete bank transfer within 24 hours",
+    data: {
+      transferDetails: {
+        transferReference,
+        bankInfo: order.paymentDetails.bankInfo,
+        amount: order.totalAmount,
+      },
+    },
+  });
+});
+
+/**
+ * @desc    Verify bank transfer (Admin)
+ * @route   POST /api/payments/verify-transfer
+ */
+export const verifyBankTransfer = asyncHandler(async (req, res, next) => {
+  const { orderId, transactionId, notes } = req.body;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+  if (order.paymentMethod !== "bank_transfer")
+    return next(new AppError("Not a bank transfer order", 400));
+
+  order.paymentStatus = "paid";
+  order.status = "processing";
+  order.paymentDetails = {
+    ...order.paymentDetails,
+    verified: true,
+    verifiedAt: new Date(),
+    verifiedBy: req.user._id,
+    transactionId,
+    notes,
+  };
+  await order.save();
+
+  res.status(200).json({ success: true, message: "Bank transfer verified", data: { order } });
+});
+
+/**
+ * @desc    Create VNPay payment
+ * @route   POST /api/payments/vnpay/create
+ */
+export const createVNPayPayment = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.body.orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  const vnpayUrl = `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=${order.totalAmount * 100}&vnp_OrderInfo=${order.orderNumber}`;
+
+  order.paymentMethod = "vnpay";
+  order.paymentStatus = "awaiting_payment";
+  order.paymentDetails = { paymentMethod: "vnpay", vnpayTxnRef: Date.now().toString() };
+  await order.save();
+
+  res.status(200).json({ success: true, data: { paymentUrl: vnpayUrl, orderId: order._id } });
+});
+
+/**
+ * @desc    VNPay callback
+ * @route   GET /api/payments/vnpay/callback
+ */
+export const vnpayCallback = asyncHandler(async (req, res, next) => {
+  const { vnp_ResponseCode, vnp_TxnRef, vnp_TransactionNo } = req.query;
+  const order = await Order.findOne({ "paymentDetails.vnpayTxnRef": vnp_TxnRef });
+  if (!order) return next(new AppError("Order not found", 404));
+
+  if (vnp_ResponseCode === "00") {
+    order.paymentStatus = "paid";
+    order.status = "processing";
+    order.paymentDetails = {
+      ...order.paymentDetails,
+      vnpayTransactionNo: vnp_TransactionNo,
+      paidAt: new Date(),
+    };
+    await order.save();
+    res.redirect(`/order-confirmation/${order.orderNumber}?payment=success`);
+  } else {
+    order.paymentStatus = "failed";
+    await order.save();
+    res.redirect(`/order-confirmation/${order.orderNumber}?payment=failed`);
+  }
+});
+
+/**
+ * @desc    Get payment status
+ * @route   GET /api/payments/status/:orderId
+ */
+export const getPaymentStatus = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.orderId).select(
+    "orderNumber paymentStatus paymentMethod totalAmount"
+  );
+  if (!order) return next(new AppError("Order not found", 404));
+  res
+    .status(200)
+    .json({
+      success: true,
+      data: {
+        orderNumber: order.orderNumber,
+        paymentStatus: order.paymentStatus,
+        amount: order.totalAmount,
+      },
+    });
+});
+
+/**
+ * @desc    Request refund
+ * @route   POST /api/payments/refund
+ */
+export const requestRefund = asyncHandler(async (req, res, next) => {
+  const { orderId, reason } = req.body;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+  if (order.paymentStatus !== "paid") return next(new AppError("Cannot refund unpaid order", 400));
+
+  order.refundRequest = { requested: true, requestedAt: new Date(), reason, status: "pending" };
+  await order.save();
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "Refund request submitted",
+      data: { orderId: order._id, refundStatus: "pending" },
+    });
+});
+
+/**
+ * @desc    Process refund (Admin)
+ * @route   POST /api/payments/refund/process
+ */
+export const processRefund = asyncHandler(async (req, res, next) => {
+  const { orderId, approved, adminNotes } = req.body;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  order.refundRequest = {
+    ...order.refundRequest,
+    status: approved ? "approved" : "rejected",
+    processedAt: new Date(),
+    processedBy: req.user._id,
+    adminNotes,
+  };
+  if (approved) {
+    order.paymentStatus = "refunded";
+    order.status = "cancelled";
+  }
+  await order.save();
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: `Refund ${approved ? "approved" : "rejected"}`,
+      data: { order },
+    });
+});
+```
+
+---
+
+#### G.2.4 Wishlist Controller
+
+**📁 File:** `backend/src/controllers/wishlistController.js`  
+**📝 Mô tả:** Quản lý danh sách yêu thích của user
+
+```javascript
+import User from "../models/User.js";
+import Product from "../models/Product.js";
+
+/**
+ * @desc    Get user's wishlist
+ * @route   GET /api/wishlist
+ * @access  Private
+ */
+export const getWishlist = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).populate({
+      path: "wishlist.product",
+      select: "name slug price salePrice images stock category",
+    });
+
+    const wishlistItems = user.wishlist
+      .filter((item) => item.product)
+      .map((item) => ({ _id: item._id, product: item.product, addedAt: item.addedAt }));
+
+    res
+      .status(200)
+      .json({ success: true, data: { wishlist: wishlistItems, count: wishlistItems.length } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Add product to wishlist
+ * @route   POST /api/wishlist/:productId
+ * @access  Private
+ */
+export const addToWishlist = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const user = await User.findById(req.user._id);
+    const existingIndex = user.wishlist.findIndex((item) => item.product.toString() === productId);
+
+    if (existingIndex > -1) {
+      return res.status(400).json({ success: false, message: "Product already in wishlist" });
+    }
+
+    user.wishlist.push({ product: productId, addedAt: new Date() });
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Added to wishlist",
+        data: { productId, count: user.wishlist.length },
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Remove product from wishlist
+ * @route   DELETE /api/wishlist/:productId
+ * @access  Private
+ */
+export const removeFromWishlist = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const user = await User.findById(req.user._id);
+    const existingIndex = user.wishlist.findIndex((item) => item.product.toString() === productId);
+
+    if (existingIndex === -1) {
+      return res.status(404).json({ success: false, message: "Product not in wishlist" });
+    }
+
+    user.wishlist.splice(existingIndex, 1);
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Removed from wishlist",
+        data: { productId, count: user.wishlist.length },
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Toggle product in wishlist
+ * @route   POST /api/wishlist/:productId/toggle
+ * @access  Private
+ */
+export const toggleWishlist = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const user = await User.findById(req.user._id);
+    const existingIndex = user.wishlist.findIndex((item) => item.product.toString() === productId);
+
+    let isInWishlist;
+    if (existingIndex > -1) {
+      user.wishlist.splice(existingIndex, 1);
+      isInWishlist = false;
+    } else {
+      user.wishlist.push({ product: productId, addedAt: new Date() });
+      isInWishlist = true;
+    }
+
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: isInWishlist ? "Added to wishlist" : "Removed from wishlist",
+      data: { productId, isInWishlist, count: user.wishlist.length },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Check if product is in wishlist
+ * @route   GET /api/wishlist/check/:productId
+ * @access  Private
+ */
+export const checkWishlist = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const isInWishlist = user.wishlist.some(
+      (item) => item.product.toString() === req.params.productId
+    );
+    res
+      .status(200)
+      .json({ success: true, data: { productId: req.params.productId, isInWishlist } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Clear entire wishlist
+ * @route   DELETE /api/wishlist
+ * @access  Private
+ */
+export const clearWishlist = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.wishlist = [];
+    await user.save();
+    res.status(200).json({ success: true, message: "Wishlist cleared", data: { count: 0 } });
+  } catch (error) {
+    next(error);
+  }
+};
+```
+
+---
+
+#### G.2.5 Inventory Controller
+
+**📁 File:** `backend/src/controllers/inventoryController.js`  
+**📝 Mô tả:** Quản lý tồn kho, cảnh báo hết hàng, bulk update, stock history
+
+```javascript
+import Product from "../models/Product.js";
+import { sendEmail } from "../utils/emailService.js";
+
+/**
+ * @desc    Get inventory alerts (low stock / out of stock)
+ * @route   GET /api/inventory/alerts
+ * @access  Private/Admin
+ */
+export const getInventoryAlerts = async (req, res) => {
+  try {
+    const { lowStockThreshold = 10, outOfStockOnly = false } = req.query;
+    const query = { isActive: true };
+
+    if (outOfStockOnly === "true") query.stock = 0;
+    else query.stock = { $lte: parseInt(lowStockThreshold) };
+
+    const products = await Product.find(query)
+      .sort({ stock: 1 })
+      .select("name sku stock price category images");
+    const outOfStock = products.filter((p) => p.stock === 0);
+    const lowStock = products.filter((p) => p.stock > 0);
+
+    res.json({
+      success: true,
+      data: {
+        outOfStock: { count: outOfStock.length, products: outOfStock },
+        lowStock: {
+          count: lowStock.length,
+          products: lowStock,
+          threshold: parseInt(lowStockThreshold),
+        },
+        totalAlerts: products.length,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Cannot get inventory alerts" });
+  }
+};
+
+/**
+ * @desc    Bulk update stock
+ * @route   PUT /api/inventory/bulk-update
+ * @access  Private/Admin
+ */
+export const bulkUpdateStock = async (req, res) => {
+  try {
+    const { updates } = req.body;
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({ success: false, message: "Invalid update list" });
+    }
+
+    const results = { success: [], failed: [] };
+
+    for (const update of updates) {
+      try {
+        const { productId, stock, reason } = update;
+        if (!productId || stock === undefined || stock < 0) {
+          results.failed.push({ productId, error: "Invalid data" });
+          continue;
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+          results.failed.push({ productId, error: "Product not found" });
+          continue;
+        }
+
+        const oldStock = product.stock;
+        product.stock = stock;
+        if (!product.stockHistory) product.stockHistory = [];
+        product.stockHistory.push({
+          oldStock,
+          newStock: stock,
+          reason: reason || "Bulk update",
+          updatedBy: req.user._id,
+          updatedAt: new Date(),
+        });
+
+        await product.save();
+        results.success.push({ productId, name: product.name, oldStock, newStock: stock });
+      } catch (err) {
+        results.failed.push({ productId: update.productId, error: err.message });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Updated ${results.success.length}/${updates.length} products`,
+      data: results,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Bulk update failed" });
+  }
+};
+
+/**
+ * @desc    Adjust stock (+/-)
+ * @route   PUT /api/inventory/:productId/adjust
+ * @access  Private/Admin
+ */
+export const adjustStock = async (req, res) => {
+  try {
+    const { adjustment, reason } = req.body;
+    if (adjustment === undefined || adjustment === 0) {
+      return res.status(400).json({ success: false, message: "Invalid adjustment" });
+    }
+
+    const product = await Product.findById(req.params.productId);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const oldStock = product.stock;
+    const newStock = oldStock + adjustment;
+
+    if (newStock < 0) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `Cannot reduce by ${Math.abs(adjustment)}. Current: ${oldStock}`,
+        });
+    }
+
+    product.stock = newStock;
+    if (!product.stockHistory) product.stockHistory = [];
+    product.stockHistory.push({
+      oldStock,
+      newStock,
+      adjustment,
+      reason: reason || (adjustment > 0 ? "Restock" : "Sold"),
+      updatedBy: req.user._id,
+      updatedAt: new Date(),
+    });
+
+    await product.save();
+    res.json({
+      success: true,
+      message: adjustment > 0 ? "Stock added" : "Stock reduced",
+      data: { productId: product._id, oldStock, adjustment, newStock },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Stock adjustment failed" });
+  }
+};
+
+/**
+ * @desc    Get stock history
+ * @route   GET /api/inventory/:productId/history
+ * @access  Private/Admin
+ */
+export const getStockHistory = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.productId)
+      .select("name sku stock stockHistory")
+      .populate("stockHistory.updatedBy", "firstName lastName");
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    res.json({
+      success: true,
+      data: {
+        product: { name: product.name, sku: product.sku, currentStock: product.stock },
+        history: product.stockHistory || [],
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Cannot get stock history" });
+  }
+};
+
+/**
+ * @desc    Get inventory report by category
+ * @route   GET /api/inventory/report
+ * @access  Private/Admin
+ */
+export const getInventoryReport = async (req, res) => {
+  try {
+    const [summary, byCategory] = await Promise.all([
+      Product.aggregate([
+        { $match: { isActive: true } },
+        {
+          $group: {
+            _id: null,
+            totalProducts: { $sum: 1 },
+            totalStock: { $sum: "$stock" },
+            totalValue: { $sum: { $multiply: ["$price", "$stock"] } },
+            outOfStock: { $sum: { $cond: [{ $eq: ["$stock", 0] }, 1, 0] } },
+            lowStock: {
+              $sum: { $cond: [{ $and: [{ $gt: ["$stock", 0] }, { $lte: ["$stock", 10] }] }, 1, 0] },
+            },
+          },
+        },
+      ]),
+      Product.aggregate([
+        { $match: { isActive: true } },
+        {
+          $group: {
+            _id: "$category",
+            totalProducts: { $sum: 1 },
+            avgPrice: { $avg: "$price" },
+            totalStock: { $sum: "$stock" },
+            avgRating: { $avg: "$ratings.average" },
+          },
+        },
+        { $sort: { totalProducts: -1 } },
+      ]),
+    ]);
+
+    res.json({
+      success: true,
+      data: { summary: summary[0] || {}, byCategory, generatedAt: new Date() },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Cannot generate report" });
+  }
+};
+
+/**
+ * @desc    Send low stock alerts via email
+ * @route   POST /api/inventory/send-alerts
+ * @access  Private/Admin
+ */
+export const sendLowStockAlerts = async (req, res) => {
+  try {
+    const { threshold = 10, email } = req.body;
+    const products = await Product.find({ isActive: true, stock: { $lte: threshold } }).select(
+      "name sku stock category"
+    );
+
+    if (products.length === 0) {
+      return res.json({ success: true, message: "No low stock products" });
+    }
+
+    const productList = products
+      .map((p) => `- ${p.name} (SKU: ${p.sku || "N/A"}) - Stock: ${p.stock}`)
+      .join("\n");
+
+    await sendEmail({
+      to: email || req.user.email,
+      subject: `Low Stock Alert - ${products.length} products need attention`,
+      text: `The following products are running low on stock:\n\n${productList}`,
+    });
+
+    res.json({ success: true, message: `Alert sent for ${products.length} products` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Cannot send alerts" });
+  }
+};
+```
+
+---
+
+### G.3 Backend - Routes
+
+#### G.3.1 Main Routes Index
+
+**📁 File:** `backend/src/routes/index.js`  
+**📝 Mô tả:** File tổng hợp tất cả routes
+
+```javascript
+import express from "express";
+import authRoutes from "./authRoutes.js";
+import productRoutes from "./productRoutes.js";
+import cartRoutes from "./cartRoutes.js";
+import profileRoutes from "./profileRoutes.js";
+import orderRoutes from "./orderRoutes.js";
+import checkoutRoutes from "./checkoutRoutes.js";
+import wishlistRoutes from "./wishlistRoutes.js";
+import reviewRoutes from "./reviewRoutes.js";
+import couponRoutes from "./couponRoutes.js";
+import paymentRoutes from "./paymentRoutes.js";
+import adminRoutes from "./adminRoutes.js";
+import inventoryRoutes from "./inventoryRoutes.js";
+
+const router = express.Router();
+
+// Mount routes
+router.use("/auth", authRoutes);
+router.use("/products", productRoutes);
+router.use("/cart", cartRoutes);
+router.use("/profile", profileRoutes);
+router.use("/orders", orderRoutes);
+router.use("/checkout", checkoutRoutes);
+router.use("/wishlist", wishlistRoutes);
+router.use("/reviews", reviewRoutes);
+router.use("/coupons", couponRoutes);
+router.use("/payments", paymentRoutes);
+router.use("/admin", adminRoutes);
+router.use("/inventory", inventoryRoutes);
+
+// Health check
+router.get("/health", (req, res) => {
+  res
+    .status(200)
+    .json({ success: true, message: "API is healthy", timestamp: new Date().toISOString() });
+});
+
+export default router;
+```
+
+---
+
+#### G.3.2 Wishlist Routes
+
+**📁 File:** `backend/src/routes/wishlistRoutes.js`
+
+```javascript
+import express from "express";
+import { protect } from "../middleware/auth.js";
+import {
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
+  toggleWishlist,
+  checkWishlist,
+  clearWishlist,
+} from "../controllers/wishlistController.js";
+
+const router = express.Router();
+router.use(protect); // All wishlist routes require auth
+
+router.get("/", getWishlist);
+router.delete("/", clearWishlist);
+router.get("/check/:productId", checkWishlist);
+router.post("/:productId", addToWishlist);
+router.delete("/:productId", removeFromWishlist);
+router.post("/:productId/toggle", toggleWishlist);
+
+export default router;
+```
+
+---
+
+#### G.3.3 Review Routes
+
+**📁 File:** `backend/src/routes/reviewRoutes.js`
+
+```javascript
+import express from "express";
+import { protect, adminOnly } from "../middleware/auth.js";
+import {
+  getProductReviews,
+  createReview,
+  updateReview,
+  deleteReview,
+  voteHelpful,
+  getMyReviews,
+  canReviewProduct,
+  getAllReviews,
+  approveReview,
+  rejectReview,
+  replyToReview,
+} from "../controllers/reviewController.js";
+
+const router = express.Router();
+
+// Public
+router.get("/product/:productId", getProductReviews);
+
+// Protected
+router.get("/my-reviews", protect, getMyReviews);
+router.get("/can-review/:productId", protect, canReviewProduct);
+router.post("/", protect, createReview);
+router.put("/:id", protect, updateReview);
+router.delete("/:id", protect, deleteReview);
+router.post("/:id/helpful", protect, voteHelpful);
+
+// Admin
+router.get("/admin/all", protect, adminOnly, getAllReviews);
+router.patch("/:id/approve", protect, adminOnly, approveReview);
+router.patch("/:id/reject", protect, adminOnly, rejectReview);
+router.post("/:id/reply", protect, adminOnly, replyToReview);
+
+export default router;
+```
+
+---
+
+#### G.3.4 Coupon Routes
+
+**📁 File:** `backend/src/routes/couponRoutes.js`
+
+```javascript
+import express from "express";
+import { protect, optionalAuth, adminOnly } from "../middleware/auth.js";
+import {
+  validateCoupon,
+  getAvailableCoupons,
+  createCoupon,
+  getAllCoupons,
+  getCoupon,
+  updateCoupon,
+  deleteCoupon,
+  toggleCouponStatus,
+  getCouponStats,
+} from "../controllers/couponController.js";
+
+const router = express.Router();
+
+// User routes
+router.post("/validate", optionalAuth, validateCoupon);
+router.get("/available", protect, getAvailableCoupons);
+
+// Admin CRUD
+router.route("/").get(protect, adminOnly, getAllCoupons).post(protect, adminOnly, createCoupon);
+router
+  .route("/:id")
+  .get(protect, adminOnly, getCoupon)
+  .put(protect, adminOnly, updateCoupon)
+  .delete(protect, adminOnly, deleteCoupon);
+router.patch("/:id/toggle", protect, adminOnly, toggleCouponStatus);
+router.get("/:id/stats", protect, adminOnly, getCouponStats);
+
+export default router;
+```
+
+---
+
+#### G.3.5 Payment Routes
+
+**📁 File:** `backend/src/routes/paymentRoutes.js`
+
+```javascript
+import express from "express";
+import { protect, optionalAuth, adminOnly } from "../middleware/auth.js";
+import {
+  getPaymentMethods,
+  createPaymentIntent,
+  confirmPayment,
+  processCOD,
+  processBankTransfer,
+  verifyBankTransfer,
+  createVNPayPayment,
+  vnpayCallback,
+  getPaymentStatus,
+  requestRefund,
+  processRefund,
+} from "../controllers/paymentController.js";
+
+const router = express.Router();
+
+// Public
+router.get("/methods", getPaymentMethods);
+router.get("/vnpay/callback", vnpayCallback);
+
+// Protected
+router.post("/create-intent", optionalAuth, createPaymentIntent);
+router.post("/confirm", optionalAuth, confirmPayment);
+router.post("/cod", optionalAuth, processCOD);
+router.post("/bank-transfer", optionalAuth, processBankTransfer);
+router.post("/vnpay/create", optionalAuth, createVNPayPayment);
+router.get("/status/:orderId", optionalAuth, getPaymentStatus);
+router.post("/refund", protect, requestRefund);
+
+// Admin
+router.post("/verify-transfer", protect, adminOnly, verifyBankTransfer);
+router.post("/refund/process", protect, adminOnly, processRefund);
+
+export default router;
+```
+
+---
+
+#### G.3.6 Admin Routes
+
+**📁 File:** `backend/src/routes/adminRoutes.js`
+
+```javascript
+import express from "express";
+import {
+  getDashboardOverview,
+  getRevenueStats,
+  getTopProducts,
+  getRecentOrders,
+  getCategoryStats,
+  getLowStockProducts,
+  getUserStats,
+  updateOrderStatus,
+  updateProductStock,
+  getAllOrders,
+  getAllUsers,
+  updateUserRole,
+} from "../controllers/adminController.js";
+import { protect, adminOnly } from "../middleware/auth.js";
+
+const router = express.Router();
+router.use(protect, adminOnly); // All admin routes
+
+// Dashboard
+router.get("/dashboard", getDashboardOverview);
+router.get("/revenue-stats", getRevenueStats);
+router.get("/top-products", getTopProducts);
+router.get("/category-stats", getCategoryStats);
+router.get("/user-stats", getUserStats);
+router.get("/low-stock", getLowStockProducts);
+
+// Order Management
+router.get("/orders", getAllOrders);
+router.get("/recent-orders", getRecentOrders);
+router.put("/orders/:id/status", updateOrderStatus);
+
+// User Management
+router.get("/users", getAllUsers);
+router.put("/users/:id/role", updateUserRole);
+
+// Inventory
+router.put("/products/:id/stock", updateProductStock);
+
+export default router;
+```
+
+---
+
+#### G.3.7 Inventory Routes
+
+**📁 File:** `backend/src/routes/inventoryRoutes.js`
+
+```javascript
+import express from "express";
+import {
+  getInventoryAlerts,
+  bulkUpdateStock,
+  adjustStock,
+  getStockHistory,
+  getInventoryReport,
+  sendLowStockAlerts,
+} from "../controllers/inventoryController.js";
+import { protect, adminOnly } from "../middleware/auth.js";
+
+const router = express.Router();
+router.use(protect, adminOnly);
+
+router.get("/alerts", getInventoryAlerts);
+router.get("/report", getInventoryReport);
+router.post("/send-alerts", sendLowStockAlerts);
+router.put("/bulk-update", bulkUpdateStock);
+router.put("/:productId/adjust", adjustStock);
+router.get("/:productId/history", getStockHistory);
+
+export default router;
+```
+
+---
+
+### G.4 Frontend - Services
+
+#### G.4.1 Wishlist Service
+
+**📁 File:** `frontend/src/services/wishlistService.js`  
+**📝 Mô tả:** API calls cho wishlist
+
+```javascript
+import api from "./api";
+
+const wishlistService = {
+  async getWishlist() {
+    const response = await api.get("/wishlist");
+    return response.data;
+  },
+
+  async addToWishlist(productId) {
+    const response = await api.post(`/wishlist/${productId}`);
+    return response.data;
+  },
+
+  async removeFromWishlist(productId) {
+    const response = await api.delete(`/wishlist/${productId}`);
+    return response.data;
+  },
+
+  async toggleWishlist(productId) {
+    const response = await api.post(`/wishlist/${productId}/toggle`);
+    return response.data;
+  },
+
+  async checkWishlist(productId) {
+    const response = await api.get(`/wishlist/check/${productId}`);
+    return response.data;
+  },
+
+  async clearWishlist() {
+    const response = await api.delete("/wishlist");
+    return response.data;
+  },
+};
+
+export default wishlistService;
+```
+
+---
+
+#### G.4.2 Checkout Service
+
+**📁 File:** `frontend/src/services/checkoutService.js`
+
+```javascript
+import api from "./api";
+
+const checkoutService = {
+  async initialize() {
+    const response = await api.post("/checkout/initialize");
+    return response.data.data;
+  },
+
+  async getShippingRates(shippingAddress, subtotal) {
+    const response = await api.post("/checkout/shipping-rates", { shippingAddress, subtotal });
+    return response.data.data;
+  },
+
+  async calculateTax(subtotal) {
+    const response = await api.post("/checkout/calculate-tax", { subtotal });
+    return response.data.data;
+  },
+
+  async validateCoupon(code, subtotal) {
+    const response = await api.post("/checkout/validate-coupon", { code, subtotal });
+    return response.data.data;
+  },
+
+  async completeOrder(orderData) {
+    const response = await api.post("/checkout/complete", orderData);
+    return response.data.data;
+  },
+
+  async getOrderConfirmation(orderNumber, email) {
+    const response = await api.get(`/checkout/order/${orderNumber}`, {
+      params: email ? { email } : {},
+    });
+    return response.data.data.order;
+  },
+};
+
+export default checkoutService;
+```
+
+---
+
+#### G.4.3 Order Service
+
+**📁 File:** `frontend/src/services/orderService.js`
+
+```javascript
+import api from "./api";
+
+const orderService = {
+  async getOrders(params = {}) {
+    const response = await api.get("/orders", { params });
+    return response.data.data;
+  },
+
+  async getOrderById(orderId) {
+    const response = await api.get(`/orders/${orderId}`);
+    return response.data.data.order;
+  },
+
+  async trackOrder(orderNumber, email) {
+    const response = await api.get(`/orders/track/${orderNumber}`, { params: { email } });
+    return response.data.data.order;
+  },
+
+  async cancelOrder(orderId, reason) {
+    const response = await api.post(`/orders/${orderId}/cancel`, { reason });
+    return response.data.data.order;
+  },
+
+  async requestReturn(orderId, returnData) {
+    const response = await api.post(`/orders/${orderId}/return`, returnData);
+    return response.data.data;
+  },
+};
+
+export default orderService;
+```
+
+---
+
+### G.5 Frontend - Hooks
+
+#### G.5.1 useWishlist Hook
+
+**📁 File:** `frontend/src/hooks/useWishlist.js`  
+**📝 Mô tả:** Custom hook quản lý wishlist với optimistic updates
+
+```javascript
+import { useState, useCallback, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import wishlistService from "../services/wishlistService";
+
+export function useWishlist() {
+  const { isAuthenticated, user } = useAuth();
+  const [wishlist, setWishlist] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchWishlist = useCallback(async () => {
+    if (!isAuthenticated) {
+      setWishlist([]);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await wishlistService.getWishlist();
+      if (response.success) {
+        setWishlist(response.data.wishlist || response.data.items || []);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to load wishlist");
+      setWishlist([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist, user]);
+
+  const isInWishlist = useCallback(
+    (productId) => {
+      return wishlist.some((item) => {
+        const itemProductId = item.product?._id || item.product || item._id;
+        return itemProductId === productId;
+      });
+    },
+    [wishlist]
+  );
+
+  const toggleWishlist = useCallback(
+    async (productId) => {
+      if (!isAuthenticated) return { success: false, error: "Authentication required" };
+
+      setIsToggling(true);
+      setError(null);
+
+      // Optimistic update
+      const wasInWishlist = isInWishlist(productId);
+      if (wasInWishlist) {
+        setWishlist((prev) =>
+          prev.filter((item) => (item.product?._id || item.product || item._id) !== productId)
+        );
+      } else {
+        setWishlist((prev) => [...prev, { product: productId, addedAt: new Date() }]);
+      }
+
+      try {
+        const response = await wishlistService.toggleWishlist(productId);
+        if (response.success) {
+          return { success: true, action: response.data.isInWishlist ? "added" : "removed" };
+        }
+        return { success: false, error: response.message };
+      } catch (err) {
+        // Revert on error
+        if (wasInWishlist) {
+          setWishlist((prev) => [...prev, { product: productId, addedAt: new Date() }]);
+        } else {
+          setWishlist((prev) =>
+            prev.filter((item) => (item.product?._id || item.product || item._id) !== productId)
+          );
+        }
+        return {
+          success: false,
+          error: err.response?.data?.message || "Failed to update wishlist",
+        };
+      } finally {
+        setIsToggling(false);
+      }
+    },
+    [isAuthenticated, isInWishlist]
+  );
+
+  const clearWishlist = useCallback(async () => {
+    try {
+      await wishlistService.clearWishlist();
+      setWishlist([]);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.message };
+    }
+  }, []);
+
+  return {
+    wishlist,
+    wishlistCount: wishlist.length,
+    isLoading,
+    isToggling,
+    error,
+    isInWishlist,
+    toggleWishlist,
+    clearWishlist,
+    refetch: fetchWishlist,
+  };
+}
+```
+
+---
+
+### G.6 Frontend - Pages
+
+#### G.6.1 Wishlist Page
+
+**📁 File:** `frontend/src/pages/Wishlist.jsx`  
+**📝 Mô tả:** Trang hiển thị wishlist của user
+
+```jsx
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useWishlist } from "../hooks/useWishlist";
+import { useAuth } from "../context/AuthContext";
+import ProductCard from "../components/products/ProductCard";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import styles from "./Wishlist.module.css";
+
+const Wishlist = () => {
+  const { isAuthenticated } = useAuth();
+  const { wishlist, isLoading, error, clearWishlist, wishlistCount } = useWishlist();
+  const [isClearing, setIsClearing] = useState(false);
+
+  const handleClearWishlist = async () => {
+    if (!window.confirm("Are you sure you want to clear your entire wishlist?")) return;
+    setIsClearing(true);
+    await clearWishlist();
+    setIsClearing(false);
+  };
+
+  const products = wishlist
+    .map((item) => (item.product && typeof item.product === "object" ? item.product : null))
+    .filter(Boolean);
+
+  if (!isAuthenticated) {
+    return (
+      <div className={styles.wishlist}>
+        <div className={styles.container}>
+          <div className={styles.emptyState}>
+            <span className={styles.emptyIcon}>🔐</span>
+            <h2>Please Log In</h2>
+            <p>You need to be logged in to view your wishlist.</p>
+            <Link to="/login" className={styles.loginButton}>
+              Log In
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className={styles.wishlist}>
+        <div className={styles.container}>
+          <LoadingSpinner size="large" />
+          <p>Loading your wishlist...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.wishlist}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.headerText}>
+            <h1 className={styles.title}>My Wishlist</h1>
+            <p className={styles.count}>
+              {wishlistCount} {wishlistCount === 1 ? "item" : "items"}
+            </p>
+          </div>
+          {wishlistCount > 0 && (
+            <button
+              className={styles.clearButton}
+              onClick={handleClearWishlist}
+              disabled={isClearing}
+            >
+              {isClearing ? "Clearing..." : "Clear Wishlist"}
+            </button>
+          )}
+        </div>
+
+        {wishlistCount === 0 ? (
+          <div className={styles.emptyState}>
+            <span className={styles.emptyIcon}>💝</span>
+            <h2>Your wishlist is empty</h2>
+            <p>Save items you love by clicking the heart icon.</p>
+            <Link to="/products" className={styles.browseButton}>
+              Browse Products
+            </Link>
+          </div>
+        ) : (
+          <div className={styles.productGrid}>
+            {products.map((product) => (
+              <ProductCard key={product._id} product={product} showWishlistButton={true} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Wishlist;
+```
+
+---
+
+### G.7 Tổng Kết Files Đã Tạo/Cập Nhật
+
+| Loại    | File                                             | Mô tả                           |
+| ------- | ------------------------------------------------ | ------------------------------- |
+| Model   | `backend/src/models/Review.js`                   | Review & Rating Model           |
+| Model   | `backend/src/models/Coupon.js`                   | Coupon Model                    |
+| Ctrl    | `backend/src/controllers/reviewController.js`    | Review CRUD + Admin moderation  |
+| Ctrl    | `backend/src/controllers/couponController.js`    | Coupon CRUD + validation        |
+| Ctrl    | `backend/src/controllers/paymentController.js`   | Payment methods integration     |
+| Ctrl    | `backend/src/controllers/wishlistController.js`  | Wishlist management             |
+| Ctrl    | `backend/src/controllers/inventoryController.js` | Inventory management            |
+| Ctrl    | `backend/src/controllers/adminController.js`     | Admin dashboard                 |
+| Routes  | `backend/src/routes/index.js`                    | Main routes index               |
+| Routes  | `backend/src/routes/reviewRoutes.js`             | Review routes                   |
+| Routes  | `backend/src/routes/couponRoutes.js`             | Coupon routes                   |
+| Routes  | `backend/src/routes/paymentRoutes.js`            | Payment routes                  |
+| Routes  | `backend/src/routes/wishlistRoutes.js`           | Wishlist routes                 |
+| Routes  | `backend/src/routes/adminRoutes.js`              | Admin routes                    |
+| Routes  | `backend/src/routes/inventoryRoutes.js`          | Inventory routes                |
+| Service | `frontend/src/services/wishlistService.js`       | Wishlist API calls              |
+| Service | `frontend/src/services/checkoutService.js`       | Checkout API calls              |
+| Service | `frontend/src/services/orderService.js`          | Order API calls                 |
+| Hook    | `frontend/src/hooks/useWishlist.js`              | Wishlist hook với optimistic UI |
+| Page    | `frontend/src/pages/Wishlist.jsx`                | Wishlist page                   |
+
+---
+
+> 📅 **Cập nhật lần cuối:** 2026-02-02  
+> ✅ Tài liệu đã bao gồm toàn bộ source code từ các session phát triển  
+> 🎯 Sử dụng làm mẫu giáo án thực hành cho học viên

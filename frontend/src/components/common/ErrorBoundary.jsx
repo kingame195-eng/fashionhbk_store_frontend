@@ -49,25 +49,25 @@ class ErrorBoundary extends Component {
         <div style={styles.container}>
           <div style={styles.content}>
             <div style={styles.icon}>⚠️</div>
-            <h1 style={styles.title}>Oops! Đã có lỗi xảy ra</h1>
+            <h1 style={styles.title}>Oops! An error occurred</h1>
             <p style={styles.message}>
-              Chúng tôi xin lỗi vì sự bất tiện này. Vui lòng thử lại hoặc liên hệ hỗ trợ nếu vấn đề
-              vẫn tiếp tục.
+              We apologize for the inconvenience. Please try again or contact support if the problem
+              continues.
             </p>
 
             <div style={styles.actions}>
               <button onClick={this.handleRetry} style={styles.retryButton}>
-                Thử lại
+                Try Again
               </button>
               <button onClick={() => (window.location.href = "/")} style={styles.homeButton}>
-                Về trang chủ
+                Go Home
               </button>
             </div>
 
             {/* Show error details in development */}
             {import.meta.env.DEV && this.state.error && (
               <details style={styles.details}>
-                <summary style={styles.summary}>Chi tiết lỗi (Development only)</summary>
+                <summary style={styles.summary}>Error Details (Development only)</summary>
                 <pre style={styles.errorStack}>
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}

@@ -191,13 +191,13 @@ const formatPrice = (price) => {
 };
 
 /**
- * Component hiển thị một sản phẩm trong giỏ hàng
+ * Component displays a product in the cart
  */
 function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
-  // Lấy thông tin sản phẩm từ item
+  // Get product information from item
   const product = item.product || {};
   const variant = item.variant || {};
-  const name = product.name || item.name || "Sản phẩm";
+  const name = product.name || item.name || "Product";
   const image = product.images?.[0] || variant.image || item.image || "/images/placeholder.jpg";
   const price = variant.price ?? product.price ?? item.price ?? 0;
   const originalPrice = product.originalPrice || product.compareAtPrice;
@@ -253,7 +253,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
               className={styles.quantityBtn}
               onClick={() => handleQuantityChange(quantity - 1)}
               disabled={quantity <= 1 || isUpdating}
-              aria-label="Giảm số lượng"
+              aria-label="Decrease quantity"
             >
               <MinusIcon />
             </button>
@@ -262,7 +262,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
               className={styles.quantityBtn}
               onClick={() => handleQuantityChange(quantity + 1)}
               disabled={quantity >= maxStock || isUpdating}
-              aria-label="Tăng số lượng"
+              aria-label="Increase quantity"
             >
               <PlusIcon />
             </button>
@@ -271,7 +271,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
             className={styles.removeBtn}
             onClick={() => onRemove(item._id)}
             disabled={isUpdating}
-            aria-label="Xóa sản phẩm"
+            aria-label="Remove product"
           >
             <TrashIcon />
           </button>
@@ -332,7 +332,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!code.trim()) {
-      setError("Vui lòng nhập mã giảm giá");
+      setError("Please enter a discount code");
       return;
     }
     setError("");
@@ -462,11 +462,11 @@ function OrderSummary({
 
   return (
     <div className={styles.orderSummary}>
-      <h2 className={styles.summaryTitle}>Tóm tắt đơn hàng</h2>
+      <h2 className={styles.summaryTitle}>Order Summary</h2>
 
       <div className={styles.summaryDetails}>
         <div className={styles.summaryRow}>
-          <span>Tạm tính ({itemCount} sản phẩm)</span>
+          <span>Subtotal ({itemCount} products)</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
 
@@ -512,12 +512,12 @@ function OrderSummary({
         isLoading={isLoading}
         leftIcon={<LockIcon />}
       >
-        {isAuthenticated ? "Tiến hành thanh toán" : "Đăng nhập để thanh toán"}
+        {isAuthenticated ? "Proceed to Checkout" : "Login to Checkout"}
       </Button>
 
       <div className={styles.secureCheckout}>
         <LockIcon />
-        <span>Thanh toán an toàn với SSL 256-bit</span>
+        <span>Secure checkout with SSL 256-bit</span>
       </div>
 
       {/* Payment methods */}
@@ -534,7 +534,7 @@ function OrderSummary({
 }
 
 /**
- * Component giỏ hàng trống
+ * Empty cart component
  */
 function EmptyCart() {
   return (
@@ -542,8 +542,8 @@ function EmptyCart() {
       <div className={styles.emptyCartIcon}>
         <ShoppingBagIcon />
       </div>
-      <h2>Giỏ hàng của bạn đang trống</h2>
-      <p>Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any products to your cart yet.</p>
       <Link to="/products">
         <Button variant="primary" size="lg" leftIcon={<ArrowLeftIcon />}>
           Tiếp tục mua sắm
@@ -554,7 +554,7 @@ function EmptyCart() {
 }
 
 /**
- * Component sản phẩm đề xuất
+ * Suggested products component
  */
 function RecommendedProducts({ currentItems }) {
   // Mock recommended products - trong thực tế sẽ fetch từ API
@@ -691,7 +691,7 @@ export default function Cart() {
       });
 
       if (!result.success) {
-        showError(result.error || "Không thể cập nhật số lượng");
+        showError(result.error || "Unable to update quantity");
       }
     },
     [updateItem, showError]
@@ -713,9 +713,9 @@ export default function Cart() {
       });
 
       if (result.success) {
-        showSuccess("Đã xóa sản phẩm khỏi giỏ hàng");
+        showSuccess("Product removed from cart");
       } else {
-        showError(result.error || "Không thể xóa sản phẩm");
+        showError(result.error || "Unable to remove product");
       }
     },
     [removeItem, showSuccess, showError]
@@ -725,12 +725,12 @@ export default function Cart() {
    * Xử lý xóa tất cả sản phẩm
    */
   const handleClearCart = useCallback(async () => {
-    if (window.confirm("Bạn có chắc muốn xóa tất cả sản phẩm khỏi giỏ hàng?")) {
+    if (window.confirm("Are you sure you want to remove all products from cart?")) {
       const result = await clearCart();
       if (result.success) {
-        showSuccess("Đã xóa tất cả sản phẩm khỏi giỏ hàng");
+        showSuccess("All products removed from cart");
       } else {
-        showError(result.error || "Không thể xóa giỏ hàng");
+        showError(result.error || "Unable to clear cart");
       }
     }
   }, [clearCart, showSuccess, showError]);
@@ -742,7 +742,7 @@ export default function Cart() {
     async (code) => {
       const result = await applyCoupon(code);
       if (result.success) {
-        showSuccess("Áp dụng mã giảm giá thành công!");
+        showSuccess("Discount code applied successfully!");
       }
       return result;
     },
@@ -755,9 +755,9 @@ export default function Cart() {
   const handleRemoveCoupon = useCallback(async () => {
     const result = await removeCoupon();
     if (result.success) {
-      showSuccess("Đã xóa mã giảm giá");
+      showSuccess("Discount code removed");
     } else {
-      showError(result.error || "Không thể xóa mã giảm giá");
+      showError(result.error || "Unable to remove discount code");
     }
   }, [removeCoupon, showSuccess, showError]);
 
@@ -781,7 +781,7 @@ export default function Cart() {
       <div className={styles.cartPage}>
         <div className={styles.loadingContainer}>
           <LoadingSpinner size="large" />
-          <p>Đang tải giỏ hàng...</p>
+          <p>Loading cart...</p>
         </div>
       </div>
     );
@@ -803,8 +803,8 @@ export default function Cart() {
       <div className={styles.container}>
         {/* Page Header */}
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Giỏ hàng của bạn</h1>
-          <p className={styles.pageSubtitle}>{itemCount} sản phẩm trong giỏ hàng</p>
+          <h1 className={styles.pageTitle}>Your Cart</h1>
+          <p className={styles.pageSubtitle}>{itemCount} products in cart</p>
         </div>
 
         {/* Free Shipping Progress */}

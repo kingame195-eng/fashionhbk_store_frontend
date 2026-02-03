@@ -31,7 +31,7 @@ const productService = {
   async getCategories() {
     const response = await api.get("/products/categories");
     const categories = response.data.data.categories;
-    
+
     // Map _id to name for frontend compatibility
     // API returns: { _id: "men", count: 8, subcategories: "..." }
     // Frontend expects: { name: "men", slug: "men", count: 8 }
