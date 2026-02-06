@@ -81,6 +81,18 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Handle network errors (backend not running, connection refused, etc.)
+    if (!error.response) {
+      console.error("Network error - backend may not be running:", error.message);
+      const errorResponse = {
+        message: "Cannot connect to server. Please check your connection and try again.",
+        status: 0,
+        isNetworkError: true,
+        code: "NETWORK_ERROR",
+      };
+      return Promise.reject(errorResponse);
+    }
+
     // Handle 429 Too Many Requests - don't retry, fail gracefully
     // Retrying causes cascading requests that make things worse
     if (error.response?.status === 429) {
@@ -95,8 +107,14 @@ api.interceptors.response.use(
       return Promise.reject(errorResponse);
     }
 
-    // Handle 401 Unauthorized - attempt token refresh
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Skip token refresh for auth routes (login, register, refresh)
+    const isAuthRoute =
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/register") ||
+      originalRequest.url?.includes("/auth/refresh");
+
+    // Handle 401 Unauthorized - attempt token refresh (but not for auth routes)
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
       // Don't retry refresh token requests
       if (originalRequest.url?.includes("/auth/refresh")) {
         clearAccessToken();
