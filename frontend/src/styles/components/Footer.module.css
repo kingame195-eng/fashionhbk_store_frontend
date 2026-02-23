@@ -19,7 +19,7 @@
 /* Newsletter Section */
 .newsletter {
   position: relative;
-  background: linear-gradient(160deg, #CFB370 0%, #d4bc7e 50%, #CFB370 100%);
+  background: linear-gradient(160deg, #cfb370 0%, #d4bc7e 50%, #cfb370 100%);
   padding: var(--space-16) var(--space-6);
   overflow: hidden;
 }
@@ -160,7 +160,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #CFB370;
+  color: #cfb370;
   background: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
