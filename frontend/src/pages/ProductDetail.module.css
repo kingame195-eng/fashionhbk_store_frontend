@@ -1,7 +1,8 @@
 .productDetail {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 2rem;
+  background-color: #ffffff;
 }
 
 /* Breadcrumb */
@@ -9,22 +10,24 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .breadcrumb a {
-  color: var(--color-accent, #c9a962);
+  color: #888888;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .breadcrumb a:hover {
-  text-decoration: underline;
-  color: var(--color-accent-dark, #b8944d);
+  color: #c9a962;
 }
 
 .breadcrumb span {
-  color: var(--color-text-secondary, #666);
+  color: #1a1a1a;
 }
 
 /* Loading/Error States */
@@ -46,20 +49,23 @@
 
 .backLink {
   margin-top: 1rem;
-  color: var(--color-accent, #c9a962);
+  color: #c9a962;
   text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
 .backLink:hover {
-  text-decoration: underline;
-  color: var(--color-accent-dark, #b8944d);
+  color: #1a1a1a;
 }
 
 /* Product Content */
 .productContent {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 4rem;
 }
 
 /* Product Images */
@@ -72,8 +78,7 @@
 .mainImage {
   position: relative;
   aspect-ratio: 1;
-  background: var(--color-bg-secondary, #f8f9fa);
-  border-radius: 8px;
+  background: #f8f8f6;
   overflow: hidden;
 }
 
@@ -95,34 +100,35 @@
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: var(--color-danger, #dc3545);
-  color: white;
+  background: #c9a962;
+  color: #ffffff;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .thumbnails {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 .thumbnail {
   width: 80px;
   height: 80px;
   border: 2px solid transparent;
-  border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
   background: none;
+  transition: all 0.3s ease;
 }
 
 .thumbnail:hover,
 .thumbnail.active {
-  border-color: var(--color-primary, #007bff);
+  border-color: #c9a962;
 }
 
 .thumbnail img {
@@ -140,13 +146,12 @@
 
 .category {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-accent, #c9a962);
+  letter-spacing: 0.15em;
+  color: #c9a962;
   background: rgba(201, 169, 98, 0.1);
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  padding: 0.35rem 1rem;
   width: fit-content;
 }
 

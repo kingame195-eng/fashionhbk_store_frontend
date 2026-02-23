@@ -1,16 +1,16 @@
 /* Checkout Page Styles */
 .checkoutPage {
   min-height: 100vh;
-  background-color: var(--color-gray-50, #f9fafb);
-  padding-bottom: 3rem;
+  background-color: #ffffff;
+  padding-bottom: 4rem;
 }
 
 /* Progress Bar */
 .progressBar {
-  background: var(--color-white, #fff);
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
-  margin-bottom: 2rem;
+  background: #f8f8f6;
+  padding: 2rem 0;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 3rem;
 }
 
 .progressBar .container {
@@ -34,47 +34,49 @@
   position: absolute;
   left: calc(100% + 1rem);
   width: 2rem;
-  height: 2px;
-  background: var(--color-gray-200, #e5e7eb);
+  height: 1px;
+  background: #e0e0e0;
 }
 
 .step.active {
-  color: var(--color-primary, #1a1a1a);
+  color: #1a1a1a;
 }
 
 .step.completed::after {
-  background: var(--color-accent, #c9a962);
+  background: #c9a962;
 }
 
 .stepNumber {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.875rem;
-  background: var(--color-gray-100, #f3f4f6);
-  border: 2px solid var(--color-gray-200, #e5e7eb);
-  transition: all 0.3s ease;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  transition: all 0.4s ease;
 }
 
 .step.active .stepNumber {
-  background: var(--color-primary, #1a1a1a);
-  border-color: var(--color-primary, #1a1a1a);
-  color: var(--color-white, #fff);
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #ffffff;
 }
 
 .step.completed .stepNumber {
-  background: var(--color-accent, #c9a962);
-  border-color: var(--color-accent, #c9a962);
-  color: var(--color-white, #fff);
+  background: #c9a962;
+  border-color: #c9a962;
+  color: #ffffff;
 }
 
 .stepLabel {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 /* Container */
@@ -114,24 +116,35 @@
 
 /* Section */
 .section {
-  background: var(--color-white, #fff);
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: var(--color-primary, #1a1a1a);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sectionTitle::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: #c9a962;
+  margin-top: 0.75rem;
 }
 
 .subsectionTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 1.5rem 0 1rem;
-  color: var(--color-primary, #1a1a1a);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 2rem 0 1.25rem;
+  color: #1a1a1a;
+  letter-spacing: 0.03em;
 }
 
 /* Form Grid */
@@ -165,13 +178,11 @@
 .formGroup select,
 .formGroupFull input,
 .formGroupFull select {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-gray-300, #d1d5db);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
 }
 
 .formGroup input:focus,
@@ -179,7 +190,7 @@
 .formGroupFull input:focus,
 .formGroupFull select:focus {
   outline: none;
-  border-color: var(--color-accent, #c9a962);
+  border-color: #c9a962;
   box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.1);
 }
 
@@ -194,24 +205,23 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  border: 2px solid var(--color-gray-200, #e5e7eb);
-  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .shippingOption:hover {
-  border-color: var(--color-gray-300, #d1d5db);
+  border-color: #c9a962;
 }
 
 .shippingOption.selected {
-  border-color: var(--color-accent, #c9a962);
+  border-color: #c9a962;
   background: rgba(201, 169, 98, 0.05);
 }
 
 .shippingOption input {
-  accent-color: var(--color-accent, #c9a962);
+  accent-color: #c9a962;
 }
 
 .optionInfo {
@@ -248,24 +258,23 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  border: 2px solid var(--color-gray-200, #e5e7eb);
-  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .paymentOption:hover {
-  border-color: var(--color-gray-300, #d1d5db);
+  border-color: #c9a962;
 }
 
 .paymentOption.selected {
-  border-color: var(--color-accent, #c9a962);
+  border-color: #c9a962;
   background: rgba(201, 169, 98, 0.05);
 }
 
 .paymentOption input {
-  accent-color: var(--color-accent, #c9a962);
+  accent-color: #c9a962;
 }
 
 /* Coupon Section */

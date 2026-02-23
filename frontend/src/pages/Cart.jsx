@@ -232,7 +232,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
           {size && <span>Size: {size}</span>}
           {color && (
             <span className={styles.colorOption}>
-              Màu: {color}
+              Color: {color}
               <span className={styles.colorDot} style={{ backgroundColor: color.toLowerCase() }} />
             </span>
           )}
@@ -285,7 +285,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
             className={styles.quantityBtn}
             onClick={() => handleQuantityChange(quantity - 1)}
             disabled={quantity <= 1 || isUpdating}
-            aria-label="Giảm số lượng"
+            aria-label="Reduce quantity"
           >
             <MinusIcon />
           </button>
@@ -294,12 +294,12 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
             className={styles.quantityBtn}
             onClick={() => handleQuantityChange(quantity + 1)}
             disabled={quantity >= maxStock || isUpdating}
-            aria-label="Tăng số lượng"
+            aria-label="Increase quantity"
           >
             <PlusIcon />
           </button>
         </div>
-        {quantity >= maxStock && <span className={styles.stockWarning}>Tối đa: {maxStock}</span>}
+        {quantity >= maxStock && <span className={styles.stockWarning}>Max: {maxStock}</span>}
       </div>
 
       {/* Desktop: Subtotal */}
@@ -313,7 +313,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
           className={styles.removeBtn}
           onClick={() => onRemove(item._id)}
           disabled={isUpdating}
-          aria-label="Xóa sản phẩm"
+          aria-label="Delete product"
         >
           <TrashIcon />
         </button>
@@ -338,7 +338,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
     setError("");
     const result = await onApply(code.trim());
     if (!result.success) {
-      setError(result.error || "Mã giảm giá không hợp lệ");
+      setError(result.error || "Invalid discount code");
     } else {
       setCode("");
     }
@@ -353,7 +353,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
           <span className={styles.couponDiscount}>-{appliedCoupon.discountPercent}%</span>
         </div>
         <button className={styles.removeCouponBtn} onClick={onRemove} disabled={isLoading}>
-          Xóa
+          Delete
         </button>
       </div>
     );
@@ -370,7 +370,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
             setCode(e.target.value.toUpperCase());
             setError("");
           }}
-          placeholder="Nhập mã giảm giá"
+          placeholder="Enter discount code"
           className={styles.couponInput}
           disabled={isLoading}
         />
@@ -382,7 +382,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
         isLoading={isLoading}
         disabled={isLoading || !code.trim()}
       >
-        Áp dụng
+        Apply
       </Button>
       {error && <span className={styles.couponError}>{error}</span>}
     </form>
@@ -400,15 +400,15 @@ function FreeShippingProgress({ progress, amountNeeded, threshold }) {
       {isFreeShipping ? (
         <div className={styles.freeShippingSuccess}>
           <CheckCircleIcon />
-          <span>Chúc mừng! Bạn được miễn phí vận chuyển!</span>
+          <span>Congratulations! You get free shipping!</span>
         </div>
       ) : (
         <>
           <div className={styles.freeShippingText}>
             <TruckIcon />
             <span>
-              Mua thêm <strong>{formatPrice(amountNeeded)}</strong> để được{" "}
-              <strong>miễn phí vận chuyển</strong>
+              Buy more <strong>{formatPrice(amountNeeded)}</strong> to get{" "}
+              <strong>free shipping</strong>
             </span>
           </div>
           <div className={styles.progressBar}>
@@ -473,18 +473,18 @@ function OrderSummary({
         <div className={styles.summaryRow}>
           <span>Phí vận chuyển</span>
           <span className={finalShipping === 0 ? styles.freeShipping : ""}>
-            {finalShipping === 0 ? "Miễn phí" : formatPrice(finalShipping)}
+            {finalShipping === 0 ? "Free" : formatPrice(finalShipping)}
           </span>
         </div>
 
         <div className={styles.summaryRow}>
-          <span>Thuế (10%)</span>
+          <span>VAT (10%)</span>
           <span>{formatPrice(tax)}</span>
         </div>
 
         {discount > 0 && (
           <div className={`${styles.summaryRow} ${styles.discountRow}`}>
-            <span>Giảm giá</span>
+            <span>Discount</span>
             <span>-{formatPrice(discount)}</span>
           </div>
         )}
@@ -492,7 +492,7 @@ function OrderSummary({
         <div className={styles.summaryDivider} />
 
         <div className={`${styles.summaryRow} ${styles.totalRow}`}>
-          <span>Tổng cộng</span>
+          <span>Total</span>
           <span className={styles.totalPrice}>{formatPrice(finalTotal)}</span>
         </div>
       </div>

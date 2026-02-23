@@ -1,6 +1,7 @@
 .page {
   min-height: 100vh;
-  padding: 2rem 0 4rem;
+  padding: 3rem 0 5rem;
+  background-color: #ffffff;
 }
 
 .container {
@@ -13,7 +14,7 @@
 .productSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 5rem;
   align-items: start;
 }
 
@@ -23,7 +24,7 @@
 }
 
 .info {
-  padding-top: 0.5rem;
+  padding-top: 0;
 }
 
 /* Loading State */
@@ -69,18 +70,21 @@
 }
 
 .errorContent button {
-  padding: 0.75rem 2rem;
-  background-color: var(--color-primary);
+  padding: 1rem 2.5rem;
+  background-color: #c9a962;
   border: none;
-  border-radius: var(--radius-md);
-  color: white;
+  color: #1a1a1a;
   font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .errorContent button:hover {
-  opacity: 0.9;
+  background-color: #1a1a1a;
+  color: #c9a962;
 }
 
 /* Tablet Styles */

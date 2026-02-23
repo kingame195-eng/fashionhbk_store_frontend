@@ -83,13 +83,15 @@ const Home = () => {
       {/* Hero Banner Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>Welcome to Fashion Store</h1>
+          <h1 className={styles.heroTitle}>
+            Discover Your <span>Style</span>
+          </h1>
           <p className={styles.heroSubtitle}>
-            Discover the latest trends in fashion. Quality clothing and accessories for the modern
-            lifestyle.
+            Curated fashion pieces crafted for the modern lifestyle. Elevate your wardrobe with
+            timeless elegance.
           </p>
           <Link to="/products" className={styles.ctaButton}>
-            Shop Now
+            Explore Collection
           </Link>
         </div>
         <div className={styles.heroAccent}></div>
@@ -177,13 +179,13 @@ const Home = () => {
       {/* CTA Section */}
       <section className={styles.cta}>
         <div className={styles.container}>
-          <h2>Elevate Your Style</h2>
+          <h2>Elevate Your Wardrobe</h2>
           <p>
-            Browse our complete collection and find pieces that perfectly express your personal
-            style.
+            Explore our complete collection of premium fashion pieces designed to express your
+            unique style.
           </p>
           <Link to="/products" className={styles.secondaryCta}>
-            View All Products
+            Shop All Products
           </Link>
         </div>
       </section>

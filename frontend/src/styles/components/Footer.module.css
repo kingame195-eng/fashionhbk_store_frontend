@@ -18,18 +18,46 @@
 
 /* Newsletter Section */
 .newsletter {
-  margin-top: 5px;
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
-  padding: var(--space-12) 0;
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  background: linear-gradient(160deg, #CFB370 0%, #d4bc7e 50%, #CFB370 100%);
+  padding: var(--space-16) var(--space-6);
+  overflow: hidden;
+}
+
+.newsletter::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.newsletter::after {
+  content: "";
+  position: absolute;
+  bottom: -40%;
+  left: -5%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .newsletterContent {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
   align-items: center;
   text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
@@ -37,24 +65,54 @@
     flex-direction: row;
     justify-content: space-between;
     text-align: left;
+    gap: var(--space-12);
   }
 }
 
 .newsletterText {
-  max-width: 400px;
+  max-width: 420px;
 }
 
 .newsletterTitle {
   font-family: var(--font-primary);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  color: var(--color-white);
-  margin-bottom: var(--space-2);
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.newsletterTitle::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 2px;
+  background: #ffffff;
+  margin-top: var(--space-3);
+  border-radius: 1px;
+}
+
+@media (min-width: 768px) {
+  .newsletterTitle::after {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .newsletterTitle::after {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .newsletterDescription {
+  font-family: var(--font-secondary);
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  margin-top: var(--space-4);
 }
 
 .newsletterForm {
@@ -62,53 +120,61 @@
   flex-direction: column;
   gap: var(--space-3);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 @media (min-width: 480px) {
   .newsletterForm {
     flex-direction: row;
+    gap: var(--space-3);
   }
 }
 
 .newsletterInput {
   flex: 1;
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--text-base);
-  border: none;
-  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
   outline: none;
   background-color: rgba(255, 255, 255, 0.95);
-  color: var(--color-primary);
-  transition: all var(--transition-fast);
+  color: #5a4a2a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.newsletterInput::placeholder {
+  color: #9a8a6a;
 }
 
 .newsletterInput:focus {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
 .newsletterButton {
-  margin-top: 5px;
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  font-family: var(--font-secondary);
   font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-  color: var(--color-black);
-  background-color: var(--color-white);
+  letter-spacing: 0.1em;
+  color: #CFB370;
+  background: #ffffff;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
 }
 
 .newsletterButton:hover {
-  background-color: #D0B674;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+  color: #b8944d;
 }
 
 /* Main Footer */

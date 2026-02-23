@@ -202,7 +202,26 @@ export function CartProvider({ children }) {
   // Add Item to Cart (with optimistic UI update)
   // -----------------------------------------
   const addItem = useCallback(
-    async (productId, quantity = 1, options = {}) => {
+    async (productIdOrOptions, quantity = 1, options = {}) => {
+      // Support both signatures:
+      // addItem(productId, quantity, options) - original
+      // addItem({ productId, variantId, quantity }) - new object style
+      let productId, variantId, finalQuantity, finalOptions;
+
+      if (typeof productIdOrOptions === "object" && productIdOrOptions !== null) {
+        // Object style: { productId, variantId, quantity }
+        productId = productIdOrOptions.productId;
+        variantId = productIdOrOptions.variantId;
+        finalQuantity = productIdOrOptions.quantity || 1;
+        finalOptions = { variantId, ...productIdOrOptions };
+      } else {
+        // Original style: (productId, quantity, options)
+        productId = productIdOrOptions;
+        finalQuantity = quantity;
+        finalOptions = options;
+        variantId = options.variantId;
+      }
+
       // Keep previous items for rollback
       const previousItems = [...state.items];
 
@@ -210,10 +229,10 @@ export function CartProvider({ children }) {
       const tempItem = {
         _id: `temp_${Date.now()}`,
         productId,
-        quantity,
-        ...options,
+        quantity: finalQuantity,
+        ...finalOptions,
         // Estimate price if product info is passed
-        price: options.price ?? 0,
+        price: finalOptions.price ?? 0,
       };
       dispatch({
         type: CART_ACTIONS.OPTIMISTIC_UPDATE,
@@ -224,7 +243,7 @@ export function CartProvider({ children }) {
       dispatch({ type: CART_ACTIONS.OPEN_CART });
 
       try {
-        const cart = await cartService.addItem(productId, quantity, options);
+        const cart = await cartService.addItem(productId, finalQuantity, finalOptions);
         dispatch({
           type: CART_ACTIONS.CART_SUCCESS,
           payload: { cart },
@@ -496,6 +515,7 @@ export function CartProvider({ children }) {
 
       // Cart Actions
       addItem,
+      addToCart: addItem, // Alias for backward compatibility
       updateItem,
       removeItem,
       clearCart,

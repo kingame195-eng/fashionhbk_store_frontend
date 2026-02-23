@@ -54,7 +54,7 @@ const STEPS = {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, subtotal } = useCart();
+  const { items, subtotal, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
@@ -201,6 +201,8 @@ export default function Checkout() {
       const result = await checkoutService.completeOrder(orderData);
 
       if (result?.order) {
+        // Clear cart after successful order
+        await clearCart();
         showToast("Order placed successfully!", "success");
         navigate(`/order-confirmation/${result.order.orderNumber}`);
       }

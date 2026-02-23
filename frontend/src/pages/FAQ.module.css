@@ -1,27 +1,59 @@
 .faq {
   width: 100%;
+  background-color: #ffffff;
 }
 
 /* Hero Section */
 .hero {
-  padding: var(--space-16) var(--space-4);
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  position: relative;
+  padding: var(--space-24) var(--space-4);
+  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
   text-align: center;
-  color: var(--color-white);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(201, 169, 98, 0.15) 0%,
+    transparent 50%
+  );
 }
 
 .heroTitle {
   font-family: var(--font-primary);
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: var(--font-bold);
-  margin-bottom: var(--space-4);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 300;
+  margin-bottom: var(--space-5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.heroTitle::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 1px;
+  background: #ffffff;
+  margin: var(--space-5) auto 0;
 }
 
 .heroSubtitle {
   font-size: var(--text-lg);
-  opacity: 0.95;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 600px;
   margin: 0 auto;
+  line-height: 1.8;
+  font-weight: 300;
+  position: relative;
 }
 
 /* Container */
@@ -39,8 +71,8 @@
 
 /* Main Section */
 .main {
-  padding: var(--space-12) var(--space-4);
-  background-color: var(--color-white);
+  padding: var(--space-16) var(--space-4);
+  background-color: #ffffff;
 }
 
 /* Categories */
@@ -55,26 +87,27 @@
 }
 
 .categoryButton {
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--color-text-secondary);
-  background-color: var(--color-gray-100);
-  border: 1px solid transparent;
-  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-5);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #777777;
+  background-color: transparent;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.3s ease;
 }
 
 .categoryButton:hover {
-  color: var(--color-accent-dark);
-  background-color: var(--color-gray-200);
+  color: #1a1a1a;
+  border-color: #c9a962;
 }
 
 .categoryButton.active {
-  color: var(--color-white);
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
 }
 
 /* FAQ List */
@@ -85,22 +118,19 @@
 }
 
 .faqItem {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-md);
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
   overflow: hidden;
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .faqItem:hover {
-  border-color: var(--color-gray-300);
+  border-color: #c9a962;
 }
 
 .faqItem.open {
-  border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.1);
+  border-color: #c9a962;
+  box-shadow: 0 8px 30px rgba(201, 169, 98, 0.12);
 }
 
 .faqQuestion {
@@ -120,11 +150,11 @@
 }
 
 .faqQuestion:hover {
-  background-color: var(--color-gray-50);
+  background-color: rgba(201, 169, 98, 0.1);
 }
 
 .faqItem.open .faqQuestion {
-  background-color: var(--color-gray-50);
+  background-color: rgba(201, 169, 98, 0.1);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -132,21 +162,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  font-size: var(--text-xl);
-  font-weight: var(--font-light);
-  color: var(--color-accent);
-  background-color: var(--color-gray-100);
-  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  font-size: var(--text-lg);
+  font-weight: 300;
+  color: #c9a962;
+  background-color: transparent;
+  border: 1px solid #c9a962;
+  border-radius: 50%;
   flex-shrink: 0;
   margin-left: var(--space-4);
-  transition: all var(--transition-fast);
+  transition: all 0.3s ease;
 }
 
 .faqItem.open .faqIcon {
-  background-color: var(--color-accent);
-  color: var(--color-white);
+  background-color: #c9a962;
+  color: #ffffff;
 }
 
 .faqAnswer {
@@ -175,41 +206,64 @@
 
 /* CTA Section */
 .cta {
-  padding: var(--space-16) var(--space-4);
-  background-color: var(--color-gray-50);
+  padding: var(--space-24) var(--space-4);
+  background-color: #1a1a1a;
   text-align: center;
+  position: relative;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 50%,
+    rgba(201, 169, 98, 0.08) 0%,
+    transparent 50%
+  );
 }
 
 .cta h2 {
   font-family: var(--font-primary);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  color: var(--color-text);
-  margin-bottom: var(--space-3);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 300;
+  color: #ffffff;
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
 }
 
 .cta p {
   font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-6);
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: var(--space-8);
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.7;
+  position: relative;
 }
 
 .ctaButton {
   display: inline-block;
-  padding: var(--space-3) var(--space-8);
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
-  background-color: var(--color-accent);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
+  padding: var(--space-4) var(--space-10);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #1a1a1a;
+  background-color: #c9a962;
+  border: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .ctaButton:hover {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.3);
+  background-color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(201, 169, 98, 0.3);
 }

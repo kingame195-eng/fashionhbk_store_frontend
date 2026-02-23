@@ -1,27 +1,59 @@
 .contact {
   width: 100%;
+  background-color: #ffffff;
 }
 
 /* Hero Section */
 .hero {
-  padding: var(--space-16) var(--space-4);
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  position: relative;
+  padding: var(--space-24) var(--space-4);
+  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
   text-align: center;
-  color: var(--color-white);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(201, 169, 98, 0.15) 0%,
+    transparent 50%
+  );
 }
 
 .heroTitle {
   font-family: var(--font-primary);
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: var(--font-bold);
-  margin-bottom: var(--space-4);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 300;
+  margin-bottom: var(--space-5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.heroTitle::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 1px;
+  background: #ffffff;
+  margin: var(--space-5) auto 0;
 }
 
 .heroSubtitle {
   font-size: var(--text-lg);
-  opacity: 0.95;
-  max-width: 500px;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 550px;
   margin: 0 auto;
+  line-height: 1.8;
+  font-weight: 300;
+  position: relative;
 }
 
 /* Container */
@@ -40,16 +72,18 @@
 /* Section Title */
 .sectionTitle {
   font-family: var(--font-primary);
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  color: var(--color-text);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #1a1a1a;
   margin-bottom: var(--space-6);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 /* Main Section */
 .main {
-  padding: var(--space-16) var(--space-4);
-  background-color: var(--color-white);
+  padding: var(--space-24) var(--space-4);
+  background-color: #ffffff;
 }
 
 .grid {
@@ -127,21 +161,23 @@
 }
 
 .submitButton {
-  padding: var(--space-3) var(--space-6);
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
-  background-color: var(--color-accent);
+  padding: var(--space-4) var(--space-8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #1a1a1a;
+  background-color: #c9a962;
   border: none;
-  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.3);
+  background-color: #1a1a1a;
+  color: #c9a962;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .submitButton:disabled {
@@ -171,14 +207,16 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-4);
-  background-color: var(--color-gray-50);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
+  padding: var(--space-5);
+  background-color: #f8f8f6;
+  transition: all 0.4s ease;
+  border-left: 3px solid transparent;
 }
 
 .infoCard:hover {
-  background-color: var(--color-gray-100);
+  background-color: #ffffff;
+  border-left-color: #c9a962;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .infoIcon {
@@ -236,25 +274,41 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  font-size: 1.5rem;
-  background-color: var(--color-gray-100);
-  border-radius: var(--radius-full);
-  transition: all var(--transition-base);
+  font-size: 1.25rem;
+  background-color: #f8f8f6;
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #1a1a1a;
 }
 
 .socialLink:hover {
-  background-color: var(--color-accent);
-  transform: translateY(-3px);
+  background-color: #c9a962;
+  color: #ffffff;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(201, 169, 98, 0.35);
 }
 
 /* FAQ Section */
 .faq {
-  padding: var(--space-16) var(--space-4);
-  background-color: var(--color-gray-50);
+  padding: var(--space-24) var(--space-4);
+  background-color: #f8f8f6;
+  position: relative;
+}
+
+.faq::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, #c9a962);
 }
 
 .faq .sectionTitle {
   text-align: center;
+  color: #1a1a1a;
 }
 
 .faqList {
@@ -267,22 +321,27 @@
 
 .faqItem {
   padding: var(--space-5);
-  background-color: var(--color-white);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-200);
+  background-color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 .faqQuestion {
   font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--color-text);
+  font-weight: 500;
+  color: #1a1a1a;
   margin-bottom: var(--space-2);
 }
 
 .faqAnswer {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-relaxed);
+  font-size: 0.9rem;
+  color: #777777;
+  line-height: 1.7;
 }
 
 .faqLink {
@@ -293,18 +352,19 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--color-accent-dark);
-  padding: var(--space-3) var(--space-6);
-  border: 2px solid var(--color-accent);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #1a1a1a;
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid #1a1a1a;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .viewAllLink:hover {
-  background-color: var(--color-accent);
-  color: var(--color-white);
+  background-color: #1a1a1a;
+  color: #ffffff;
 }
 
 /* Map Section */

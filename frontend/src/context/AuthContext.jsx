@@ -138,6 +138,9 @@ export function AuthProvider({ children }) {
             type: AUTH_ACTIONS.AUTH_SUCCESS,
             payload: { user },
           });
+
+          // Dispatch event for CartContext to reload cart with valid token
+          window.dispatchEvent(new CustomEvent("auth:login"));
         } else {
           dispatch({
             type: AUTH_ACTIONS.AUTH_FAILURE,

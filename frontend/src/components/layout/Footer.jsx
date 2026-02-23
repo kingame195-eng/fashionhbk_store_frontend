@@ -168,7 +168,7 @@ function Footer() {
               <h4 className={styles.columnTitle}>Shop</h4>
               <ul className={styles.linkList}>
                 {footerLinks.shop.map((link) => (
-                  <li key={link.path}>
+                  <li key={link.label}>
                     <Link to={link.path} className={styles.link}>
                       {link.label}
                     </Link>
@@ -182,7 +182,7 @@ function Footer() {
               <h4 className={styles.columnTitle}>Help</h4>
               <ul className={styles.linkList}>
                 {footerLinks.help.map((link) => (
-                  <li key={link.path}>
+                  <li key={link.label}>
                     <Link to={link.path} className={styles.link}>
                       {link.label}
                     </Link>
@@ -196,7 +196,7 @@ function Footer() {
               <h4 className={styles.columnTitle}>Company</h4>
               <ul className={styles.linkList}>
                 {footerLinks.company.map((link) => (
-                  <li key={link.path}>
+                  <li key={link.label}>
                     <Link to={link.path} className={styles.link}>
                       {link.label}
                     </Link>
@@ -215,7 +215,7 @@ function Footer() {
             <p className={styles.copyright}>© {currentYear} Fashion Store. All rights reserved.</p>
             <div className={styles.legalLinks}>
               {footerLinks.legal.map((link, index) => (
-                <span key={link.path}>
+                <span key={link.label}>
                   <Link to={link.path} className={styles.legalLink}>
                     {link.label}
                   </Link>

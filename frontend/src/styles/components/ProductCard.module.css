@@ -2,17 +2,18 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg);
+  background-color: #ffffff;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  border-color: #c9a962;
 }
 
 .link {
@@ -85,8 +86,8 @@
 }
 
 .badgeNew {
-  background-color: var(--color-primary);
-  color: white;
+  background: linear-gradient(135deg, #c9a962 0%, #d4bc7e 100%);
+  color: #1a1a1a;
 }
 
 .badgeSale {
@@ -215,7 +216,7 @@
 .name {
   font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--color-text);
+  color: #1a1a1a;
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -225,7 +226,7 @@
 }
 
 .card:hover .name {
-  color: var(--color-primary);
+  color: #c9a962;
 }
 
 /* Rating */
@@ -271,7 +272,7 @@
 .price {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: #1a1a1a;
 }
 
 /* Giá đã giảm - Màu đỏ nổi bật */

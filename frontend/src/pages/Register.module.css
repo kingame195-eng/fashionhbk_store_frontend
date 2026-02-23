@@ -21,8 +21,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-  color: var(--color-white, #ffffff);
+  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
+  color: #ffffff;
   padding: 3rem;
   position: relative;
   overflow: hidden;
@@ -61,10 +61,7 @@
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #c9a962 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
 }
 
 .brandSubtitle {
@@ -109,17 +106,17 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background-color: var(--color-gray-50, #fafafa);
+  background-color: #f8f8f6;
   overflow-y: auto;
 }
 
 .formContainer {
   width: 100%;
   max-width: 480px;
-  background: var(--color-white, #ffffff);
+  background: #ffffff;
   padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
 }
 
 .formHeader {
@@ -130,9 +127,20 @@
 .formTitle {
   font-family: var(--font-primary, "Playfair Display", serif);
   font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-black, #000000);
+  font-weight: 300;
+  color: #1a1a1a;
   margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.formTitle::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 1px;
+  background: #c9a962;
+  margin: var(--space-4) auto 0;
 }
 
 .formSubtitle {
@@ -405,8 +413,8 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.875rem;
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-  color: var(--color-white, #ffffff);
+  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   border: none;
@@ -417,9 +425,9 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+  background: linear-gradient(135deg, #b8944d 0%, #a6823e 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.4);
 }
 
 .submitButton:active:not(:disabled) {

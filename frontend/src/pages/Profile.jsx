@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import { profileService } from "../services";
+import { profileService, orderService } from "../services";
 import styles from "./Profile.module.css";
 
 // Icons
@@ -111,6 +111,11 @@ export default function Profile() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  // Orders state
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersError, setOrdersError] = useState(null);
+
   // Password change state
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -135,6 +140,28 @@ export default function Profile() {
       });
     }
   }, [user]);
+
+  // Fetch orders when orders tab is active
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (activeTab !== "orders" || !isAuthenticated) return;
+
+      setOrdersLoading(true);
+      setOrdersError(null);
+
+      try {
+        const response = await orderService.getOrders();
+        setOrders(response?.orders || []);
+      } catch (err) {
+        console.error("Failed to fetch orders:", err);
+        setOrdersError(err.message || "Failed to load orders");
+      } finally {
+        setOrdersLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [activeTab, isAuthenticated]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -547,15 +574,76 @@ export default function Profile() {
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>My Orders</h2>
+                <Link to="/orders" className={styles.viewAllLink}>
+                  View All Orders
+                </Link>
               </div>
-              <div className={styles.emptyState}>
-                <OrdersIcon />
-                <h3>No orders yet</h3>
-                <p>When you place an order, it will appear here.</p>
-                <button className={styles.primaryBtn} onClick={() => navigate("/products")}>
-                  Start Shopping
-                </button>
-              </div>
+
+              {ordersLoading ? (
+                <div className={styles.loadingState}>
+                  <SpinnerIcon />
+                  <p>Loading orders...</p>
+                </div>
+              ) : ordersError ? (
+                <div className={styles.errorState}>
+                  <p>{ordersError}</p>
+                  <button className={styles.retryBtn} onClick={() => setActiveTab("orders")}>
+                    Retry
+                  </button>
+                </div>
+              ) : orders.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <OrdersIcon />
+                  <h3>No orders yet</h3>
+                  <p>When you place an order, it will appear here.</p>
+                  <button className={styles.primaryBtn} onClick={() => navigate("/products")}>
+                    Start Shopping
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.ordersList}>
+                  {orders.slice(0, 5).map((order) => (
+                    <div key={order._id} className={styles.orderCard}>
+                      <div className={styles.orderHeader}>
+                        <span className={styles.orderNumber}>
+                          Order #{order.orderNumber || order._id.slice(-8)}
+                        </span>
+                        <span
+                          className={`${styles.orderStatus} ${styles[`status${order.status?.charAt(0).toUpperCase()}${order.status?.slice(1)}`]}`}
+                        >
+                          {order.status}
+                        </span>
+                      </div>
+                      <div className={styles.orderDetails}>
+                        <span className={styles.orderDate}>
+                          {new Date(order.createdAt).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                        <span className={styles.orderTotal}>
+                          ${order.total?.toFixed(2) || "0.00"}
+                        </span>
+                      </div>
+                      <div className={styles.orderItems}>
+                        {order.items?.slice(0, 3).map((item, idx) => (
+                          <span key={idx} className={styles.orderItemName}>
+                            {item.product?.name || item.name || "Product"}
+                            {idx < Math.min(order.items.length, 3) - 1 && ", "}
+                          </span>
+                        ))}
+                        {order.items?.length > 3 && (
+                          <span className={styles.moreItems}>+{order.items.length - 3} more</span>
+                        )}
+                      </div>
+                      <Link to={`/orders/${order._id}`} className={styles.viewOrderBtn}>
+                        View Details
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           )}
 

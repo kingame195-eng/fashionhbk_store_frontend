@@ -187,6 +187,28 @@ const ProductDetail = () => {
             </div>
           )}
 
+          {/* Quantity Selector */}
+          {product.stock > 0 && (
+            <div className={styles.options}>
+              <h3>Quantity</h3>
+              <div className={styles.quantitySelector}>
+                <button
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                >
+                  −
+                </button>
+                <span>{quantity}</span>
+                <button
+                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  disabled={quantity >= product.stock}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Stock Status */}
           <div className={styles.stockStatus}>
             {product.stock > 0 ? (
