@@ -1,6 +1,6 @@
 /**
- * Script cập nhật compareAtPrice cho tất cả sản phẩm
- * Để hiển thị giá sale
+ * Script to update compareAtPrice for all products
+ * To display sale prices
  */
 import mongoose from "mongoose";
 
@@ -13,17 +13,17 @@ async function updatePrices() {
     const db = mongoose.connection.db;
     const products = db.collection("products");
 
-    // Lấy tất cả products
+    // Get all products
     const allProducts = await products.find({}).toArray();
     console.log("Total products:", allProducts.length);
 
     let updated = 0;
     let alreadyHasSale = 0;
 
-    // Cập nhật compareAtPrice cho các sản phẩm
+    // Update compareAtPrice for products
     for (const product of allProducts) {
       if (!product.compareAtPrice || product.compareAtPrice <= product.price) {
-        // Thêm compareAtPrice cao hơn price 20-40%
+        // Add compareAtPrice 20-40% higher than price
         const discountPercent = 0.2 + Math.random() * 0.2; // 20-40%
         const compareAtPrice = Math.round((product.price / (1 - discountPercent)) * 100) / 100;
 

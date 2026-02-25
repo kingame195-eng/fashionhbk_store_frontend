@@ -1,6 +1,6 @@
 /**
  * CategoryMegaMenu Styles
- * Mega menu dropdown với hiển thị sản phẩm và giá sale
+ * Mega menu dropdown with product display and sale prices
  */
 
 .megaMenu {
@@ -138,7 +138,7 @@
 }
 
 /* =============================================
-   PRICE DISPLAY - GIÁ GỐC VÀ GIÁ SALE
+   PRICE DISPLAY - ORIGINAL AND SALE PRICE
    ============================================= */
 .priceWrapper {
   display: flex;
@@ -147,15 +147,15 @@
   flex-wrap: wrap;
 }
 
-/* Giá sale - Màu đỏ nổi bật */
+/* Sale price - Highlighted in red */
 .salePrice {
   font-size: 15px;
   font-weight: 700;
   color: #e53e3e;
-  /* Làm nổi bật giá sale */
+  /* Highlight sale price */
 }
 
-/* Giá gốc - Gạch ngang, màu xám */
+/* Original price - Strikethrough, gray */
 .originalPrice {
   font-size: 12px;
   font-weight: 400;
@@ -163,7 +163,7 @@
   text-decoration: line-through;
 }
 
-/* Giá thường (không sale) */
+/* Regular price (no sale) */
 .regularPrice {
   font-size: 15px;
   font-weight: 600;

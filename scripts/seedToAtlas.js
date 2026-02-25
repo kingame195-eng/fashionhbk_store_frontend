@@ -9,7 +9,7 @@
 
 import mongoose from "mongoose";
 
-// ⚠️ MongoDB Atlas Connection String - TÊN DATABASE: fashion-store (có dấu gạch ngang)
+// ⚠️ MongoDB Atlas Connection String - DATABASE NAME: fashion-store (with hyphen)
 const MONGODB_ATLAS_URI =
   "mongodb+srv://kingame195_db_user:1NW4DbvqgJhQDPb3@cluster0.itiojgh.mongodb.net/fashion-store?retryWrites=true&w=majority";
 

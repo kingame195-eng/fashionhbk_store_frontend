@@ -68,7 +68,7 @@
   gap: var(--space-8);
 }
 
-/* Nav item với dropdown mega menu */
+/* Nav item with dropdown mega menu */
 .navItemWithDropdown {
   position: relative;
 }

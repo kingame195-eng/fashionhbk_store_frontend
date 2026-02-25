@@ -231,7 +231,7 @@ export default function Register() {
           result.error?.includes("already") ||
           result.error?.includes("EMAIL_EXISTS") ||
           result.error?.includes("registered") ||
-          result.error?.includes("đã được sử dụng")
+          result.error?.includes("already in use")
         ) {
           errorMessage = "This email is already registered. Please login or use a different email.";
         } else if (result.error?.includes("network") || result.error?.includes("Network")) {

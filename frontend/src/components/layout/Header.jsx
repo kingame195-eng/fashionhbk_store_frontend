@@ -254,10 +254,10 @@ export default function Header() {
     { path: "/about", label: "About" },
   ];
 
-  // Categories có mega menu
+  // Categories with mega menu
   const categoriesWithMegaMenu = ["women", "men", "accessories"];
 
-  // Handler mở mega menu với delay
+  // Handler to open mega menu with delay
   const handleCategoryMouseEnter = (category) => {
     if (megaMenuTimeoutRef.current) {
       clearTimeout(megaMenuTimeoutRef.current);
@@ -265,21 +265,21 @@ export default function Header() {
     setActiveMegaMenu(category);
   };
 
-  // Handler đóng mega menu với delay
+  // Handler to close mega menu with delay
   const handleCategoryMouseLeave = () => {
     megaMenuTimeoutRef.current = setTimeout(() => {
       setActiveMegaMenu(null);
-    }, 200); // 200ms delay để user có thể di chuột vào mega menu
+    }, 200); // 200ms delay for user to move mouse to mega menu
   };
 
-  // Handler khi mouse vào mega menu content
+  // Handler when mouse enters mega menu content
   const handleMegaMenuEnter = () => {
     if (megaMenuTimeoutRef.current) {
       clearTimeout(megaMenuTimeoutRef.current);
     }
   };
 
-  // Handler đóng mega menu ngay lập tức
+  // Handler to close mega menu immediately
   const closeMegaMenu = () => {
     if (megaMenuTimeoutRef.current) {
       clearTimeout(megaMenuTimeoutRef.current);
@@ -316,8 +316,8 @@ export default function Header() {
     e.preventDefault();
     const searchQuery = e.target.search.value.trim();
     if (searchQuery) {
-      // Chỉ navigate với search param, không giữ category
-      // để tìm kiếm trên toàn bộ sản phẩm
+      // Navigate with search param only, don't keep category
+      // to search across all products
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       e.target.reset();

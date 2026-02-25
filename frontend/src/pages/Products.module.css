@@ -37,7 +37,7 @@
   letter-spacing: 0.02em;
 }
 
-/* Search Banner - hiển thị khi đang tìm kiếm */
+/* Search Banner - displays when searching */
 .searchBanner {
   display: flex;
   align-items: center;

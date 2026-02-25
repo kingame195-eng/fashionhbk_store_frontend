@@ -1,11 +1,11 @@
 /**
  * Shipping Calculator Component
  *
- * Component tính phí vận chuyển dựa trên địa chỉ nhận hàng.
- * Hỗ trợ:
- * - Chọn tỉnh/thành phố
- * - Hiển thị phí vận chuyển ước tính
- * - Thời gian giao hàng dự kiến
+ * Component to calculate shipping fee based on delivery address.
+ * Supports:
+ * - Select province/city
+ * - Display estimated shipping fee
+ * - Estimated delivery time
  *
  * @module components/cart/ShippingCalculator
  */
@@ -13,18 +13,18 @@
 import { useState, useMemo } from "react";
 import styles from "./ShippingCalculator.module.css";
 
-// Dữ liệu các tỉnh/thành phố và phí ship
+// Province/city data and shipping fees
 const PROVINCES_DATA = [
-  { id: "hcm", name: "TP. Hồ Chí Minh", shippingFee: 0, days: "1-2" },
-  { id: "hn", name: "Hà Nội", shippingFee: 0, days: "1-2" },
-  { id: "dn", name: "Đà Nẵng", shippingFee: 3.99, days: "2-3" },
-  { id: "hp", name: "Hải Phòng", shippingFee: 4.99, days: "2-3" },
-  { id: "ct", name: "Cần Thơ", shippingFee: 4.99, days: "2-3" },
-  { id: "bd", name: "Bình Dương", shippingFee: 2.99, days: "1-2" },
-  { id: "dn2", name: "Đồng Nai", shippingFee: 2.99, days: "1-2" },
-  { id: "tth", name: "Thừa Thiên Huế", shippingFee: 5.99, days: "3-4" },
-  { id: "qn", name: "Quảng Ninh", shippingFee: 5.99, days: "3-4" },
-  { id: "other", name: "Tỉnh/Thành khác", shippingFee: 7.99, days: "3-5" },
+  { id: "hcm", name: "Ho Chi Minh City", shippingFee: 0, days: "1-2" },
+  { id: "hn", name: "Hanoi", shippingFee: 0, days: "1-2" },
+  { id: "dn", name: "Da Nang", shippingFee: 3.99, days: "2-3" },
+  { id: "hp", name: "Hai Phong", shippingFee: 4.99, days: "2-3" },
+  { id: "ct", name: "Can Tho", shippingFee: 4.99, days: "2-3" },
+  { id: "bd", name: "Binh Duong", shippingFee: 2.99, days: "1-2" },
+  { id: "dn2", name: "Dong Nai", shippingFee: 2.99, days: "1-2" },
+  { id: "tth", name: "Thua Thien Hue", shippingFee: 5.99, days: "3-4" },
+  { id: "qn", name: "Quang Ninh", shippingFee: 5.99, days: "3-4" },
+  { id: "other", name: "Other Provinces", shippingFee: 7.99, days: "3-5" },
 ];
 
 const TruckIcon = () => (
@@ -81,7 +81,7 @@ const ClockIcon = () => (
 );
 
 /**
- * Format giá tiền sang định dạng USD
+ * Format price to USD format
  */
 const formatPrice = (price) => {
   return new Intl.NumberFormat("en-US", {
@@ -94,9 +94,9 @@ const formatPrice = (price) => {
  * Shipping Calculator Component
  *
  * @param {Object} props
- * @param {Function} props.onShippingChange - Callback khi phí vận chuyển thay đổi
- * @param {number} props.subtotal - Tổng tiền hàng (để tính miễn phí ship)
- * @param {number} props.freeShippingThreshold - Ngưỡng miễn phí vận chuyển
+ * @param {Function} props.onShippingChange - Callback when shipping fee changes
+ * @param {number} props.subtotal - Order subtotal (for free shipping calculation)
+ * @param {number} props.freeShippingThreshold - Free shipping threshold
  */
 export default function ShippingCalculator({
   onShippingChange,
@@ -106,14 +106,14 @@ export default function ShippingCalculator({
   const [selectedProvince, setSelectedProvince] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Tính phí ship dựa trên tỉnh và tổng tiền
+  // Calculate shipping fee based on province and subtotal
   const shippingInfo = useMemo(() => {
     if (!selectedProvince) return null;
 
     const province = PROVINCES_DATA.find((p) => p.id === selectedProvince);
     if (!province) return null;
 
-    // Miễn phí ship nếu đạt ngưỡng
+    // Free shipping if threshold is reached
     const isFreeShipping = subtotal >= freeShippingThreshold;
     const finalFee = isFreeShipping ? 0 : province.shippingFee;
 
@@ -125,7 +125,7 @@ export default function ShippingCalculator({
     };
   }, [selectedProvince, subtotal, freeShippingThreshold]);
 
-  // Gọi callback khi phí ship thay đổi
+  // Call callback when shipping fee changes
   const handleProvinceChange = (e) => {
     const value = e.target.value;
     setSelectedProvince(value);
@@ -152,7 +152,7 @@ export default function ShippingCalculator({
       <button className={styles.header} onClick={() => setIsExpanded(!isExpanded)} type="button">
         <div className={styles.headerContent}>
           <TruckIcon />
-          <span>Tính phí vận chuyển</span>
+          <span>Calculate Shipping</span>
         </div>
         <span className={`${styles.arrow} ${isExpanded ? styles.expanded : ""}`}>▼</span>
       </button>
@@ -167,7 +167,7 @@ export default function ShippingCalculator({
             onChange={handleProvinceChange}
             className={styles.select}
           >
-            <option value="">-- Chọn tỉnh/thành phố --</option>
+            <option value="">-- Select Province/City --</option>
             {PROVINCES_DATA.map((province) => (
               <option key={province.id} value={province.id}>
                 {province.name}
@@ -180,11 +180,11 @@ export default function ShippingCalculator({
         {shippingInfo && (
           <div className={styles.shippingInfo}>
             <div className={styles.infoRow}>
-              <span className={styles.label}>Phí vận chuyển:</span>
+              <span className={styles.label}>Shipping Fee:</span>
               <div className={styles.feeInfo}>
                 {shippingInfo.isFreeShipping ? (
                   <>
-                    <span className={styles.freeShipping}>Miễn phí</span>
+                    <span className={styles.freeShipping}>Free</span>
                     {shippingInfo.originalFee > 0 && (
                       <span className={styles.originalFee}>
                         {formatPrice(shippingInfo.originalFee)}
@@ -200,15 +200,14 @@ export default function ShippingCalculator({
             <div className={styles.infoRow}>
               <span className={styles.label}>
                 <ClockIcon />
-                Thời gian giao hàng:
+                Delivery Time:
               </span>
-              <span className={styles.days}>{shippingInfo.days} ngày</span>
+              <span className={styles.days}>{shippingInfo.days} days</span>
             </div>
 
             {!shippingInfo.isFreeShipping && subtotal > 0 && (
               <div className={styles.freeShippingNote}>
-                💡 Mua thêm {formatPrice(freeShippingThreshold - subtotal)} để được miễn phí vận
-                chuyển
+                💡 Add {formatPrice(freeShippingThreshold - subtotal)} more for free shipping
               </div>
             )}
           </div>
@@ -216,24 +215,24 @@ export default function ShippingCalculator({
 
         {/* Shipping Methods */}
         <div className={styles.methods}>
-          <h4>Phương thức vận chuyển:</h4>
+          <h4>Shipping Method:</h4>
           <div className={styles.methodList}>
             <label className={styles.methodOption}>
               <input type="radio" name="shippingMethod" value="standard" defaultChecked />
               <div className={styles.methodInfo}>
-                <span className={styles.methodName}>Giao hàng tiêu chuẩn</span>
-                <span className={styles.methodDesc}>3-5 ngày làm việc</span>
+                <span className={styles.methodName}>Standard Delivery</span>
+                <span className={styles.methodDesc}>3-5 business days</span>
               </div>
               <span className={styles.methodPrice}>
-                {shippingInfo?.isFreeShipping ? "Miễn phí" : "Phí cơ bản"}
+                {shippingInfo?.isFreeShipping ? "Free" : "Base Fee"}
               </span>
             </label>
 
             <label className={styles.methodOption}>
               <input type="radio" name="shippingMethod" value="express" />
               <div className={styles.methodInfo}>
-                <span className={styles.methodName}>Giao hàng nhanh</span>
-                <span className={styles.methodDesc}>1-2 ngày làm việc</span>
+                <span className={styles.methodName}>Express Delivery</span>
+                <span className={styles.methodDesc}>1-2 business days</span>
               </div>
               <span className={styles.methodPrice}>+$5.00</span>
             </label>

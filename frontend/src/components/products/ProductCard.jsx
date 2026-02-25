@@ -193,7 +193,7 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
-          {/* Pricing - Hiển thị giá gốc và giá sale */}
+          {/* Pricing - Display original price and sale price */}
           <div className={styles.pricing}>
             {compareAtPrice && Number(compareAtPrice) > Number(price) ? (
               <>

@@ -92,12 +92,11 @@
 /* Outline - Bordered button */
 .outline {
   background-color: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+  color: #000000;
 }
 
 .outline:hover:not(:disabled) {
-  background-color: var(--color-primary);
+  background-color: #D2B879;
   color: var(--color-white);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);

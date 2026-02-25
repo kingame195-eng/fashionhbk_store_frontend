@@ -75,7 +75,7 @@ export function useProducts(initialFilters = {}) {
       setError(null);
 
       try {
-        // Build API params - limit sẽ được backend quyết định
+        // Build API params - limit will be determined by backend
         const apiParams = {};
 
         if (params.category) apiParams.category = params.category;
@@ -185,24 +185,24 @@ export function useProducts(initialFilters = {}) {
     [updateFilters]
   );
 
-  // Tìm kiếm sản phẩm - giữ nguyên các filter khác để user có thể kết hợp search + filter
+  // Search products - keep other filters so user can combine search + filter
   const setSearch = useCallback(
     (search, clearCategory = false) => {
       if (search && search.trim()) {
-        // Có từ khóa tìm kiếm
+        // Has search keyword
         if (clearCategory) {
-          // Khi search từ Header hoặc muốn search toàn site -> xóa category
+          // When searching from Header or want to search entire site -> clear category
           updateFilters({
             search,
             category: "",
             page: 1,
           });
         } else {
-          // Search trong context hiện tại (giữ category nếu có)
+          // Search in current context (keep category if any)
           updateFilters({ search, page: 1 });
         }
       } else {
-        // Xóa từ khóa tìm kiếm -> giữ nguyên các filter khác
+        // Clear search keyword -> keep other filters
         updateFilters({ search: "", page: 1 });
       }
     },

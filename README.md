@@ -2,19 +2,19 @@
 
 A full-stack e-commerce fashion website built with React, Node.js, Express, and MongoDB.
 
-> **Đây là dự án học tập fullstack** - Mỗi phần code đều kèm giải thích lý do và cách thực hiện.
+> **This is a fullstack learning project** - Each code section includes explanations of why and how it's implemented.
 
 ---
 
-## 📖 Tài liệu học tập
+## 📖 Learning Resources
 
-| File                                                       | Mô tả                                                     |
-| ---------------------------------------------------------- | --------------------------------------------------------- |
-| [FASHION_FULLSTACK_GUIDE.md](./FASHION_FULLSTACK_GUIDE.md) | 📚 **Giáo án chính** - Hướng dẫn từng bước xây dựng dự án |
+| File                                                       | Description                                                    |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| [FASHION_FULLSTACK_GUIDE.md](./FASHION_FULLSTACK_GUIDE.md) | 📚 **Main Guide** - Step-by-step guide to building the project |
 
 ---
 
-## 🏗️ Cấu trúc dự án
+## 🏗️ Project Structure
 
 ```
 fashion-website-frontend/
@@ -64,8 +64,8 @@ cd fashion-website-frontend
 ```bash
 cd fashion-website-backend
 npm install
-cp .env.example .env  # Cấu hình environment variables
-npm run dev           # Chạy ở http://localhost:5000
+cp .env.example .env  # Configure environment variables
+npm run dev           # Run at http://localhost:5000
 ```
 
 ### 3. Setup Frontend
@@ -73,7 +73,7 @@ npm run dev           # Chạy ở http://localhost:5000
 ```bash
 cd frontend
 npm install
-npm run dev           # Chạy ở http://localhost:3000
+npm run dev           # Run at http://localhost:3000
 ```
 
 ---
@@ -153,23 +153,23 @@ npm test         # Run tests
 
 ## 🌐 Deployment
 
-Xem chi tiết trong [FASHION_FULLSTACK_GUIDE.md](./FASHION_FULLSTACK_GUIDE.md) phần **Part 6: Docker & Deployment**.
+See details in [FASHION_FULLSTACK_GUIDE.md](./FASHION_FULLSTACK_GUIDE.md) section **Part 6: Docker & Deployment**.
 
 ---
 
 ## 📄 License
 
-MIT License - Xem file [LICENSE](./LICENSE) để biết thêm chi tiết.
+MIT License - See [LICENSE](./LICENSE) file for more details.
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork repository
-2. Tạo feature branch (`git checkout -b feature/amazing-feature`)
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
 4. Push to branch (`git push origin feature/amazing-feature`)
-5. Mở Pull Request
+5. Open Pull Request
 
 ---
 

@@ -1,14 +1,14 @@
 /**
  * Cart Page Component
  *
- * Trang giỏ hàng đầy đủ chức năng với các tính năng:
- * - Hiển thị danh sách sản phẩm trong giỏ hàng
- * - Thay đổi số lượng sản phẩm
- * - Xóa sản phẩm khỏi giỏ hàng
- * - Áp dụng mã giảm giá/voucher
- * - Tính phí vận chuyển
- * - Hiển thị sản phẩm đề xuất
- * - Responsive design cho mobile và desktop
+ * Full-featured shopping cart page with:
+ * - Display list of products in cart
+ * - Change product quantity
+ * - Remove products from cart
+ * - Apply discount code/voucher
+ * - Calculate shipping fee
+ * - Display recommended products
+ * - Responsive design for mobile and desktop
  *
  * @module pages/Cart
  */
@@ -181,7 +181,7 @@ const LockIcon = () => (
 );
 
 /**
- * Format giá tiền sang định dạng USD
+ * Format price to USD format
  */
 const formatPrice = (price) => {
   return new Intl.NumberFormat("en-US", {
@@ -323,7 +323,7 @@ function CartItem({ item, onUpdateQuantity, onRemove, isUpdating }) {
 }
 
 /**
- * Component nhập mã giảm giá
+ * Coupon input component
  */
 function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
   const [code, setCode] = useState("");
@@ -390,7 +390,7 @@ function CouponInput({ onApply, appliedCoupon, onRemove, isLoading }) {
 }
 
 /**
- * Component hiển thị tiến độ miễn phí vận chuyển
+ * Free shipping progress component
  */
 function FreeShippingProgress({ progress, amountNeeded, threshold }) {
   const isFreeShipping = progress >= 100;
@@ -424,7 +424,7 @@ function FreeShippingProgress({ progress, amountNeeded, threshold }) {
 }
 
 /**
- * Component tóm tắt đơn hàng
+ * Order summary component
  */
 function OrderSummary({
   subtotal,
@@ -451,12 +451,12 @@ function OrderSummary({
     }
   };
 
-  // Xử lý thay đổi phí vận chuyển từ calculator
+  // Handle shipping fee change from calculator
   const handleShippingChange = (shippingData) => {
     setCalculatedShipping(shippingData);
   };
 
-  // Tính tổng tiền cuối cùng với phí ship mới
+  // Calculate final total with new shipping fee
   const finalShipping = calculatedShipping?.fee ?? shipping;
   const finalTotal = subtotal + finalShipping + tax - discount;
 
@@ -471,7 +471,7 @@ function OrderSummary({
         </div>
 
         <div className={styles.summaryRow}>
-          <span>Phí vận chuyển</span>
+          <span>Shipping</span>
           <span className={finalShipping === 0 ? styles.freeShipping : ""}>
             {finalShipping === 0 ? "Free" : formatPrice(finalShipping)}
           </span>
@@ -522,7 +522,7 @@ function OrderSummary({
 
       {/* Payment methods */}
       <div className={styles.paymentMethods}>
-        <span>Chấp nhận:</span>
+        <span>Accepted:</span>
         <div className={styles.paymentIcons}>
           <span className={styles.paymentIcon}>💳 Visa</span>
           <span className={styles.paymentIcon}>💳 Mastercard</span>
@@ -546,7 +546,7 @@ function EmptyCart() {
       <p>Looks like you haven't added any products to your cart yet.</p>
       <Link to="/products">
         <Button variant="primary" size="lg" leftIcon={<ArrowLeftIcon />}>
-          Tiếp tục mua sắm
+          Continue Shopping
         </Button>
       </Link>
     </div>
@@ -557,44 +557,44 @@ function EmptyCart() {
  * Suggested products component
  */
 function RecommendedProducts({ currentItems }) {
-  // Mock recommended products - trong thực tế sẽ fetch từ API
+  // Mock recommended products - in production, this would be fetched from API
   const recommendedProducts = useMemo(
     () => [
       {
         _id: "rec1",
-        name: "Áo sơ mi linen cao cấp",
+        name: "Premium Linen Shirt",
         price: 89.99,
         originalPrice: 129.99,
         image: "/images/products/shirt-1.jpg",
-        slug: "ao-so-mi-linen",
+        slug: "premium-linen-shirt",
       },
       {
         _id: "rec2",
-        name: "Quần jeans slim fit",
+        name: "Slim Fit Jeans",
         price: 79.99,
         image: "/images/products/jeans-1.jpg",
-        slug: "quan-jeans-slim",
+        slug: "slim-fit-jeans",
       },
       {
         _id: "rec3",
-        name: "Áo khoác bomber",
+        name: "Bomber Jacket",
         price: 149.99,
         originalPrice: 199.99,
         image: "/images/products/jacket-1.jpg",
-        slug: "ao-khoac-bomber",
+        slug: "bomber-jacket",
       },
       {
         _id: "rec4",
-        name: "Giày sneaker trắng",
+        name: "White Sneakers",
         price: 119.99,
         image: "/images/products/sneaker-1.jpg",
-        slug: "giay-sneaker-trang",
+        slug: "white-sneakers",
       },
     ],
     []
   );
 
-  // Lọc bỏ các sản phẩm đã có trong giỏ hàng
+  // Filter out products already in cart
   const filteredProducts = recommendedProducts.filter(
     (product) =>
       !currentItems.some(
@@ -606,7 +606,7 @@ function RecommendedProducts({ currentItems }) {
 
   return (
     <div className={styles.recommendedSection}>
-      <h3 className={styles.recommendedTitle}>Có thể bạn cũng thích</h3>
+      <h3 className={styles.recommendedTitle}>You May Also Like</h3>
       <div className={styles.recommendedGrid}>
         {filteredProducts.slice(0, 4).map((product) => (
           <Link
@@ -676,7 +676,7 @@ export default function Cart() {
   const [updatingItems, setUpdatingItems] = useState(new Set());
 
   /**
-   * Xử lý thay đổi số lượng sản phẩm
+   * Handle product quantity change
    */
   const handleUpdateQuantity = useCallback(
     async (itemId, quantity) => {
@@ -698,7 +698,7 @@ export default function Cart() {
   );
 
   /**
-   * Xử lý xóa sản phẩm
+   * Handle product removal
    */
   const handleRemoveItem = useCallback(
     async (itemId) => {
@@ -722,7 +722,7 @@ export default function Cart() {
   );
 
   /**
-   * Xử lý xóa tất cả sản phẩm
+   * Handle clear all products
    */
   const handleClearCart = useCallback(async () => {
     if (window.confirm("Are you sure you want to remove all products from cart?")) {
@@ -736,7 +736,7 @@ export default function Cart() {
   }, [clearCart, showSuccess, showError]);
 
   /**
-   * Xử lý áp dụng mã giảm giá
+   * Handle apply discount code
    */
   const handleApplyCoupon = useCallback(
     async (code) => {
@@ -750,7 +750,7 @@ export default function Cart() {
   );
 
   /**
-   * Xử lý xóa mã giảm giá
+   * Handle remove discount code
    */
   const handleRemoveCoupon = useCallback(async () => {
     const result = await removeCoupon();
@@ -762,7 +762,7 @@ export default function Cart() {
   }, [removeCoupon, showSuccess, showError]);
 
   /**
-   * Xử lý chuyển đến trang thanh toán
+   * Handle navigate to checkout page
    */
   const handleCheckout = useCallback(() => {
     navigate("/checkout");
@@ -827,9 +827,9 @@ export default function Cart() {
           <div className={styles.cartItemsSection}>
             {/* Table Header (Desktop) */}
             <div className={styles.cartHeader}>
-              <span className={styles.headerProduct}>Sản phẩm</span>
-              <span className={styles.headerQuantity}>Số lượng</span>
-              <span className={styles.headerSubtotal}>Thành tiền</span>
+              <span className={styles.headerProduct}>Product</span>
+              <span className={styles.headerQuantity}>Quantity</span>
+              <span className={styles.headerSubtotal}>Subtotal</span>
               <span className={styles.headerAction}></span>
             </div>
 
@@ -850,17 +850,17 @@ export default function Cart() {
             <div className={styles.cartActions}>
               <Link to="/products" className={styles.continueShoppingLink}>
                 <ArrowLeftIcon />
-                <span>Tiếp tục mua sắm</span>
+                <span>Continue Shopping</span>
               </Link>
 
               <Button variant="ghost" size="sm" onClick={handleClearCart} disabled={isLoading}>
-                Xóa tất cả
+                Clear All
               </Button>
             </div>
 
             {/* Coupon Section */}
             <div className={styles.couponSection}>
-              <h3>Mã giảm giá</h3>
+              <h3>Discount Code</h3>
               <CouponInput
                 onApply={handleApplyCoupon}
                 appliedCoupon={coupon}

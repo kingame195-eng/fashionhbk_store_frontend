@@ -1,139 +1,139 @@
 # 🛒 Cart Page Documentation
 
-## Tổng quan
+## Overview
 
-Trang giỏ hàng (`Cart.jsx`) là một component React đầy đủ chức năng, cung cấp trải nghiệm mua sắm mượt mà cho người dùng.
+The Cart page (`Cart.jsx`) is a fully functional React component that provides a smooth shopping experience for users.
 
-## 📁 Cấu trúc files
+## 📁 File Structure
 
 ```
 frontend/src/
 ├── pages/
-│   ├── Cart.jsx           # Component chính trang giỏ hàng
-│   └── Cart.module.css    # Styles cho trang giỏ hàng
+│   ├── Cart.jsx           # Main cart page component
+│   └── Cart.module.css    # Cart page styles
 ├── components/
 │   └── cart/
 │       ├── index.js                    # Export components
-│       ├── ShippingCalculator.jsx      # Component tính phí vận chuyển
+│       ├── ShippingCalculator.jsx      # Shipping calculator component
 │       └── ShippingCalculator.module.css
 └── context/
-    └── CartContext.jsx    # Context quản lý state giỏ hàng
+    └── CartContext.jsx    # Cart state management context
 ```
 
-## ✨ Tính năng
+## ✨ Features
 
-### 1. Hiển thị danh sách sản phẩm
+### 1. Product List Display
 
-- Tên sản phẩm với link đến trang chi tiết
-- Ảnh sản phẩm với hiệu ứng hover
-- Giá từng sản phẩm (bao gồm giá gốc nếu có sale)
-- Số lượng với nút tăng/giảm
-- Thành tiền của từng sản phẩm
-- Hiển thị thông tin variant (size, màu sắc)
+- Product name with link to detail page
+- Product image with hover effect
+- Price per product (including original price if on sale)
+- Quantity with increase/decrease buttons
+- Subtotal per product
+- Display variant info (size, color)
 
-### 2. Quản lý số lượng
+### 2. Quantity Management
 
-- Nút tăng/giảm số lượng
-- Giới hạn theo số lượng tồn kho
-- Optimistic UI updates (cập nhật ngay lập tức)
-- Rollback khi có lỗi
+- Increase/decrease quantity buttons
+- Limited by stock quantity
+- Optimistic UI updates (instant update)
+- Rollback on error
 
-### 3. Xóa sản phẩm
+### 3. Remove Products
 
-- Xóa từng sản phẩm
-- Xóa tất cả với xác nhận
-- Animation mượt mà
+- Remove individual products
+- Clear all with confirmation
+- Smooth animation
 
-### 4. Tóm tắt đơn hàng
+### 4. Order Summary
 
-- Tạm tính
-- Phí vận chuyển (miễn phí khi đạt ngưỡng $100)
-- Thuế 10%
-- Giảm giá (nếu có)
-- Tổng cộng
+- Subtotal
+- Shipping fee (free when reaching $100 threshold)
+- 10% Tax
+- Discount (if any)
+- Total
 
-### 5. Mã giảm giá / Voucher
+### 5. Discount Code / Voucher
 
-- Nhập và áp dụng mã giảm giá
-- Hiển thị mã đã áp dụng với thông tin giảm giá
-- Xóa mã giảm giá
+- Enter and apply discount code
+- Display applied code with discount info
+- Remove discount code
 
-### 6. Tính phí vận chuyển
+### 6. Shipping Calculator
 
-- Component ShippingCalculator độc lập
-- Chọn tỉnh/thành phố
-- Hiển thị phí vận chuyển ước tính
-- Thời gian giao hàng dự kiến
-- Phương thức vận chuyển (tiêu chuẩn/nhanh)
+- Independent ShippingCalculator component
+- Select province/city
+- Display estimated shipping fee
+- Estimated delivery time
+- Shipping method (standard/express)
 
-### 7. Tiến độ miễn phí vận chuyển
+### 7. Free Shipping Progress
 
-- Progress bar hiển thị tiến độ
-- Thông báo số tiền cần mua thêm
-- Hiệu ứng khi đạt miễn phí ship
+- Progress bar showing progress
+- Message showing amount needed
+- Effect when free shipping is reached
 
-### 8. Sản phẩm đề xuất
+### 8. Recommended Products
 
-- Grid sản phẩm liên quan
-- Lọc bỏ sản phẩm đã có trong giỏ
+- Related products grid
+- Filter out products already in cart
 - Responsive grid layout
 
 ### 9. Responsive Design
 
-- Desktop: Layout 2 cột (giỏ hàng + tóm tắt)
-- Tablet: Layout 1 cột
-- Mobile: Giao diện tối ưu với actions inline
+- Desktop: 2-column layout (cart + summary)
+- Tablet: 1-column layout
+- Mobile: Optimized interface with inline actions
 
 ## 🎨 UI/UX Features
 
-- **Optimistic Updates**: Cập nhật UI ngay lập tức, rollback nếu lỗi
-- **Loading States**: Hiển thị spinner khi đang tải
-- **Error Handling**: Toast notifications cho các lỗi
-- **Empty State**: Giao diện thân thiện khi giỏ trống
-- **Animations**: Hover effects, transitions mượt mà
+- **Optimistic Updates**: Update UI immediately, rollback on error
+- **Loading States**: Display spinner while loading
+- **Error Handling**: Toast notifications for errors
+- **Empty State**: Friendly interface when cart is empty
+- **Animations**: Hover effects, smooth transitions
 - **Accessibility**: ARIA labels, keyboard navigation
 
-## 🔧 Cách sử dụng
+## 🔧 Usage
 
-### Import và sử dụng trong router:
+### Import and use in router:
 
 ```jsx
 import Cart from "@pages/Cart";
 
-// Trong Router
+// In Router
 <Route path="cart" element={<Cart />} />;
 ```
 
-### CartContext cung cấp các methods:
+### CartContext provides these methods:
 
 ```jsx
 const {
   // State
-  items, // Danh sách sản phẩm
-  subtotal, // Tổng tiền hàng
-  total, // Tổng cộng sau thuế, ship
-  discount, // Số tiền giảm giá
-  coupon, // Mã giảm giá đã áp dụng
-  itemCount, // Tổng số lượng
-  shipping, // Phí vận chuyển
-  tax, // Thuế
-  isLoading, // Đang tải
-  error, // Lỗi
+  items, // Product list
+  subtotal, // Subtotal
+  total, // Total after tax, shipping
+  discount, // Discount amount
+  coupon, // Applied coupon code
+  itemCount, // Total quantity
+  shipping, // Shipping fee
+  tax, // Tax
+  isLoading, // Loading state
+  error, // Error
 
   // Computed
-  isEmpty, // Giỏ trống?
-  freeShippingProgress, // % tiến độ free ship
-  amountToFreeShipping, // Số tiền cần mua thêm
-  freeShippingThreshold, // Ngưỡng free ship ($100)
+  isEmpty, // Is cart empty?
+  freeShippingProgress, // % progress to free shipping
+  amountToFreeShipping, // Amount needed for free shipping
+  freeShippingThreshold, // Free shipping threshold ($100)
 
   // Actions
-  addItem, // Thêm sản phẩm
-  updateItem, // Cập nhật số lượng
-  removeItem, // Xóa sản phẩm
-  clearCart, // Xóa tất cả
-  applyCoupon, // Áp dụng mã giảm giá
-  removeCoupon, // Xóa mã giảm giá
-  refreshCart, // Làm mới giỏ hàng
+  addItem, // Add product
+  updateItem, // Update quantity
+  removeItem, // Remove product
+  clearCart, // Clear all
+  applyCoupon, // Apply discount code
+  removeCoupon, // Remove discount code
+  refreshCart, // Refresh cart
 } = useCart();
 ```
 
@@ -141,44 +141,44 @@ const {
 
 - React Router DOM (navigation, Link)
 - CartContext (state management)
-- AuthContext (kiểm tra đăng nhập)
+- AuthContext (authentication check)
 - ToastContext (notifications)
 - CSS Modules (styling)
 
-## 🎯 Tùy chỉnh
+## 🎯 Customization
 
-### Thay đổi ngưỡng miễn phí vận chuyển:
+### Change free shipping threshold:
 
-Sửa trong `CartContext.jsx`:
+Edit in `CartContext.jsx`:
 
 ```jsx
-const FREE_SHIPPING_THRESHOLD = 100; // Đổi thành giá trị mong muốn
+const FREE_SHIPPING_THRESHOLD = 100; // Change to desired value
 ```
 
-### Thêm tỉnh/thành phố:
+### Add provinces/cities:
 
-Sửa trong `ShippingCalculator.jsx`:
+Edit in `ShippingCalculator.jsx`:
 
 ```jsx
 const PROVINCES_DATA = [
-  { id: "new-city", name: "Tên thành phố", shippingFee: 4.99, days: "2-3" },
+  { id: "new-city", name: "City Name", shippingFee: 4.99, days: "2-3" },
   // ...
 ];
 ```
 
-### Thay đổi thuế suất:
+### Change tax rate:
 
-Sửa trong `CartContext.jsx`:
+Edit in `CartContext.jsx`:
 
 ```jsx
-const TAX_RATE = 0.1; // 10%, đổi thành giá trị mong muốn
+const TAX_RATE = 0.1; // 10%, change to desired value
 ```
 
-## 🔒 Bảo mật
+## 🔒 Security
 
-- Kiểm tra authentication trước khi checkout
-- Redirect đến login với return URL
-- Validate số lượng trước khi gửi request
+- Check authentication before checkout
+- Redirect to login with return URL
+- Validate quantity before sending request
 - Sanitize user input
 
 ## 📱 Breakpoints
@@ -190,26 +190,26 @@ const TAX_RATE = 0.1; // 10%, đổi thành giá trị mong muốn
 ## 🚀 Performance
 
 - Lazy loading images
-- Memoized components và callbacks
+- Memoized components and callbacks
 - Optimistic UI updates
-- Debounced quantity updates (nếu cần)
+- Debounced quantity updates (if needed)
 
 ## 🐛 Troubleshooting
 
-### Giỏ hàng không hiển thị:
+### Cart not displaying:
 
-1. Kiểm tra CartProvider đã wrap App
-2. Kiểm tra API cart endpoint
-3. Xem console logs
+1. Check CartProvider wraps App
+2. Check cart API endpoint
+3. View console logs
 
-### Số lượng không cập nhật:
+### Quantity not updating:
 
-1. Kiểm tra kết nối API
-2. Xem network tab trong DevTools
-3. Kiểm tra error state
+1. Check API connection
+2. View network tab in DevTools
+3. Check error state
 
-### Mã giảm giá không hoạt động:
+### Discount code not working:
 
-1. Kiểm tra API coupon endpoint
-2. Xác nhận mã hợp lệ
-3. Xem response từ server
+1. Check coupon API endpoint
+2. Confirm code is valid
+3. View server response

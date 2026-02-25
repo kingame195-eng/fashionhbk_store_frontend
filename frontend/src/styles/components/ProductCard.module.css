@@ -275,14 +275,14 @@
   color: #1a1a1a;
 }
 
-/* Giá đã giảm - Màu đỏ nổi bật */
+/* Sale price - Highlighted in red */
 .salePrice {
   font-size: 1.1rem;
   font-weight: 700;
   color: #dc2626;
 }
 
-/* Giá gốc - Gạch ngang */
+/* Original price - Strikethrough */
 .comparePrice {
   font-size: 0.875rem;
   color: #9ca3af;

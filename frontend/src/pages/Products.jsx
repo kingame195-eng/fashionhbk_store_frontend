@@ -63,7 +63,7 @@ const Products = () => {
         </p>
       </div>
 
-      {/* Search Info Banner - hiển thị khi có từ khóa tìm kiếm */}
+      {/* Search Info Banner - displays when there's a search keyword */}
       {filters.search && (
         <div className={styles.searchBanner}>
           <span>

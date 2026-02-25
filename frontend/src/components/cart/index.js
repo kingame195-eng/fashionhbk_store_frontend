@@ -1,7 +1,7 @@
 /**
  * Cart Components
  *
- * Export các components liên quan đến giỏ hàng
+ * Export cart-related components
  */
 
 export { default as ShippingCalculator } from "./ShippingCalculator";

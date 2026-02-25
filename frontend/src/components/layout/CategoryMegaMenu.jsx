@@ -1,7 +1,7 @@
 /**
  * CategoryMegaMenu Component
- * Hiển thị dropdown mega menu với sản phẩm của từng category
- * Bao gồm giá gốc và giá đã sale
+ * Displays dropdown mega menu with products of each category
+ * Includes original price and sale price
  */
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ export default function CategoryMegaMenu({ category, isOpen, onClose }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch products khi menu mở
+  // Fetch products when menu opens
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       setIsLoading(true);
@@ -37,7 +37,7 @@ export default function CategoryMegaMenu({ category, isOpen, onClose }) {
     }
   }, [isOpen, category]);
 
-  // Lấy URL hình ảnh sản phẩm
+  // Get product image URL
   const getImageUrl = (product) => {
     if (product.images?.[0]?.url) return product.images[0].url;
     if (product.thumbnail) return product.thumbnail;
@@ -45,7 +45,7 @@ export default function CategoryMegaMenu({ category, isOpen, onClose }) {
     return "/images/placeholder-product.jpg";
   };
 
-  // Tính phần trăm giảm giá
+  // Calculate discount percentage
   const getDiscountPercent = (price, compareAtPrice) => {
     if (!compareAtPrice || compareAtPrice <= price) return 0;
     return Math.round((1 - price / compareAtPrice) * 100);
@@ -109,23 +109,23 @@ export default function CategoryMegaMenu({ category, isOpen, onClose }) {
                     <h4 className={styles.productName}>{product.name}</h4>
 
                     {/* 
-                      PHẦN HIỂN THỊ GIÁ - CÓ GIÁ GỐC VÀ GIÁ SALE
-                      - Nếu có compareAtPrice (giá gốc) > price (giá hiện tại) → Hiển thị cả 2 giá
-                      - Giá sale (price) màu đỏ, nổi bật
-                      - Giá gốc (compareAtPrice) gạch ngang, màu xám
+                      PRICE DISPLAY - ORIGINAL AND SALE PRICE
+                      - If compareAtPrice (original price) > price (current price) → Display both prices
+                      - Sale price (price) in red, highlighted
+                      - Original price (compareAtPrice) strikethrough, gray
                     */}
                     <div className={styles.priceWrapper}>
                       {product.compareAtPrice && product.compareAtPrice > product.price ? (
                         <>
-                          {/* Giá đã giảm - Nổi bật màu đỏ */}
+                          {/* Sale price - Highlighted in red */}
                           <span className={styles.salePrice}>${product.price.toFixed(2)}</span>
-                          {/* Giá gốc - Gạch ngang */}
+                          {/* Original price - Strikethrough */}
                           <span className={styles.originalPrice}>
                             ${product.compareAtPrice.toFixed(2)}
                           </span>
                         </>
                       ) : (
-                        /* Giá bình thường (không có sale) */
+                        /* Regular price (no sale) */
                         <span className={styles.regularPrice}>${product.price.toFixed(2)}</span>
                       )}
                     </div>

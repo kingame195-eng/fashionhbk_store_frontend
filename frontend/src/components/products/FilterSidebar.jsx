@@ -61,11 +61,11 @@ export default function FilterSidebar({
   };
 
   const handleCategoryClick = (categorySlug) => {
-    // Khi click category, giữ nguyên search query (nếu có) để kết hợp search + filter
+    // When clicking category, keep search query (if any) to combine search + filter
     updateFilters({
       category: filters.category === categorySlug ? "" : categorySlug,
       page: 1,
-      // Giữ nguyên search param
+      // Keep search param
     });
   };
 
