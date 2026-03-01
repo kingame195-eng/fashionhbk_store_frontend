@@ -98,9 +98,8 @@ function Footer() {
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    // TODO: Implement newsletter subscription
-    console.log("Newsletter subscription:", email);
+    // TODO: Implement newsletter subscription API call
+    // Example: await newsletterService.subscribe(e.target.email.value);
     e.target.reset();
     alert("Thank you for subscribing!");
   };

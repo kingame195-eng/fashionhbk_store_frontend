@@ -85,8 +85,8 @@ export default function Login() {
     if (!password) {
       return "Please enter your password";
     }
-    if (password.length < 6) {
-      return "Password must be at least 6 characters long";
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
     }
     return "";
   };

@@ -102,13 +102,12 @@ export default function ForgotPassword() {
       setIsSuccess(true);
       showSuccess("Password reset instructions sent!");
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "An error occurred. Please try again later.";
+      const errorMessage = err.message || "An error occurred. Please try again later.";
 
       // Handle specific error cases
-      if (err.response?.status === 404) {
+      if (err.status === 404) {
         setError("This email is not registered in our system");
-      } else if (err.response?.status === 429) {
+      } else if (err.status === 429) {
         setError("You have sent too many requests. Please wait a few minutes and try again.");
       } else {
         setError(errorMessage);

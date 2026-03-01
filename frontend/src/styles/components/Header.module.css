@@ -48,7 +48,7 @@
   font-family: var(--font-secondary);
   font-size: var(--text-lg);
   font-weight: var(--font-light);
-  color: var(--color-accent);
+  color: #000000;
 }
 
 /* Desktop Navigation */
@@ -110,8 +110,9 @@
 
 .navLink:hover,
 .navLink.active {
-  color: white;
-  background-color: #d0b674;
+  color: var(--color-black);
+  background-color: #D0B674;
+  color: #ffffff;
   border-radius: 12px;
 }
 
@@ -147,8 +148,9 @@
 }
 
 .iconButton:hover {
-  color: var(--color-primary);
-  background-color: #d0b674;
+  color: var(--color-black);
+  background-color: #D0B674;
+  color: #ffffff;
 }
 
 .cartButton {
@@ -166,8 +168,9 @@
 }
 
 .cartButton:hover {
-  color: var(--color-primary);
-  background-color: #d0b674;
+  color: var(--color-black);
+  background-color: #D0B674;
+  color: #ffffff;
 }
 
 .cartBadge {
@@ -179,8 +182,9 @@
   padding: 0 4px;
   font-size: 11px;
   font-weight: var(--font-bold);
-  color: var(--color-white);
-  background-color: var(--color-accent);
+  color: var(--color-black);
+  background-color: #D0B674;
+  color: #ffffff;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -210,8 +214,9 @@
 }
 
 .userMenuButton:hover {
-  background-color: #d0b674;
-  color: white;
+  background-color: #D0B674;
+  color: #ffffff;
+  color: var(--color-black);
 }
 
 .userAvatar {
@@ -303,8 +308,9 @@
 }
 
 .dropdownItem:hover {
-  background-color: #d0b674;
-  color: var(--color-white);
+  background-color: #D0B674;
+  color: #ffffff;
+  color: var(--color-black);
 }
 
 .dropdownItem svg {
@@ -533,9 +539,10 @@
 }
 
 .registerLink {
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   color: var(--color-white);
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .registerLink:hover {

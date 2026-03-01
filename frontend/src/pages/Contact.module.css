@@ -7,7 +7,7 @@
 .hero {
   position: relative;
   padding: var(--space-24) var(--space-4);
-  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
+  background: linear-gradient(135deg, #D0B674 0%, #B89F5C 100%);
   text-align: center;
   color: #ffffff;
   overflow: hidden;
@@ -167,7 +167,7 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #1a1a1a;
-  background-color: #c9a962;
+  background-color: #D0B674;
   border: none;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -175,7 +175,7 @@
 
 .submitButton:hover:not(:disabled) {
   background-color: #1a1a1a;
-  color: #c9a962;
+  color: #D0B674;
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
@@ -215,7 +215,7 @@
 
 .infoCard:hover {
   background-color: #ffffff;
-  border-left-color: #c9a962;
+  border-left-color: #D0B674;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
@@ -282,7 +282,7 @@
 }
 
 .socialLink:hover {
-  background-color: #c9a962;
+  background-color: #D0B674;
   color: #ffffff;
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(201, 169, 98, 0.35);
@@ -303,7 +303,7 @@
   transform: translateX(-50%);
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, #c9a962);
+  background: linear-gradient(to bottom, transparent, #D0B674);
 }
 
 .faq .sectionTitle {

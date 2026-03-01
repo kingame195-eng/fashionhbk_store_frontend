@@ -19,7 +19,7 @@
 /* Newsletter Section */
 .newsletter {
   position: relative;
-  background: linear-gradient(160deg, #cfb370 0%, #d4bc7e 50%, #cfb370 100%);
+  background: linear-gradient(160deg, #d0b674 0%, #e5d4a1 50%, #d0b674 100%);
   padding: var(--space-16) var(--space-6);
   overflow: hidden;
 }
@@ -160,7 +160,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #cfb370;
+  color: #000000;
   background: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
@@ -174,7 +174,7 @@
   background: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
-  color: #b8944d;
+  color: #000000;
 }
 
 /* Main Footer */
@@ -258,17 +258,18 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  color: var(--color-accent);
-  background-color: rgba(201, 169, 98, 0.15);
-  border: 1px solid var(--color-accent);
+  color: #000000;
+  background-color: rgba(208, 182, 116, 0.15);
+  border: 1px solid var(--color-primary);
   border-radius: var(--radius-full);
   transition: all var(--transition-fast);
 }
 
 .socialLink:hover {
-  color: var(--color-white);
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  color: var(--color-black);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   transform: translateY(-3px);
 }
 

@@ -71,7 +71,7 @@
 
 .errorContent button {
   padding: 1rem 2.5rem;
-  background-color: #c9a962;
+  background-color: #D0B674;
   border: none;
   color: #1a1a1a;
   font-weight: 500;
@@ -84,7 +84,7 @@
 
 .errorContent button:hover {
   background-color: #1a1a1a;
-  color: #c9a962;
+  color: #D0B674;
 }
 
 /* Tablet Styles */

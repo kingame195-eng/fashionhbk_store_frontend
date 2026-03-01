@@ -23,7 +23,7 @@
 }
 
 .breadcrumb a:hover {
-  color: #c9a962;
+  color: #D0B674;
 }
 
 .breadcrumb span {
@@ -49,7 +49,7 @@
 
 .backLink {
   margin-top: 1rem;
-  color: #c9a962;
+  color: #D0B674;
   text-decoration: none;
   font-size: 0.85rem;
   letter-spacing: 0.05em;
@@ -100,7 +100,7 @@
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: #c9a962;
+  background: #D0B674;
   color: #ffffff;
   padding: 0.5rem 1rem;
   font-weight: 500;
@@ -128,7 +128,7 @@
 
 .thumbnail:hover,
 .thumbnail.active {
-  border-color: #c9a962;
+  border-color: #D0B674;
 }
 
 .thumbnail img {
@@ -149,7 +149,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #c9a962;
+  color: #D0B674;
   background: rgba(201, 169, 98, 0.1);
   padding: 0.35rem 1rem;
   width: fit-content;
@@ -237,13 +237,13 @@
 }
 
 .sizeBtn:hover {
-  border-color: var(--color-accent, #c9a962);
+  border-color: var(--color-accent, #D0B674);
 }
 
 .sizeBtn.active,
 .sizeBtn.selected {
-  background: var(--color-accent, #c9a962);
-  border-color: var(--color-accent, #c9a962);
+  background: var(--color-accent, #D0B674);
+  border-color: var(--color-accent, #D0B674);
   color: var(--color-black, #000);
 }
 
@@ -268,8 +268,8 @@
 
 .colorBtn.active,
 .colorBtn.selectedColor {
-  border-color: var(--color-accent, #c9a962);
-  box-shadow: 0 0 0 2px var(--color-accent, #c9a962);
+  border-color: var(--color-accent, #D0B674);
+  box-shadow: 0 0 0 2px var(--color-accent, #D0B674);
 }
 
 /* Stock Status */
@@ -293,7 +293,7 @@
   padding: 1rem 2rem;
   font-size: 1.1rem;
   font-weight: 600;
-  background: var(--color-accent, #c9a962);
+  background: var(--color-accent, #D0B674);
   color: var(--color-black, #000);
   border: none;
   border-radius: 4px;
@@ -303,7 +303,7 @@
 }
 
 .addToCartBtn:hover:not(:disabled) {
-  background: var(--color-accent-dark, #b8944d);
+  background: var(--color-accent-dark, #B89F5C);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(201, 169, 98, 0.3);
 }

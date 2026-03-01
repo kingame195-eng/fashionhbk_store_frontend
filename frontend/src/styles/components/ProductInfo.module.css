@@ -21,7 +21,7 @@
 }
 
 .breadcrumbs a:hover {
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .separator {
@@ -87,7 +87,7 @@
 }
 
 .reviewCount:hover {
-  color: var(--color-primary);
+  color: #000000;
   text-decoration: underline;
 }
 
@@ -211,7 +211,7 @@
 .feature svg {
   width: 20px;
   height: 20px;
-  color: var(--color-primary);
+  color: #000000;
   flex-shrink: 0;
 }
 

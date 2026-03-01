@@ -30,7 +30,7 @@
 .homeLink {
   display: inline-block;
   padding: 1rem 2rem;
-  background: #c9a962;
+  background: #D0B674;
   color: #1a1a1a;
   text-decoration: none;
   margin-top: 1.5rem;
@@ -43,7 +43,7 @@
 
 .homeLink:hover {
   background: #1a1a1a;
-  color: #c9a962;
+  color: #D0B674;
 }
 
 /* Success Header */
@@ -53,7 +53,7 @@
 }
 
 .successIcon {
-  color: #c9a962;
+  color: #D0B674;
   margin-bottom: 1.5rem;
 }
 
@@ -130,7 +130,7 @@
 }
 
 .cardHeader svg {
-  color: var(--color-accent, #c9a962);
+  color: var(--color-accent, #D0B674);
 }
 
 .cardHeader h3 {
@@ -159,7 +159,7 @@
 
 .estimatedDelivery {
   font-size: 0.875rem;
-  color: var(--color-accent, #c9a962);
+  color: var(--color-accent, #D0B674);
 }
 
 .status {
@@ -334,7 +334,7 @@
 }
 
 .supportNote a {
-  color: var(--color-accent, #c9a962);
+  color: var(--color-accent, #D0B674);
   font-weight: 500;
 }
 

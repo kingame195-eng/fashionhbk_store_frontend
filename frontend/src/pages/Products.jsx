@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useProducts, useDebounce } from "../hooks";
+import { useState } from "react";
+import { useProducts } from "../hooks";
 import { Link } from "react-router-dom";
 import { LoadingSpinner } from "../components/common";
 import { FilterSidebar } from "../components/products";
@@ -159,48 +159,58 @@ const Products = () => {
               {/* Products Grid */}
               {products.length > 0 ? (
                 <div className={styles.productsGrid}>
-                  {products.map((product) => (
-                    <Link
-                      to={`/products/${product.slug || product._id}`}
-                      key={product._id}
-                      className={styles.productCard}
-                    >
-                      <div className={styles.productImage}>
-                        {(product.images && product.images.length > 0) ||
-                        product.thumbnail ||
-                        product.image ? (
-                          <img
-                            src={
-                              typeof product.images?.[0] === "string"
-                                ? product.images[0]
-                                : product.images?.[0]?.url || product.thumbnail || product.image
-                            }
-                            alt={product.name}
-                          />
-                        ) : (
-                          <div className={styles.placeholderImage}>No Image</div>
-                        )}
-                        {product.onSale && <span className={styles.saleBadge}>Sale</span>}
-                        {product.featured && <span className={styles.featuredBadge}>Featured</span>}
-                      </div>
-                      <div className={styles.productInfo}>
-                        <span className={styles.productCategory}>{product.category}</span>
-                        <h3 className={styles.productName}>{product.name}</h3>
-                        <div className={styles.productPrice}>
-                          {product.compareAtPrice && product.compareAtPrice > product.price ? (
-                            <>
-                              <span className={styles.salePrice}>${product.price.toFixed(2)}</span>
-                              <span className={styles.originalPrice}>
-                                ${product.compareAtPrice.toFixed(2)}
-                              </span>
-                            </>
+                  {products.map((product) => {
+                    const isOutOfStock = product.stock === 0 || product.stock <= 0;
+                    return (
+                      <Link
+                        to={`/products/${product.slug || product._id}`}
+                        key={product._id}
+                        className={`${styles.productCard} ${isOutOfStock ? styles.outOfStock : ""}`}
+                      >
+                        <div className={styles.productImage}>
+                          {(product.images && product.images.length > 0) ||
+                          product.thumbnail ||
+                          product.image ? (
+                            <img
+                              src={
+                                typeof product.images?.[0] === "string"
+                                  ? product.images[0]
+                                  : product.images?.[0]?.url || product.thumbnail || product.image
+                              }
+                              alt={product.name}
+                            />
                           ) : (
-                            <span>${product.price?.toFixed(2) || "N/A"}</span>
+                            <div className={styles.placeholderImage}>No Image</div>
+                          )}
+                          {isOutOfStock && <span className={styles.outOfStockBadge}>Hết hàng</span>}
+                          {!isOutOfStock && product.isOnSale && (
+                            <span className={styles.saleBadge}>Sale</span>
+                          )}
+                          {!isOutOfStock && product.isFeatured && !product.isOnSale && (
+                            <span className={styles.featuredBadge}>Featured</span>
                           )}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                        <div className={styles.productInfo}>
+                          <span className={styles.productCategory}>{product.category}</span>
+                          <h3 className={styles.productName}>{product.name}</h3>
+                          <div className={styles.productPrice}>
+                            {product.compareAtPrice && product.compareAtPrice > product.price ? (
+                              <>
+                                <span className={styles.salePrice}>
+                                  ${product.price.toFixed(2)}
+                                </span>
+                                <span className={styles.originalPrice}>
+                                  ${product.compareAtPrice.toFixed(2)}
+                                </span>
+                              </>
+                            ) : (
+                              <span>${product.price?.toFixed(2) || "N/A"}</span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className={styles.emptyState}>

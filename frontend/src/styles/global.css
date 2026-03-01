@@ -216,25 +216,31 @@ textarea:not([rows]) {
 }
 
 /* ==========================================
-   SCROLLBAR STYLING
+   SCROLLBAR STYLING - Elegant Gold Theme
    ========================================== */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--color-gray-100);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-gray-400);
   border-radius: var(--radius-full);
 }
 
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-gray-100);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-500);
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-dark) 0%,
+    var(--color-primary-darker) 100%
+  );
 }
 
 /* ==========================================
@@ -242,8 +248,9 @@ textarea:not([rows]) {
    ========================================== */
 
 ::selection {
-  background-color: var(--color-accent);
-  color: var(--color-white);
+  background-color: #D0B674;
+  color: #ffffff;
+  color: var(--color-black);
 }
 
 /* ==========================================

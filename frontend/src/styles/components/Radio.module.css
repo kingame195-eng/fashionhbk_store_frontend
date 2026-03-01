@@ -11,7 +11,7 @@
 }
 
 .radioWrapper:hover {
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .radio {
@@ -29,13 +29,14 @@
 }
 
 .radio:hover {
-  border-color: var(--color-primary);
+  border-color: #000000;
   box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
 }
 
 .radio:checked {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   box-shadow: inset 0 0 0 3px var(--color-white);
 }
 

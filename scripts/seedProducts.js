@@ -553,6 +553,203 @@ const products = [
     careInstructions: ["Use suede brush", "Apply waterproof spray", "Store with shoe trees"],
     features: ["Italian suede", 'Block heel (2.5")', "Side zip closure", "Cushioned insole"],
   },
+  // === SẢN PHẨM KHÔNG SALE (để test filter "On Sale Only") ===
+  {
+    name: "Cotton Linen Shorts",
+    slug: "cotton-linen-shorts",
+    description:
+      "Relaxed fit shorts made from a breathable cotton-linen blend. Perfect for warm weather with an elastic waistband and side pockets.",
+    shortDescription: "Breathable cotton-linen blend shorts",
+    brand: "Urban Style",
+    price: 59.99,
+    compareAtPrice: null,
+    stock: 70,
+    sku: "CTN-SHT-011",
+    sizes: [
+      { name: "S", stock: 15 },
+      { name: "M", stock: 20 },
+      { name: "L", stock: 20 },
+      { name: "XL", stock: 15 },
+    ],
+    colors: [
+      { name: "Sand", hexCode: "#C2B280", stock: 25 },
+      { name: "White", hexCode: "#FFFFFF", stock: 25 },
+      { name: "Sky Blue", hexCode: "#87CEEB", stock: 20 },
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800",
+        alt: "Cotton Linen Shorts Front",
+        isPrimary: true,
+        order: 0,
+      },
+    ],
+    category: "men",
+    subcategory: "shorts",
+    tags: ["shorts", "cotton", "linen", "summer", "casual"],
+    isActive: true,
+    isFeatured: false,
+    isNewArrival: true,
+    isOnSale: false,
+    ratings: { average: 4.3, count: 45 },
+    careInstructions: ["Machine wash cold", "Hang dry", "Iron low heat"],
+    features: ["Cotton-linen blend", "Elastic waistband", "Side pockets", "Relaxed fit"],
+  },
+  {
+    name: "Silk Scarf",
+    slug: "silk-scarf",
+    description:
+      "A luxurious 100% silk scarf with a beautiful abstract print. Lightweight and versatile, can be worn around the neck, as a headband, or tied to a bag.",
+    shortDescription: "Luxurious 100% silk scarf with abstract print",
+    brand: "Luxe Fashion",
+    price: 79.99,
+    compareAtPrice: null,
+    stock: 40,
+    sku: "SLK-SCF-012",
+    sizes: [{ name: "One Size", stock: 40 }],
+    colors: [
+      { name: "Multicolor", hexCode: "#FF6B6B", stock: 20 },
+      { name: "Blue Tones", hexCode: "#4A90D9", stock: 20 },
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1584030373081-f37408c98f5e?w=800",
+        alt: "Silk Scarf",
+        isPrimary: true,
+        order: 0,
+      },
+    ],
+    category: "accessories",
+    subcategory: "scarves",
+    tags: ["silk", "scarf", "luxury", "accessory", "gift"],
+    isActive: true,
+    isFeatured: false,
+    isNewArrival: false,
+    isOnSale: false,
+    ratings: { average: 4.6, count: 78 },
+    careInstructions: ["Hand wash cold", "Lay flat to dry", "Iron on silk setting"],
+    features: ["100% Mulberry Silk", "Abstract print", "Lightweight", "Versatile styling"],
+  },
+  // === SẢN PHẨM HẾT HÀNG (để test filter "In Stock Only" & badge "Hết hàng") ===
+  {
+    name: "Velvet Evening Gown",
+    slug: "velvet-evening-gown",
+    description:
+      "A stunning velvet evening gown with a plunging neckline and floor-length silhouette. Perfect for formal events and galas.",
+    shortDescription: "Stunning velvet floor-length evening gown",
+    brand: "Milano Couture",
+    price: 459.99,
+    compareAtPrice: 599.99,
+    stock: 0,
+    sku: "VLV-GWN-013",
+    sizes: [
+      { name: "XS", stock: 0 },
+      { name: "S", stock: 0 },
+      { name: "M", stock: 0 },
+      { name: "L", stock: 0 },
+    ],
+    colors: [
+      { name: "Burgundy", hexCode: "#800020", stock: 0 },
+      { name: "Emerald", hexCode: "#50C878", stock: 0 },
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800",
+        alt: "Velvet Evening Gown",
+        isPrimary: true,
+        order: 0,
+      },
+    ],
+    category: "women",
+    subcategory: "dresses",
+    tags: ["velvet", "evening gown", "formal", "luxury", "gala"],
+    isActive: true,
+    isFeatured: true,
+    isNewArrival: false,
+    isOnSale: true,
+    ratings: { average: 4.9, count: 32 },
+    careInstructions: ["Dry clean only", "Store hanging", "Avoid direct sunlight"],
+    features: ["Premium velvet", "Floor-length", "Plunging neckline", "Fully lined"],
+  },
+  {
+    name: "Vintage Leather Watch",
+    slug: "vintage-leather-watch",
+    description:
+      "A classic vintage-style watch with a genuine leather strap and Japanese quartz movement. Features a minimalist dial with Roman numerals.",
+    shortDescription: "Classic vintage watch with leather strap",
+    brand: "Artisan Leather",
+    price: 149.99,
+    compareAtPrice: null,
+    stock: 0,
+    sku: "VTG-WTC-014",
+    sizes: [{ name: "One Size", stock: 0 }],
+    colors: [
+      { name: "Brown Leather", hexCode: "#8B4513", stock: 0 },
+      { name: "Black Leather", hexCode: "#000000", stock: 0 },
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800",
+        alt: "Vintage Leather Watch",
+        isPrimary: true,
+        order: 0,
+      },
+    ],
+    category: "accessories",
+    subcategory: "watches",
+    tags: ["watch", "vintage", "leather", "classic", "accessory"],
+    isActive: true,
+    isFeatured: false,
+    isNewArrival: false,
+    isOnSale: false,
+    ratings: { average: 4.7, count: 56 },
+    careInstructions: ["Avoid water exposure", "Store in watch box", "Replace battery yearly"],
+    features: [
+      "Japanese quartz movement",
+      "Genuine leather strap",
+      "Roman numeral dial",
+      "Water-resistant 30m",
+    ],
+  },
+  {
+    name: "Kids Striped Polo Shirt",
+    slug: "kids-striped-polo-shirt",
+    description:
+      "A colorful striped polo shirt for kids, made from soft cotton piqué. Features a classic collar and button placket.",
+    shortDescription: "Soft cotton polo shirt for kids",
+    brand: "Urban Style",
+    price: 29.99,
+    compareAtPrice: null,
+    stock: 0,
+    sku: "KDS-POL-015",
+    sizes: [
+      { name: "XS", stock: 0 },
+      { name: "S", stock: 0 },
+      { name: "M", stock: 0 },
+    ],
+    colors: [
+      { name: "Navy/White", hexCode: "#000080", stock: 0 },
+      { name: "Red/White", hexCode: "#FF0000", stock: 0 },
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=800",
+        alt: "Kids Striped Polo",
+        isPrimary: true,
+        order: 0,
+      },
+    ],
+    category: "kids",
+    subcategory: "tops",
+    tags: ["kids", "polo", "striped", "cotton", "casual"],
+    isActive: true,
+    isFeatured: false,
+    isNewArrival: true,
+    isOnSale: false,
+    ratings: { average: 4.4, count: 89 },
+    careInstructions: ["Machine wash cold", "Tumble dry low"],
+    features: ["100% Cotton piqué", "Classic collar", "Button placket"],
+  },
 ];
 
 async function seedProducts() {
@@ -567,7 +764,7 @@ async function seedProducts() {
     console.log("✅ Cleared existing products");
 
     // Insert new products
-    console.log("📦 Inserting 10 products...");
+    console.log("📦 Inserting 15 products (including out-of-stock & non-sale)...");
     const insertedProducts = await Product.insertMany(products);
     console.log(`✅ Successfully inserted ${insertedProducts.length} products!`);
 

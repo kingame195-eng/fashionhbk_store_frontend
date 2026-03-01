@@ -18,7 +18,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -51,18 +51,20 @@
    STYLE VARIANTS
    ========================================== */
 
-/* Primary - Solid dark button */
+/* Primary - Solid Gold button */
 .primary {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  color: var(--color-black);
+  border-color: #000000;
 }
 
 .primary:hover:not(:disabled) {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary-light);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-gold-md);
 }
 
 .primary:active:not(:disabled) {
@@ -70,16 +72,16 @@
   box-shadow: none;
 }
 
-/* Secondary - Accent color button */
+/* Secondary - Black button */
 .secondary {
-  background-color: var(--color-accent);
-  color: var(--color-primary);
-  border-color: var(--color-accent);
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border-color: var(--color-black);
 }
 
 .secondary:hover:not(:disabled) {
-  background-color: var(--color-accent-dark);
-  border-color: var(--color-accent-dark);
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-800);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -92,14 +94,16 @@
 /* Outline - Bordered button */
 .outline {
   background-color: transparent;
-  color: #000000;
+  color: var(--color-black);
+  border-color: #000000;
 }
 
 .outline:hover:not(:disabled) {
-  background-color: #D2B879;
-  color: var(--color-white);
+  background-color: #D0B674;
+  color: #ffffff;
+  color: var(--color-black);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-gold-md);
 }
 
 .outline:active:not(:disabled) {
@@ -116,7 +120,7 @@
 
 .ghost:hover:not(:disabled) {
   background-color: var(--color-gray-100);
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .ghost:active:not(:disabled) {
@@ -230,7 +234,7 @@
 
 .outline .spinner,
 .ghost .spinner {
-  color: var(--color-primary);
+  color: #000000;
 }
 
 /* ==========================================

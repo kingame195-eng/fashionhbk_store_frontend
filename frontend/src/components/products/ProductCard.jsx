@@ -29,7 +29,7 @@ export default function ProductCard({ product }) {
   // Calculate discount percentage
   const discount = compareAtPrice ? Math.round((1 - price / compareAtPrice) * 100) : 0;
 
-  const isOutOfStock = inventory?.totalQuantity === 0;
+  const isOutOfStock = inventory?.totalQuantity === 0 || product.stock === 0 || product.stock <= 0;
 
   // Handle both formats: images as array of objects {url, alt} OR array of strings OR thumbnail field
   const getImageUrl = (img) => {
@@ -101,7 +101,7 @@ export default function ProductCard({ product }) {
               <span className={`${styles.badge} ${styles.badgeFeatured}`}>Featured</span>
             )}
             {isOutOfStock && (
-              <span className={`${styles.badge} ${styles.badgeOutOfStock}`}>Out of Stock</span>
+              <span className={`${styles.badge} ${styles.badgeOutOfStock}`}>Hết hàng</span>
             )}
           </div>
 

@@ -38,12 +38,12 @@
 }
 
 .input:hover:not(:disabled) {
-  border-color: var(--color-primary);
+  border-color: #000000;
   background-color: rgba(var(--color-primary-rgb), 0.02);
 }
 
 .input:focus-visible {
-  border-color: var(--color-primary);
+  border-color: #000000;
   outline: 2px solid var(--color-accent);
   outline-offset: 0;
   box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.1);

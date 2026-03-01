@@ -44,6 +44,8 @@ const Home = () => {
   ];
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchProducts = async () => {
       setIsLoading(true);
       setError(null);
@@ -55,27 +57,39 @@ const Home = () => {
           productService.getProducts({
             limit: 4,
             sortBy: "sold",
-            order: "desc",
+            sortOrder: "desc",
           }),
           productService.getProducts({
             limit: 4,
             sortBy: "createdAt",
-            order: "desc",
+            sortOrder: "desc",
           }),
         ]);
 
-        // Service returns { products: [], pagination: {} } directly
-        setFeaturedProducts(featuredResponse?.products || []);
-        setNewArrivals(newArrivalsResponse?.products || []);
+        // Only update state if component is still mounted
+        if (isMounted) {
+          // Service returns { products: [], pagination: {} } directly
+          setFeaturedProducts(featuredResponse?.products || []);
+          setNewArrivals(newArrivalsResponse?.products || []);
+        }
       } catch (err) {
-        console.error("Failed to fetch products:", err);
-        setError("Failed to load products");
+        if (isMounted) {
+          console.error("Failed to fetch products:", err);
+          setError("Failed to load products");
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchProducts();
+
+    // Cleanup function to prevent state updates on unmounted component
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -119,7 +133,7 @@ const Home = () => {
             )}
 
             <div className={styles.viewAllContainer}>
-              <Link to="/products?sortBy=sold&order=desc" className={styles.viewAllLink}>
+              <Link to="/products?sortBy=sold&sortOrder=desc" className={styles.viewAllLink}>
                 View All Best Sellers →
               </Link>
             </div>
@@ -141,7 +155,7 @@ const Home = () => {
             </div>
 
             <div className={styles.viewAllContainer}>
-              <Link to="/products?sortBy=createdAt&order=desc" className={styles.viewAllLink}>
+              <Link to="/products?sortBy=createdAt&sortOrder=desc" className={styles.viewAllLink}>
                 View All New Arrivals →
               </Link>
             </div>

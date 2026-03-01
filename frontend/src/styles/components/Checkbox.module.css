@@ -11,7 +11,7 @@
 }
 
 .checkboxWrapper:hover {
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .checkbox {
@@ -30,13 +30,14 @@
 }
 
 .checkbox:hover {
-  border-color: var(--color-primary);
+  border-color: #000000;
   box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
 }
 
 .checkbox:checked {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
 }
 
 .checkbox:checked::after {

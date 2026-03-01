@@ -30,8 +30,8 @@
 }
 
 .tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  color: #000000;
+  border-bottom-color: #000000;
 }
 
 /* Tab Panels */
@@ -96,7 +96,7 @@
   content: "•";
   position: absolute;
   left: 0;
-  color: var(--color-primary);
+  color: #000000;
 }
 
 /* Reviews Section */
@@ -146,7 +146,8 @@
 
 .writeReviewBtn {
   padding: 0.75rem 1.5rem;
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-md);
   color: white;

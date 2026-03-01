@@ -7,7 +7,7 @@
 .hero {
   position: relative;
   padding: var(--space-24) var(--space-4);
-  background: linear-gradient(135deg, #c9a962 0%, #b8944d 100%);
+  background: linear-gradient(135deg, #D0B674 0%, #B89F5C 100%);
   text-align: center;
   color: #ffffff;
   overflow: hidden;
@@ -101,7 +101,7 @@
 
 .categoryButton:hover {
   color: #1a1a1a;
-  border-color: #c9a962;
+  border-color: #D0B674;
 }
 
 .categoryButton.active {
@@ -125,11 +125,11 @@
 }
 
 .faqItem:hover {
-  border-color: #c9a962;
+  border-color: #D0B674;
 }
 
 .faqItem.open {
-  border-color: #c9a962;
+  border-color: #D0B674;
   box-shadow: 0 8px 30px rgba(201, 169, 98, 0.12);
 }
 
@@ -166,9 +166,9 @@
   height: 32px;
   font-size: var(--text-lg);
   font-weight: 300;
-  color: #c9a962;
+  color: #D0B674;
   background-color: transparent;
-  border: 1px solid #c9a962;
+  border: 1px solid #D0B674;
   border-radius: 50%;
   flex-shrink: 0;
   margin-left: var(--space-4);
@@ -176,7 +176,7 @@
 }
 
 .faqItem.open .faqIcon {
-  background-color: #c9a962;
+  background-color: #D0B674;
   color: #ffffff;
 }
 
@@ -256,7 +256,7 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #1a1a1a;
-  background-color: #c9a962;
+  background-color: #D0B674;
   border: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;

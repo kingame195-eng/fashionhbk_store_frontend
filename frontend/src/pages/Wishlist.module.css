@@ -54,7 +54,7 @@
   display: block;
   width: 60px;
   height: 1px;
-  background: #c9a962;
+  background: #D0B674;
   margin-top: var(--space-4);
 }
 
@@ -149,14 +149,14 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #1a1a1a;
-  background-color: #c9a962;
+  background-color: #D0B674;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .browseButton:hover,
 .loginButton:hover {
   background-color: #1a1a1a;
-  color: #c9a962;
+  color: #D0B674;
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }

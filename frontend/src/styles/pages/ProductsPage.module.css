@@ -72,7 +72,8 @@
   right: -4px;
   width: 10px;
   height: 10px;
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   border-radius: 50%;
   border: 2px solid var(--color-bg);
 }
@@ -82,13 +83,13 @@
   background: none;
   border: none;
   font-size: 0.875rem;
-  color: var(--color-primary);
+  color: #000000;
   cursor: pointer;
   text-decoration: underline;
 }
 
 .clearFiltersBtn:hover {
-  color: var(--color-primary-dark);
+  color: #000000;
 }
 
 .sortWrapper {
@@ -213,7 +214,8 @@
 
 .retryBtn {
   padding: 0.75rem 1.5rem;
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -224,7 +226,8 @@
 }
 
 .retryBtn:hover {
-  background-color: var(--color-primary-dark);
+  background-color: #D0B674;
+  color: #ffffff;
 }
 
 /* Load More Button */
@@ -241,7 +244,8 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 2rem;
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -253,7 +257,8 @@
 }
 
 .loadMoreBtn:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
+  background-color: #D0B674;
+  color: #ffffff;
   transform: translateY(-1px);
 }
 

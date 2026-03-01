@@ -28,7 +28,7 @@
 }
 
 .viewAll:hover {
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .viewAll svg {
@@ -81,8 +81,9 @@
 }
 
 .scrollBtn:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   color: white;
 }
 

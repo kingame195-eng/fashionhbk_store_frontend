@@ -1,37 +1,52 @@
 :root {
-  /* Primary Colors - Elegant Black & Gold */
-  --color-primary: #000000;
-  --color-primary-light: #000000;
-  --color-primary-dark: #000000;
+  /* =============================================
+     COLOR PALETTE - Elegant Gold Theme (#D0B674)
+     ============================================= */
 
-  /* Accent Colors - Luxurious Gold */
-  --color-accent: #c9a962;
-  --color-accent-light: #d4bc7e;
-  --color-accent-dark: #b8944d;
+  /* Primary Colors - Luxurious Gold */
+  --color-primary: #d0b674;
+  --color-primary-light: #e0c994;
+  --color-primary-dark: #b89f5c;
+  --color-primary-darker: #9a854a;
 
-  /* Neutral Colors */
+  /* Accent Colors - Matching Gold Palette */
+  --color-accent: #d0b674;
+  --color-accent-light: #e5d4a1;
+  --color-accent-dark: #b89f5c;
+  --color-accent-hover: #c4a864;
+
+  /* Gold Gradient Colors */
+  --gradient-gold: linear-gradient(135deg, #d0b674 0%, #e5d4a1 50%, #d0b674 100%);
+  --gradient-gold-dark: linear-gradient(135deg, #b89f5c 0%, #d0b674 100%);
+  --gradient-gold-soft: linear-gradient(180deg, #fdf9f0 0%, #ffffff 100%);
+
+  /* Neutral Colors - Clean & Readable */
   --color-white: #ffffff;
   --color-black: #000000;
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #e5e5e5;
-  --color-gray-300: #d4d4d4;
-  --color-gray-400: #a3a3a3;
-  --color-gray-500: #737373;
-  --color-gray-600: #525252;
-  --color-gray-700: #404040;
-  --color-gray-800: #262626;
-  --color-gray-900: #171717;
+  --color-gray-50: #fdfcfa;
+  --color-gray-100: #f8f6f1;
+  --color-gray-200: #edeae3;
+  --color-gray-300: #d9d5cc;
+  --color-gray-400: #a8a299;
+  --color-gray-500: #737068;
+  --color-gray-600: #524f47;
+  --color-gray-700: #403d36;
+  --color-gray-800: #2a2824;
+  --color-gray-900: #1a1917;
 
-  /* Semantic Colors */
-  --color-success: #22c55e;
-  --color-success-light: #86efac;
-  --color-warning: #f59e0b;
-  --color-warning-light: #fcd34d;
-  --color-error: #ef4444;
-  --color-error-light: #fca5a5;
-  --color-info: #3b82f6;
-  --color-info-light: #93c5fd;
+  /* Semantic Colors - Harmonized with Gold */
+  --color-success: #2eab6a;
+  --color-success-light: #a8e6c3;
+  --color-success-bg: #f0faf4;
+  --color-warning: #e5a220;
+  --color-warning-light: #f5d78e;
+  --color-warning-bg: #fffbf0;
+  --color-error: #dc4545;
+  --color-error-light: #f5a8a8;
+  --color-error-bg: #fff5f5;
+  --color-info: #4a90d9;
+  --color-info-light: #a8d0f5;
+  --color-info-bg: #f5faff;
 
   /* Font Families */
   --font-primary: "Playfair Display", Georgia, serif;
@@ -107,11 +122,17 @@
   --border-color: var(--color-gray-200);
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.2);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* Gold-tinted shadows for accent elements */
+  --shadow-gold-sm: 0 2px 4px rgba(208, 182, 116, 0.15);
+  --shadow-gold-md: 0 4px 12px rgba(208, 182, 116, 0.2);
+  --shadow-gold-lg: 0 8px 24px rgba(208, 182, 116, 0.25);
+  --shadow-gold-glow: 0 0 20px rgba(208, 182, 116, 0.3);
 
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;

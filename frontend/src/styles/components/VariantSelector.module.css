@@ -50,7 +50,7 @@
 }
 
 .colorSwatch.selected {
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .colorSwatch.unavailable {
@@ -100,12 +100,13 @@
 }
 
 .optionBtn:hover:not(:disabled) {
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .optionBtn.selected {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   color: white;
 }
 

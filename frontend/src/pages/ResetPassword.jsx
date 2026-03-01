@@ -87,8 +87,8 @@ export default function ResetPassword() {
   // Calculate password strength
   const calculatePasswordStrength = (password) => {
     let score = 0;
-    if (password.length >= 6) score += 1;
     if (password.length >= 8) score += 1;
+    if (password.length >= 10) score += 1;
     if (/[A-Z]/.test(password)) score += 1;
     if (/[a-z]/.test(password)) score += 1;
     if (/[0-9]/.test(password)) score += 1;
@@ -114,8 +114,8 @@ export default function ResetPassword() {
     if (!password) {
       return "Please enter a new password";
     }
-    if (password.length < 6) {
-      return "Password must be at least 6 characters";
+    if (password.length < 8) {
+      return "Password must be at least 8 characters";
     }
     return "";
   };
@@ -190,11 +190,11 @@ export default function ResetPassword() {
       setStatus("success");
       showSuccess("Password reset successfully!");
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "An error occurred. Please try again.";
+      const errorMessage = err.message || "An error occurred. Please try again.";
 
-      if (err.response?.status === 400 && errorMessage.includes("expired")) {
+      if (err.status === 400 && errorMessage.includes("expired")) {
         setStatus("expired");
-      } else if (err.response?.status === 400 && errorMessage.includes("invalid")) {
+      } else if (err.status === 400 && errorMessage.includes("invalid")) {
         setStatus("error");
       } else {
         showError(errorMessage);

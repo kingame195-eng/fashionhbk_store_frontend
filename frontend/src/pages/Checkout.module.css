@@ -43,7 +43,7 @@
 }
 
 .step.completed::after {
-  background: #c9a962;
+  background: #D0B674;
 }
 
 .stepNumber {
@@ -67,8 +67,8 @@
 }
 
 .step.completed .stepNumber {
-  background: #c9a962;
-  border-color: #c9a962;
+  background: #D0B674;
+  border-color: #D0B674;
   color: #ffffff;
 }
 
@@ -135,7 +135,7 @@
   display: block;
   width: 40px;
   height: 1px;
-  background: #c9a962;
+  background: #D0B674;
   margin-top: 0.75rem;
 }
 
@@ -190,7 +190,7 @@
 .formGroupFull input:focus,
 .formGroupFull select:focus {
   outline: none;
-  border-color: #c9a962;
+  border-color: #D0B674;
   box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.1);
 }
 
@@ -212,16 +212,16 @@
 }
 
 .shippingOption:hover {
-  border-color: #c9a962;
+  border-color: #D0B674;
 }
 
 .shippingOption.selected {
-  border-color: #c9a962;
+  border-color: #D0B674;
   background: rgba(201, 169, 98, 0.05);
 }
 
 .shippingOption input {
-  accent-color: #c9a962;
+  accent-color: #D0B674;
 }
 
 .optionInfo {
@@ -265,16 +265,16 @@
 }
 
 .paymentOption:hover {
-  border-color: #c9a962;
+  border-color: #D0B674;
 }
 
 .paymentOption.selected {
-  border-color: #c9a962;
+  border-color: #D0B674;
   background: rgba(201, 169, 98, 0.05);
 }
 
 .paymentOption input {
-  accent-color: #c9a962;
+  accent-color: #D0B674;
 }
 
 /* Coupon Section */
@@ -360,7 +360,7 @@
 .reviewHeader button {
   background: none;
   border: none;
-  color: var(--color-accent, #c9a962);
+  color: var(--color-accent, #D0B674);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
@@ -542,7 +542,7 @@
 
 .freeShippingNote {
   font-size: 0.75rem;
-  color: var(--color-accent, #c9a962);
+  color: var(--color-accent, #D0B674);
   text-align: center;
   padding: 0.75rem;
   background: rgba(201, 169, 98, 0.1);

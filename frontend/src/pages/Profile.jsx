@@ -230,8 +230,8 @@ export default function Profile() {
 
     if (!passwordData.newPassword) {
       errors.newPassword = "New password is required";
-    } else if (passwordData.newPassword.length < 6) {
-      errors.newPassword = "Password must be at least 6 characters";
+    } else if (passwordData.newPassword.length < 8) {
+      errors.newPassword = "Password must be at least 8 characters";
     }
 
     if (!passwordData.confirmPassword) {

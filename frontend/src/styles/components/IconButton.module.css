@@ -64,11 +64,12 @@
 
 .primary {
   background-color: var(--color-gray-100);
-  color: var(--color-primary);
+  color: #000000;
 }
 
 .primary:hover:not(:disabled) {
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   color: var(--color-white);
 }
 

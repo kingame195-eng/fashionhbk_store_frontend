@@ -33,6 +33,7 @@ export function useProducts(initialFilters = {}) {
       search: params.search || "",
       featured: params.featured === "true",
       onSale: params.onSale === "true",
+      inStock: params.inStock === "true",
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParamsString]);
@@ -59,6 +60,7 @@ export function useProducts(initialFilters = {}) {
         search: params.search,
         featured: params.featured,
         onSale: params.onSale,
+        inStock: params.inStock,
         sortBy: params.sortBy,
         sortOrder: params.sortOrder,
       });
@@ -87,6 +89,7 @@ export function useProducts(initialFilters = {}) {
         if (params.search) apiParams.search = params.search;
         if (params.featured === "true") apiParams.featured = true;
         if (params.onSale === "true") apiParams.onSale = true;
+        if (params.inStock === "true") apiParams.inStock = true;
 
         apiParams.sortBy = params.sortBy || "createdAt";
         apiParams.sortOrder = params.sortOrder || "desc";
@@ -234,7 +237,8 @@ export function useProducts(initialFilters = {}) {
       filters.maxPrice ||
       filters.search ||
       filters.featured ||
-      filters.onSale
+      filters.onSale ||
+      filters.inStock
     );
   }, [filters]);
 

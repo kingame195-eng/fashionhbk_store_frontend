@@ -49,13 +49,34 @@ export default function App() {
                   <Route path="products" element={<Products />} />
                   <Route path="products/:slug" element={<ProductDetail />} />
                   <Route path="cart" element={<Cart />} />
-                  <Route path="checkout" element={<Checkout />} />
+                  <Route
+                    path="checkout"
+                    element={
+                      <ProtectedRoute>
+                        <Checkout />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="order-confirmation/:orderNumber" element={<OrderConfirmation />} />
                   <Route path="about" element={<About />} />
                   <Route path="contact" element={<Contact />} />
                   <Route path="faq" element={<FAQ />} />
-                  <Route path="wishlist" element={<Wishlist />} />
-                  <Route path="orders" element={<Orders />} />
+                  <Route
+                    path="wishlist"
+                    element={
+                      <ProtectedRoute>
+                        <Wishlist />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="orders"
+                    element={
+                      <ProtectedRoute>
+                        <Orders />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route
                     path="login"
                     element={

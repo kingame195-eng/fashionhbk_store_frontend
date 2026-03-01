@@ -15,7 +15,7 @@
   justify-content: center;
   min-height: 100vh;
   padding: var(--space-16) var(--space-6);
-  background: linear-gradient(135deg, #c9a962 0%, #b8944d 50%, #c9a962 100%);
+  background: linear-gradient(135deg, #d0b674 0%, #b89f5c 50%, #d0b674 100%);
   overflow: hidden;
 }
 
@@ -27,8 +27,8 @@
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(201, 169, 98, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(201, 169, 98, 0.1) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(208, 182, 116, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(208, 182, 116, 0.15) 0%, transparent 50%);
   animation: shimmer 15s ease-in-out infinite;
 }
 
@@ -40,8 +40,8 @@
   right: 0;
   bottom: 0;
   background-image:
-    linear-gradient(rgba(201, 169, 98, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 169, 98, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(208, 182, 116, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(208, 182, 116, 0.05) 1px, transparent 1px);
   background-size: 50px 50px;
   opacity: 0.5;
 }
@@ -163,8 +163,8 @@
   color: #ffffff;
   transform: translateY(-2px);
   box-shadow:
-    0 0 0 2px #c9a962,
-    0 10px 40px rgba(201, 169, 98, 0.3);
+    0 0 0 2px #d0b674,
+    0 10px 40px rgba(208, 182, 116, 0.4);
 }
 
 .ctaButton:hover::before {
@@ -209,7 +209,7 @@
   transform: translateX(-50%);
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, #c9a962);
+  background: linear-gradient(to bottom, transparent, #d0b674);
 }
 
 .sectionTitle {
@@ -232,7 +232,7 @@
   display: block;
   width: 60px;
   height: 1px;
-  background: #c9a962;
+  background: #d0b674;
   margin: var(--space-4) auto 0;
 }
 
@@ -290,7 +290,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: #c9a962;
+  background: #d0b674;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s ease;
@@ -336,7 +336,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #c9a962;
+  color: #d0b674;
   margin-bottom: var(--space-3);
 }
 
@@ -376,8 +376,8 @@
 }
 
 .cardLink:hover {
-  color: #c9a962;
-  border-bottom-color: #c9a962;
+  color: #d0b674;
+  border-bottom-color: #d0b674;
 }
 
 /* CTA Section */
@@ -413,7 +413,7 @@
   transform: translateX(-50%);
   width: 200px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #c9a962, transparent);
+  background: linear-gradient(90deg, transparent, #d0b674, transparent);
 }
 
 .cta h2 {
@@ -450,16 +450,16 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #c9a962;
+  color: #d0b674;
   background: transparent;
-  border: 1px solid #c9a962;
+  border: 1px solid #d0b674;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
 }
 
 .secondaryCta:hover {
-  background: #c9a962;
+  background: #d0b674;
   color: #1a1a1a;
   box-shadow: 0 0 30px rgba(201, 169, 98, 0.3);
 }
@@ -502,7 +502,7 @@
   transform: translateX(-50%);
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, #c9a962);
+  background: linear-gradient(to bottom, transparent, #d0b674);
 }
 
 .products:nth-child(even) {
@@ -538,7 +538,7 @@
 
 .errorMessage {
   text-align: center;
-  color: #c9a962;
+  color: #d0b674;
   padding: var(--space-10);
   background-color: rgba(201, 169, 98, 0.08);
   border: 1px solid rgba(201, 169, 98, 0.2);

@@ -27,7 +27,7 @@
 
 .clearBtn {
   font-size: 0.875rem;
-  color: var(--color-primary);
+  color: #000000;
   background: none;
   border: none;
   cursor: pointer;
@@ -36,7 +36,7 @@
 }
 
 .clearBtn:hover {
-  color: var(--color-primary-dark);
+  color: #000000;
 }
 
 /* Filter Group */
@@ -110,7 +110,7 @@
 
 .filterOption.active {
   background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  color: #000000;
   font-weight: 500;
 }
 
@@ -156,7 +156,7 @@
 
 .priceInput:focus {
   outline: none;
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .priceSeparator {
@@ -166,7 +166,8 @@
 
 .applyBtn {
   padding: 0.5rem 1rem;
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -177,7 +178,8 @@
 }
 
 .applyBtn:hover {
-  background-color: var(--color-primary-dark);
+  background-color: #D0B674;
+  color: #ffffff;
 }
 
 /* Size Grid */
@@ -198,12 +200,13 @@
 }
 
 .sizeBtn:hover {
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .sizeBtn.active {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
+  border-color: #000000;
   color: white;
 }
 
@@ -231,7 +234,7 @@
 }
 
 .colorBtn.active {
-  border-color: var(--color-primary);
+  border-color: #000000;
 }
 
 .colorSwatch {
@@ -302,7 +305,8 @@
 }
 
 .toggleInput:checked + .toggleSwitch {
-  background-color: var(--color-primary);
+  background-color: #D0B674;
+  color: #ffffff;
 }
 
 .toggleInput:checked + .toggleSwitch::after {

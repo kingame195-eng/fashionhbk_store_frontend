@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DOMPurify from "dompurify";
 import styles from "../../styles/components/ProductTabs.module.css";
 
 export default function ProductTabs({ product }) {
@@ -41,7 +42,7 @@ export default function ProductTabs({ product }) {
         >
           <div
             className={styles.description}
-            dangerouslySetInnerHTML={{ __html: product.description }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description || "") }}
           />
 
           {/* Product Details */}
